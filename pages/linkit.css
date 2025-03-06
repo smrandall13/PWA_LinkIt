@@ -1,0 +1,128 @@
+#linkit-container {
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	overflow: auto;
+	min-height: calc(100vh - 60px);
+	height: calc(100vh - 60px);
+	max-height: calc(100vh - 60px);
+}
+
+.linkit-entity-box {
+	border: var(--border);
+	border-radius: var(--border-radius);
+	padding: 8px;
+	min-width: 300px;
+	max-width: 300px;
+	flex: 1;
+	width: auto;
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: var(--font-size-small);
+}
+.linkit-entity-category {
+	font-size: var(--font-size-sm);
+	margin: 4px 0;
+}
+.linkit-box-title {
+	font-size: var(--font-size);
+	font-weight: bold;
+	margin: 4px 0;
+}
+
+.linkit-grid {
+	display: grid;
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	grid-template-columns: auto 1fr;
+	/* grid-gap: 4px; */
+	font-size: var(--font-size-sm);
+	border-top: var(--border);
+	padding: 4px 0;
+}
+.linkit-grid-title {
+	grid-column: span 2;
+	font-size: var(--font-size-xsm);
+	opacity: 0.7;
+	margin: 4px 0 4px 16px;
+}
+.linkit-grid-label {
+	text-align: right;
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: end;
+	width: auto;
+	min-width: 100px;
+	padding: 2px;
+}
+.linkit-grid-label:after {
+	content: ':';
+	margin: 0 4px 0 2px;
+}
+.linkit-grid-value {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	/* justify-content: start;
+	text-align: left; */
+	width: auto;
+	min-width: 100px;
+	padding: 2px 4px;
+}
+.linkit-grid-value.border-wrap {
+	border-left: 0;
+}
+.linkit-entity-color {
+	width: 30px;
+	height: 30px;
+	min-width: 30px;
+	max-width: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	appearance: none;
+	margin: 0;
+	padding: 0;
+	border: var(--border);
+	border-radius: var(--border-radius);
+}
+.linkit-entity-check {
+	width: 30px;
+	height: 30px;
+	min-width: 30px;
+	max-width: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	/* appearance: none; */
+	margin: 0;
+	padding: 0;
+	border: var(--border);
+	border-radius: var(--border-radius);
+}
+.linkit-entity-description {
+	border-top: var(--border);
+	padding: 4px 0;
+}
+.linkit-entity-close {
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+	appearance: none;
+	margin: 0;
+	padding: 0;
+	border: var(--border);
+	border-radius: var(--border-radius);
+	border-color: transparent;
+	background-image: url(../assets/images/cross-white.png);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	right: 8px;
+	top: 8px;
+}
+.linkit-box-close:hover {
+	border: var(--border);
+}

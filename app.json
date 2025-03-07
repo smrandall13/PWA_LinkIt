@@ -5,6 +5,7 @@
 	"defaultPage": "linkit",
 	"defaultTheme": "Dark",
 	"defaultFont": "Nunito",
+	"themeColor": "#121c2d",
 
 	"copyright": "&copy; 2025 Shaun Randall",
 
@@ -14,6 +15,8 @@
 
 	"allowInstall": false,
 	"allowNotifications": false,
+
+	"trackLocation": "",
 
 	"pages": [
 		{

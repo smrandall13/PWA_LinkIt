@@ -1,6 +1,8 @@
 const appContent = document.getElementById('app-content');
 const APP = {
+	root: '',
 	data: {},
+	locate: { lat: null, lng: null, acc: null },
 	timeouts: [],
 	intervals: [],
 	executions: [],
@@ -40,10 +42,18 @@ const APP = {
 			if (!isEmpty(htmlPath)) {
 				const contentElement = document.getElementById('app-content-container');
 				try {
-					const response = await fetch(htmlPath);
-					if (!response.ok) throw new Error(`Failed to load ${htmlPath}`);
-					contentElement.innerHTML = await response.text();
-					APP.page.current = pageID;
+					FETCH(
+						htmlPath,
+						null,
+						(data) => {
+							contentElement.innerHTML = data;
+							APP.page.current = pageID;
+						},
+						(error) => {
+							LOG.error('Error loading HTML:' + error);
+						},
+						{ method: 'GET' }
+					);
 				} catch (error) {
 					LOG.error('Error loading HTML:' + error);
 				}
@@ -51,14 +61,21 @@ const APP = {
 				// Load CSS
 				if (!isEmpty(cssPath)) {
 					try {
-						const response = await fetch(cssPath);
-						if (!response.ok) throw new Error(`Failed to load ${cssPath}`);
-
-						const cssLink = document.createElement('link');
-						cssLink.rel = 'stylesheet';
-						cssLink.href = cssPath;
-						cssLink.classList.add('dynamic-style'); // Mark to remove later
-						document.head.appendChild(cssLink);
+						FETCH(
+							cssPath,
+							null,
+							() => {
+								const cssLink = document.createElement('link');
+								cssLink.rel = 'stylesheet';
+								cssLink.href = APP.root + cssPath;
+								cssLink.classList.add('dynamic-style'); // Mark to remove later
+								document.head.appendChild(cssLink);
+							},
+							(error) => {
+								LOG.error('Error loading CSS:' + error);
+							},
+							{ method: 'GET' }
+						);
 					} catch (error) {
 						LOG.error('Error loading CSS:' + error);
 					}
@@ -67,14 +84,21 @@ const APP = {
 				// Load JS
 				if (!isEmpty(jsPath)) {
 					try {
-						const response = await fetch(jsPath);
-						if (!response.ok) throw new Error(`Failed to load ${jsPath}`);
-
-						const script = document.createElement('script');
-						script.src = jsPath;
-						script.classList.add('dynamic-script'); // Mark to remove later
-						script.defer = true;
-						document.body.appendChild(script);
+						FETCH(
+							jsPath,
+							null,
+							() => {
+								const script = document.createElement('script');
+								script.src = APP.root + jsPath;
+								script.classList.add('dynamic-script'); // Mark to remove later
+								script.defer = true;
+								document.body.appendChild(script);
+							},
+							(error) => {
+								LOG.error('Error loading JS:' + error);
+							},
+							{ method: 'GET' }
+						);
 					} catch (error) {
 						LOG.error('Error loading JS:' + error);
 					}
@@ -332,6 +356,7 @@ const APP = {
 		}
 	},
 	init: async function (callback) {
+		APP.root = window.location.href;
 		try {
 			// App Data (app.json)
 			FETCH(
@@ -358,8 +383,17 @@ const APP = {
 
 					// App Info
 					document.getElementById('app-name').innerHTML = APP.data.name;
-					document.getElementById('app-favicon').href = APP.data.icon;
-					document.getElementById('app-icon').src = APP.data.icon;
+					document.getElementById('app-icon').src = APP.root + APP.data.icon;
+
+					// Add Favicon
+					const favicon = document.createElement('link');
+					favicon.rel = 'icon';
+					favicon.type = 'image/png';
+					favicon.href = APP.root + APP.data.icon;
+					document.head.appendChild(favicon);
+
+					// Theme Color
+					document.getElementById('app-theme-color').content = APP.data.themeColor || '#121c2d';
 
 					// APP Title
 					APP.title(APP.data.name);
@@ -388,6 +422,9 @@ const APP = {
 					}
 					APP.page.go(pageID);
 
+					// Location
+					LOCATE.init(APP.data.trackLocation);
+
 					callback();
 				},
 				(error) => {
@@ -401,12 +438,45 @@ const APP = {
 	},
 };
 
+const DATA = {
+	database: '',
+	table: '',
+	submit: function (table = '', condition = '', fields = '') {
+		if (!isEmpty(this.database) && !isEmpty(table)) {
+			return new Promise((resolve, reject) => {
+				FETCH(
+					'',
+					{ command: 'data', request: 'get', database: this.database, table: table, fields: fields, condition: condition },
+					(response) => {
+						// Check if data is JSON or string
+						if (typeof response === 'string' && isJSON(response)) {
+							response = JSON.parse(response);
+						}
+						resolve(response.data); // Already an object or a raw string
+					},
+					(error) => {
+						reject(error);
+					}
+				);
+			});
+		}
+	},
+	init: function (database = '', table = '') {
+		this.database = database;
+		this.table = table;
+	},
+};
+
 const FETCH_REQUESTS = new Map(); // Track ongoing requests by URL+data
 const FETCH = function (url = '', data = null, successCallback = null, failureCallback = null, options = {}) {
-	if (isEmpty(url)) return;
+	if (isEmpty(url)) {
+		url = 'server/api.php';
+	}
+	let fullUrl = url;
+	if (!url.startsWith('http://') && !url.startsWith('https://')) fullUrl = APP.root + url;
 
 	// Check Fetch
-	const key = url + JSON.stringify(data);
+	const key = fullUrl + JSON.stringify(data);
 	if (FETCH_REQUESTS.has(key)) {
 		FETCH_REQUESTS.get(key).abort();
 		FETCH_REQUESTS.delete(key);
@@ -436,12 +506,18 @@ const FETCH = function (url = '', data = null, successCallback = null, failureCa
 	// Merge user options
 	const fetchOptions = { ...defaultOptions, ...options };
 
-	fetch(url, fetchOptions)
+	fetch(fullUrl, fetchOptions)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
-			return response.json();
+			const contentType = response.headers.get('content-type');
+			console.log('URL: ', fullUrl, contentType);
+			if (contentType && contentType.includes('application/json')) {
+				return response.json();
+			} else {
+				return response.text();
+			}
 		})
 		.then((data) => {
 			if (typeof successCallback === 'function') successCallback(data);
@@ -452,212 +528,6 @@ const FETCH = function (url = '', data = null, successCallback = null, failureCa
 		.finally(() => {
 			FETCH_REQUESTS.delete(key); // Remove completed/canceled requests from the tracking list
 		});
-};
-
-const NOTIFY = {
-	send: function (title = '', message = '') {
-		if (Notification.permission === 'granted') {
-			new Notification(title, { body: message });
-		} else if (Notification.permission !== 'denied') {
-			NOTIFY.init(() => {
-				NOTIFY.send(title, message);
-			});
-		}
-	},
-	init: function (callback) {
-		if ('Notification' in window && APP.data.allowNotifications === true) {
-			Notification.requestPermission().then((permission) => {
-				if (permission === 'granted') {
-					if (isFunction(callback)) callback();
-					LOG.message('Notification permission granted.');
-				} else {
-					LOG.message('Notification permission denied.');
-				}
-			});
-		} else {
-			LOG.message('Notifications are not supported in this browser.');
-		}
-	},
-};
-
-const MESSAGE = {
-	show: function (title = '', message = '', className = '', callback = null) {
-		if (document.getElementById('app-message')) {
-			document.getElementById('app-message').remove();
-		}
-
-		if (!isEmpty(message)) {
-			// Message Back
-			const appMessageBack = document.createElement('div');
-			appMessageBack.id = 'app-message-back';
-			appMessageBack.style.opacity = 0;
-			appContent.appendChild(appMessageBack);
-
-			const appMessage = document.createElement('div');
-			appMessage.id = 'app-message';
-			appMessage.style.opacity = 0;
-			if (!isEmpty(className)) {
-				appMessage.classList.add(className);
-			}
-
-			if (isEmpty(title)) {
-				title = '';
-			}
-			appMessage.innerHTML = `<div id="app-message-title"><div id='app-message-title-text'>${title}</div><div id="app-message-close"></div></div><div id="app-message-content">${message}</div>`;
-			appContent.appendChild(appMessage);
-			setTimeout(() => {
-				appMessageBack.style.opacity = 0.75;
-				appMessage.style.opacity = 1;
-				isFunction(callback) && callback();
-			}, 200);
-
-			document.getElementById('app-message-close').addEventListener('click', () => {
-				MESSAGE.hide();
-			});
-			document.getElementById('app-message-back').addEventListener('click', () => {
-				MESSAGE.hide();
-			});
-		}
-	},
-	confirm: function (title = '', message = '', confirmFunction = null) {
-		if (!isEmpty(message) && !isEmpty(confirmFunction)) {
-			message += "<div id='app-message-controls'><button id='app-message-confirm' class='app-button app-button-caution'>Yes</button><button id='app-message-cancel' class='app-button'>No</button></div>";
-			MESSAGE.show(title, message, '', () => {
-				const confirmButton = document.getElementById('app-message-confirm');
-				confirmButton.addEventListener('click', () => {
-					MESSAGE.hide();
-					confirmFunction();
-				});
-
-				const cancelButton = document.getElementById('app-message-cancel');
-				cancelButton.addEventListener('click', () => MESSAGE.hide());
-			});
-		}
-	},
-	error: function (message) {
-		MESSAGE.show('Error', message, 'app-message-caution');
-	},
-	alert: function (title, message) {
-		MESSAGE.show(title, message, 'app-message-caution');
-	},
-	hide: function () {
-		const appMessageBack = document.getElementById('app-message-back');
-		const appMessage = document.getElementById('app-message');
-
-		appMessageBack.style.opacity = 0;
-		appMessage.style.opacity = 0;
-		setTimeout(() => {
-			appMessageBack.remove();
-			appMessage.remove();
-		}, 1000);
-	},
-};
-
-const STORAGE = {
-	get: function (key) {
-		let value = localStorage.getItem(key);
-		try {
-			return JSON.parse(value);
-		} catch (e) {
-			return value;
-		}
-	},
-	set: function (key, value) {
-		localStorage.setItem(key, JSON.stringify(value));
-	},
-	reset: function (key) {
-		localStorage.removeItem(key);
-	},
-};
-
-const LOG = {
-	message: function (message) {
-		if (!isEmpty(message) && console) console.log(message);
-	},
-	error: function (message) {
-		if (!isEmpty(message) && console) console.error(message);
-	},
-};
-
-const LOCATE = {};
-// Functions
-const isEmpty = (value) => value === undefined || value === null || (typeof value === 'string' && value.trim() === '') || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0);
-
-const isFunction = (variable) => typeof variable === 'function';
-
-const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-const getValue = (inputID) => {
-	if (!isEmpty(inputID)) {
-		const input = document.getElementById(inputID);
-		if (input && input.id == inputID && input.value) {
-			return input.value;
-		} else {
-			return '';
-		}
-	}
-	return '';
-};
-
-const setValue = (inputID, value) => {
-	if (!isEmpty(inputID)) {
-		const input = document.getElementById(inputID);
-		if (input && input.id == inputID) {
-			input.value = value;
-		}
-	}
-};
-
-const formatDateTime = (variable = '', dateFormat = '', timeFormat = '') => {
-	const dateString = formatDate(variable, dateFormat);
-	const timeString = formatTime(variable, timeFormat);
-	return `${dateString} ${timeString}`;
-};
-
-const formatDate = (variable = '', format = '') => {
-	if (isEmpty(variable)) return '';
-
-	const date = new Date(variable);
-	const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	const day = date.getDate();
-	const monthIndex = date.getMonth();
-	const year = date.getFullYear();
-
-	if (isEmpty(format)) {
-		// Long
-		return `${monthNames[monthIndex]} ${day}, ${year}`;
-	} else {
-		return format
-			.replace('YYYY', year)
-			.replace('MM', monthIndex + 1)
-			.replace('DD', day);
-	}
-};
-
-const formatTime = (variable = '', format = '') => {
-	if (!variable) return ''; // Ensures variable is not empty or undefined
-
-	const date = new Date(variable);
-	if (isNaN(date.getTime())) return ''; // Handles invalid dates
-
-	const hours = date.getHours();
-	const minutes = date.getMinutes();
-	const seconds = date.getSeconds();
-	const ampm = hours >= 12 ? 'PM' : 'AM';
-	const hours12 = hours % 12 || 12;
-
-	// Ensure format is a string to prevent errors
-	format = String(format);
-
-	if (!format) {
-		return `${hours12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-	} else {
-		return format
-			.replace('HH', (format.includes('AMPM') ? hours12 : hours).toString().padStart(2, '0'))
-			.replace('mm', minutes.toString().padStart(2, '0'))
-			.replace('ss', seconds.toString().padStart(2, '0'))
-			.replace('AMPM', ampm);
-	}
 };
 
 // Initialize PWA functionality

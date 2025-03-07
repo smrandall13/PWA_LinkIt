@@ -24,7 +24,7 @@ const ASSETS_ICONS = [
 ];
 
 /** Custom Asset List**/
-const ASSETS_CUSTOM = ['pages/uptime.html', 'pages/uptime.css', 'pages/uptime.js'];
+const ASSETS_CUSTOM = ['pages/linkit.html', 'pages/linkit.css', 'pages/linkit.js'];
 
 self.addEventListener('install', (event) => {
 	event.waitUntil(

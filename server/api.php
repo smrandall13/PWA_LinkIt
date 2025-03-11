@@ -32,15 +32,28 @@
 
 			// File
 			$dataFile = "..\\data\\$database\\$table.json";
+
+			// Create File
+			if (!file_exists($dataFile)) {
+				file_put_contents($dataFile, '[]');
+			}
+
+			// Return Data - JSON
+			$RETURN_DATA = ["database"=>$database, "table"=>$table];
+			if (!empty($fields)){ 	$RETURN_DATA["fields"] = $fields; }
+			if (!empty($condition)){ $RETURN_DATA["condition"] = $condition; }
+
+			// Unique Fields
+			$UNIQUE_FIELDS = ['name','id'];
+
+			// File Exists
 			if (file_exists($dataFile)) { // File Exists
-				$RETURN_DATA = ["database"=>$database, "table"=>$table];
-				if (!empty($fields)){ $RETURN_DATA["fields"] = $fields; }
-				if (!empty($condition)){ $RETURN_DATA["condition"] = $condition; }
+
+				// Read File Contents
+				$data = json_decode(file_get_contents($dataFile), true);
 
 				// Read
-				if ($REQUEST === "read" || $REQUEST === "get") {
-
-					$data = json_decode(file_get_contents($dataFile), true);
+				if ($REQUEST === "read" || $REQUEST === "get" || $REQUEST === "select") {
 
 					// Limit the reutrn data to that of the conditions
 					if (!empty($condition)) {
@@ -57,16 +70,46 @@
 
 								$rowValue = strval($row[$field]);
 
-								if ($operator === '=' && $rowValue !== $value) {
-									return false;
-								} elseif ($operator === 'LIKE' && stripos($rowValue, str_replace('%', '', $value)) === false) {
-									return false;
+								// Check Operator
+								switch ($operator) {
+									case '=':
+									    return $rowValue === $value;
+
+									case 'LIKE':
+									    return stripos($rowValue, str_replace('%', '', $value)) !== false;
+
+									case 'NOT LIKE':
+									    return stripos($rowValue, str_replace('%', '', $value)) === false;
+
+									case 'IN':
+									    return in_array($value, explode(',', $rowValue));
+
+									case '!=':
+									case '<>':
+									    return $rowValue !== $value;
+
+									case '>':
+									    return $rowValue > $value;
+
+									case '<':
+									    return $rowValue < $value;
+
+									case '>=':
+									    return $rowValue >= $value;
+
+									case '<=':
+									    return $rowValue <= $value;
+
+									default:
+									    return false; // Return false for unhandled operators
 								}
+
 							}
 							return true;
 						});
 					}
 
+					// Return Fields
 					if (!empty($fields)){
 						$data = array_map(function ($row) use ($fields) {
 							$filteredRow = [];
@@ -79,6 +122,7 @@
 						}, $data);
 					}
 
+					// Nothing to Return
 					if (empty($data)) $data = [];
 
 					$RETURN_DATA["data"] = $data ;
@@ -86,7 +130,8 @@
 					$RETURN_STATUS = 'success';
 
 				// Create / Update
-				}else if ($REQUEST === "create" || $REQUEST === "update") {
+				}else if ($REQUEST === "create" || $REQUEST === "update" || $REQUEST === "set" || $REQUEST === "insert" || $REQUEST === "add") {
+
 
 				// Delete
 				}else if ($REQUEST === "delete" || $REQUEST === "remove") {

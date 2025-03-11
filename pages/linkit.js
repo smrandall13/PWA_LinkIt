@@ -11,37 +11,125 @@ const LINKIT = {
 		update: function (entityID = '') {},
 		delete: function (entityID = '') {},
 	},
+	plan: {
+		upgrade: function () {
+			MESSAGE.show('Upgrade', 'Upgrade Plan');
+		},
+	},
 	project: {
 		get: function () {},
+		new: function () {
+			const projects = LINKIT.settings.projects;
+
+			// Check Project Limit
+			const projectLimit = 1;
+			if (projects.length >= projectLimit) {
+				MESSAGE.show('Error', 'You have reached the maximum number of projects.');
+				return;
+			}
+
+			// New Project Form
+			let content = `<div class='app-box-body'>
+					<div class='app-box-label'>Name</div>
+					<div class='app-box-value'><input type="text" id="linkit-project-name" placeholder="Project Name" /></div>
+
+					<div class='app-box-label'>Description</div>
+					<div class='app-box-value'><textarea id="linkit-project-description"></textarea></div>
+
+					<div class='app-box-seperator'></div>
+					<div class='app-button app-button-small' style='width:100%;' onclick='LINKIT.project.create()'>Create</div>
+				</div>
+			`;
+			POPUP.open('New Project', content);
+		},
 		update: function () {},
+		create: function () {
+			const name = document.getElementById('linkit-project-name').value;
+			const description = document.getElementById('linkit-project-description').value;
+
+			if (isEmpty(name)) {
+				MESSAGE.show('Error', 'Please enter a name.');
+				return;
+			}
+
+			DATA.submit(
+				'projects',
+				null,
+				[
+					{ field: 'name', value: name },
+					{ field: 'description', value: description },
+				],
+				'insert'
+			).then((result) => {
+				if (result && result.data) {
+					LINKIT.settings.projects = result.data.projects;
+					LINKIT.settings.projectid = result.data.projectid;
+					LINKIT.project.load();
+				}
+			});
+
+			const back = document.getElementById('app-popup-back');
+			if (back) {
+				back.remove();
+			}
+		},
 		delete: function () {},
+		select: function (projectID = '') {
+			const list = document.getElementById('linkit-project-list');
+			const projects = LINKIT.settings.projects;
+			if (isEmpty(projectID)) {
+				if (isEmpty(projects)) {
+					LINKIT.project.new();
+				} else {
+					if (list.classList.contains('app-hidden')) {
+						list.classList.remove('app-hidden');
+					} else {
+						list.classList.add('app-hidden');
+					}
+				}
+			} else {
+				list.classList.add('app-hidden');
+				const project = LINKIT.settings.projects.find((project) => project.id == projectID);
+				if (project && project.id == projectID) {
+					LINKIT.settings.project = project;
+					LINKIT.project.load();
+				}
+			}
+		},
 		load: function () {
 			const projects = LINKIT.settings.projects;
 			const project = LINKIT.settings.project;
-			let content = '';
+
+			let list = '';
+			let body = '';
+			let label = ``;
 
 			// No Projects
 			if (isEmpty(projects)) {
-				content += '<div class="linkit-header">No Projects</div>';
-				content += `<div class='app-button app-button-small'>Add Project</div>`;
+				label = `<div id='linkit-project-add' class='linkit-project-button no-border no-padding no-margin'><div class='app-icon app-icon-small app-icon-add'></div>New Project</div>`;
 			} else if (isEmpty(project)) {
-				// List Projects
-				// List Projects
-				content += '<div class="linkit-header">Select Project</div>';
-				content += "<div class='linkit-list'>";
-
-				projects.forEach((project) => {
-					content += `<div class='linkit-list-item' data-id='${project.id}'>${project.name}</div>`;
-				});
-
-				content += '</div>';
-				content += `<div class='app-button app-button-small'>Add Project</div>`;
-			} else if (!isEmpty(project)) {
-				// Load Project
-				// List Projects
-				content += `<div class="linkit-header">${project.name}</div>`;
+				label = 'Select Project';
 			}
+
+			// List Projects
+			if (isEmpty(project)) {
+				projects.forEach((project) => {
+					list += `<div class='linkit-project-item' onclick="LINKIT.project.select('${project.id}')">${project.name}</div>`;
+				});
+			}
+
+			list += `<div id='linkit-project-add' class='linkit-project-button'><div class='app-icon app-icon-small app-icon-add'></div>New Project</div>`;
+			let content = `<div id='linkit-project-label'>${label}</div><div id='linkit-project-line'></div><div id='linkit-project-list' class='app-hidden'>${list}</div>${body}`;
 			container.innerHTML = content;
+
+			// Controls
+			document.getElementById('linkit-project-label').addEventListener('click', () => {
+				LINKIT.project.select();
+			});
+
+			if (isEmpty(projects)) {
+				LINKIT.project.new();
+			}
 		},
 	},
 	load: function () {
@@ -60,8 +148,6 @@ const LINKIT = {
 		}
 	},
 	init: function () {
-		console.log('INIT');
-
 		// Get Saved Info
 		const projectID = STORAGE.get('linkit-projectid');
 		const entityID = STORAGE.get('linkit-entityid');
@@ -83,9 +169,9 @@ const LINKIT = {
 						LINKIT.settings.project = project;
 					}
 				}
-
-				LINKIT.project.load();
 			}
+
+			LINKIT.project.load();
 		});
 
 		// DATA.submit('projects', [{ field: 'name', operator: '=', value: 'Project 1' }]).then((result) => {

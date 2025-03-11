@@ -1,6 +1,4 @@
-{
-	"entities": [
-		{ "id": "entity1", "project": "", "label": "Entity 1", "type": "Type A", "attributes": {}, "relationships": [] },
-		{ "id": "entity2", "project": "", "label": "Entity 2", "type": "Type B", "attributes": {}, "relationships": [] }
-	]
-}
+[
+	{ "id": "entity1", "project": "", "label": "Entity 1", "type": "Type A", "attributes": {}, "relationships": [] },
+	{ "id": "entity2", "project": "", "label": "Entity 2", "type": "Type B", "attributes": {}, "relationships": [] }
+]

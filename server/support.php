@@ -29,7 +29,7 @@
 		return format($variable, $format);
 	}
 
- 	function format($variable='', $format = 'string') {
+ 	function format($variable='', $format = 'string',$subformat='') {
 		switch ($format) {
 			case 'int':
 			case 'i':
@@ -43,6 +43,18 @@
 				break;
 			case 'bool':
 				$variable = filter_var($variable, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+				break;
+			case 'label':
+			case 'l':
+				$variable = ucfirst(filter_var($variable, FILTER_SANITIZE_SPECIAL_CHARS) !== false ? $variable : '');
+				break;
+			case 'email':
+			case 'e':
+				$variable = filter_var($variable, FILTER_VALIDATE_EMAIL) !== false ? $variable : '';
+				break;
+			case 'phone':
+			case 'p':
+				$variable = filter_var($variable, FILTER_VALIDATE_INT) !== false ? (int) $variable : 0;
 				break;
 			case 'array':
 			case 'a':

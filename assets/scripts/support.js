@@ -164,14 +164,50 @@ const MESSAGE = {
 	},
 };
 
+const POPUP = {
+	open: function (title = '', content = '') {
+		// Check if Popup already open
+		POPUP.close();
+
+		if (!isEmpty(content)) {
+			const back = document.createElement('div');
+			back.id = 'app-popup-back';
+			document.getElementById('app-content').appendChild(back);
+
+			const popup = document.createElement('div');
+			popup.id = 'app-popup-container';
+
+			popup.innerHTML =
+				`<div class='app-box-title'>${title}<div class='app-popup-close' onclick="POPUP.close()"></div></div>
+				</div>` + content;
+
+			document.getElementById('app-content').appendChild(popup);
+		}
+	},
+	close: function () {
+		const popup = document.getElementById('app-popup-container');
+		if (popup) {
+			popup.remove();
+			document.getElementById('app-popup-back').remove();
+		}
+	},
+};
+
 // Functions
 const isEmpty = (value) => value === undefined || value === null || (typeof value === 'string' && value.trim() === '') || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0);
-
 const isFunction = (variable) => typeof variable === 'function';
 const isNumber = (variable) => typeof variable === 'number';
 const isString = (variable) => typeof variable === 'string';
 const isJSON = (variable) => typeof variable === 'object' && variable !== null;
 const isArray = (variable) => Array.isArray(variable);
+const is = {
+	number: isNumber,
+	string: isString,
+	json: isJSON,
+	array: isArray,
+	function: isFunction,
+	empty: isEmpty,
+};
 
 const addClass = (elementID, className) => document.getElementById(elementID).classList.add(className);
 const removeClass = (elementID, className) => document.getElementById(elementID).classList.remove(className);

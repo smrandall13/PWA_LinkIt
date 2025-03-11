@@ -1,3 +1,6 @@
+// Components
+// import { MyButton } from './assets/components.js';
+
 const appContent = document.getElementById('app-content');
 const APP = {
 	root: '',
@@ -42,18 +45,20 @@ const APP = {
 			if (!isEmpty(htmlPath)) {
 				const contentElement = document.getElementById('app-content-container');
 				try {
-					FETCH(
-						htmlPath,
-						null,
-						(data) => {
-							contentElement.innerHTML = data;
-							APP.page.current = pageID;
-						},
-						(error) => {
-							LOG.error('Error loading HTML:' + error);
-						},
-						{ method: 'GET' }
-					);
+					if (contentElement) {
+						FETCH(
+							htmlPath,
+							null,
+							(data) => {
+								contentElement.innerHTML = data;
+								APP.page.current = pageID;
+							},
+							(error) => {
+								LOG.error('Error loading HTML:' + error);
+							},
+							{ method: 'GET' }
+						);
+					}
 				} catch (error) {
 					LOG.error('Error loading HTML:' + error);
 				}
@@ -428,7 +433,7 @@ const APP = {
 					callback();
 				},
 				(error) => {
-					console.error(`Failed to load app.json:`, error);
+					LOG.error(`Failed to load app.json:`, error);
 				},
 				{ method: 'GET' } // Override default POST method
 			);
@@ -441,12 +446,12 @@ const APP = {
 const DATA = {
 	database: '',
 	table: '',
-	submit: function (table = '', condition = '', fields = '') {
+	submit: function (table = '', condition = '', fields = '', request = 'select') {
 		if (!isEmpty(this.database) && !isEmpty(table)) {
 			return new Promise((resolve, reject) => {
 				FETCH(
 					'',
-					{ command: 'data', request: 'get', database: this.database, table: table, fields: fields, condition: condition },
+					{ command: 'data', request: request, database: this.database, table: table, fields: fields, condition: condition },
 					(response) => {
 						// Check if data is JSON or string
 						if (typeof response === 'string' && isJSON(response)) {
@@ -512,7 +517,6 @@ const FETCH = function (url = '', data = null, successCallback = null, failureCa
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 			const contentType = response.headers.get('content-type');
-			console.log('URL: ', fullUrl, contentType);
 			if (contentType && contentType.includes('application/json')) {
 				return response.json();
 			} else {

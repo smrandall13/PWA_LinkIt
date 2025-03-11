@@ -711,7 +711,8 @@ body.theme-light select option textarea {
 	overflow: auto;
 	line-height: 2rem;
 }
-#app-message-close {
+#app-message-close,
+.app-popup-close {
 	cursor: pointer;
 	width: 30px;
 	height: 30px;
@@ -768,7 +769,8 @@ body.theme-light select option textarea {
 	width: auto;
 	display: inline-block;
 }
-.app-box-content {
+.app-box-content,
+.app-box-grid {
 	display: grid;
 	width: 100%;
 	min-width: 100%;
@@ -777,21 +779,30 @@ body.theme-light select option textarea {
 	grid-gap: 4px;
 	font-size: var(--font-size);
 }
+.app-box-body {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
 .app-box-span {
 	grid-column: span 2;
 }
+
+/* Label */
 .app-box-label {
 	text-align: right;
 	display: inline-flex;
 	flex-direction: row;
-	align-items: center;
+	align-items: start;
 	justify-content: end;
 	width: auto;
 	min-width: 100px;
 	min-height: 24px;
 	line-height: 24px;
 }
-.app-box-label::after {
+.app-box-content .app-box-label::after,
+.app-box-grid .app-box-label::after {
 	content: ':';
 	margin-left: 2px;
 	margin-right: 4px;
@@ -804,6 +815,22 @@ body.theme-light select option textarea {
 	justify-content: flex-start;
 	min-height: 24px;
 	line-height: 24px;
+}
+.app-box-body .app-box-label {
+	text-align: left;
+	display: flex;
+	justify-content: start;
+	margin-top: 8px;
+}
+.app-box-body .app-box-value {
+	text-align: left;
+	display: flex;
+}
+.app-box-seperator {
+	height: 1px;
+	border-top: var(--border);
+	margin: 8px 0;
+	width: 100%;
 }
 
 /* Table */
@@ -840,6 +867,42 @@ body.theme-light select option textarea {
 	background-color: var(--theme-dark-offset);
 }
 
+#app-popup-back {
+	z-index: 9998;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: var(--theme-dark-back);
+	border-radius: var(--border-radius);
+	opacity: 0.5;
+	pointer-events: all;
+}
+#app-popup-container {
+	z-index: 9999;
+	border: var(--border);
+	border-radius: var(--border-radius);
+	background: var(--theme-dark-back);
+	color: var(--theme-dark-text);
+	padding: 8px;
+	width: auto;
+	min-width: 300px;
+	max-width: 300px;
+	height: auto;
+	flex: 1;
+	left: 16px;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: start;
+	position: fixed;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	top: 50%;
+	box-shadow: var(--box-shadow-dark);
+}
+
 /* Icons */
 .app-icon {
 	width: 40px;
@@ -862,7 +925,6 @@ body.theme-light select option textarea {
 	max-height: 30px;
 	margin: 0;
 	padding: 0;
-	margin-top: 4px;
 	background-size: 80%;
 	background-image: url(../assets/images/eye-white.png);
 	background-repeat: no-repeat;
@@ -875,11 +937,18 @@ body.theme-light select option textarea {
 .app-icon-download {
 	background-image: url(assets/images/download-white.png);
 }
+.app-icon-add {
+	background-image: url(assets/images/add-white.png);
+}
 .app-icon-home {
 	background-image: url(assets/images/home-white.png);
 }
 .app-icon-help {
 	background-image: url(assets/images/question-white.png);
+}
+.app-icon-close,
+.app-icon-cross {
+	background-image: url(assets/images/cross-white.png);
 }
 .app-icon-eye {
 	background-image: url(assets/images/eye-white.png);
@@ -919,6 +988,18 @@ body.theme-light select option textarea {
 }
 
 /* Support */
+.no-border {
+	border-color: transparent !important;
+}
+.no-padding,
+.no-pad {
+	padding: 0 !important;
+}
+.no-margin,
+.no-mar {
+	margin: 0 !important;
+}
+
 .app-border {
 	border: var(--border);
 	border-radius: var(--border-radius);

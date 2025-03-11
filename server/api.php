@@ -4,7 +4,7 @@
 	$COMMAND = get('command');
 	$REQUEST = get('request');
 
-	$RETURN_STATUS = 'error';
+	$RETURN_STATUS = 'failure';
 	$RETURN_MESSAGE = '';
 	$RETURN_DATA = '';
 
@@ -30,14 +30,6 @@
 		// JSON Data Files
 		if ($DATA_TYPE === 'json') {
 
-			// File
-			$dataFile = "..\\data\\$database\\$table.json";
-
-			// Create File
-			if (!file_exists($dataFile)) {
-				file_put_contents($dataFile, '[]');
-			}
-
 			// Return Data - JSON
 			$RETURN_DATA = ["database"=>$database, "table"=>$table];
 			if (!empty($fields)){ 	$RETURN_DATA["fields"] = $fields; }
@@ -46,97 +38,24 @@
 			// Unique Fields
 			$UNIQUE_FIELDS = ['name','id'];
 
-			// File Exists
-			if (file_exists($dataFile)) { // File Exists
+			// Read
+			if ($REQUEST === "get") {
+				$RETURN_DATA["data"][$table] = DATA::get($database, $table, $fields, $condition);
+				$RETURN_STATUS = 'success';
 
-				// Read File Contents
-				$data = json_decode(file_get_contents($dataFile), true);
-
-				// Read
-				if ($REQUEST === "read" || $REQUEST === "get" || $REQUEST === "select") {
-
-					// Limit the reutrn data to that of the conditions
-					if (!empty($condition)) {
-
-						$data = array_filter($data, function ($row) use ($condition) {
-							foreach ($condition as $cond) {
-								$field = $cond['field'];
-								$operator = $cond['operator'];
-								$value = $cond['value'];
-
-								if (!isset($row[$field])) {
-									return false; // Skip rows that don't have the field
-								}
-
-								$rowValue = strval($row[$field]);
-
-								// Check Operator
-								switch ($operator) {
-									case '=':
-									    return $rowValue === $value;
-
-									case 'LIKE':
-									    return stripos($rowValue, str_replace('%', '', $value)) !== false;
-
-									case 'NOT LIKE':
-									    return stripos($rowValue, str_replace('%', '', $value)) === false;
-
-									case 'IN':
-									    return in_array($value, explode(',', $rowValue));
-
-									case '!=':
-									case '<>':
-									    return $rowValue !== $value;
-
-									case '>':
-									    return $rowValue > $value;
-
-									case '<':
-									    return $rowValue < $value;
-
-									case '>=':
-									    return $rowValue >= $value;
-
-									case '<=':
-									    return $rowValue <= $value;
-
-									default:
-									    return false; // Return false for unhandled operators
-								}
-
-							}
-							return true;
-						});
-					}
-
-					// Return Fields
-					if (!empty($fields)){
-						$data = array_map(function ($row) use ($fields) {
-							$filteredRow = [];
-							foreach ($fields as $field) {
-								if (isset($row[$field])) {
-									$filteredRow[$field] = $row[$field];
-								}
-							}
-							return $filteredRow;
-						}, $data);
-					}
-
-					// Nothing to Return
-					if (empty($data)) $data = [];
-
-					$RETURN_DATA["data"] = $data ;
-
-					$RETURN_STATUS = 'success';
-
-				// Create / Update
-				}else if ($REQUEST === "create" || $REQUEST === "update" || $REQUEST === "set" || $REQUEST === "insert" || $REQUEST === "add") {
-
-
-				// Delete
-				}else if ($REQUEST === "delete" || $REQUEST === "remove") {
-
+			// Create / Update
+			}else if ($REQUEST === "set") {
+				$RETURN_STATUS = DATA::set($database, $table, $fields, $condition);
+				if ($RETURN_STATUS === 'success') {
+					$RETURN_DATA["data"][$table] = DATA::get($database, $table);
+					$RETURN_DATA["data"][$table."id"] = DATA::get($database, $table, ['id'], [['field'=>'name', 'operator'=>'=', 'value'=>$fields['name']]]);
 				}
+
+			// Delete
+			}else if ($REQUEST === "delete") {
+				$RETURN_STATUS = DATA::delete($database, $table, $condition);
+				if ($RETURN_STATUS === 'success') $RETURN_DATA["data"] = DATA::get($database, $table);
+
 			}
 
 		}

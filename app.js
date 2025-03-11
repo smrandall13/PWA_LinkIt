@@ -446,7 +446,7 @@ const APP = {
 const DATA = {
 	database: '',
 	table: '',
-	submit: function (table = '', condition = '', fields = '', request = 'select') {
+	submit: function (table = '', condition = '', fields = '', request = 'get') {
 		if (!isEmpty(this.database) && !isEmpty(table)) {
 			return new Promise((resolve, reject) => {
 				FETCH(

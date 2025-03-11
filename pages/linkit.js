@@ -17,7 +17,14 @@ const LINKIT = {
 		},
 	},
 	project: {
-		get: function () {},
+		get: function () {
+			DATA.submit('projects', null).then((result) => {
+				if (result && result.data) {
+					LINKIT.settings.projects = result.data.projects;
+					LINKIT.project.load();
+				}
+			});
+		},
 		new: function () {
 			const projects = LINKIT.settings.projects;
 
@@ -29,7 +36,9 @@ const LINKIT = {
 			}
 
 			// New Project Form
-			let content = `<div class='app-box-body'>
+			POPUP.open(
+				'New Project',
+				`<div class='app-box-body'>
 					<div class='app-box-label'>Name</div>
 					<div class='app-box-value'><input type="text" id="linkit-project-name" placeholder="Project Name" /></div>
 
@@ -37,13 +46,11 @@ const LINKIT = {
 					<div class='app-box-value'><textarea id="linkit-project-description"></textarea></div>
 
 					<div class='app-box-seperator'></div>
-					<div class='app-button app-button-small' style='width:100%;' onclick='LINKIT.project.create()'>Create</div>
-				</div>
-			`;
-			POPUP.open('New Project', content);
+					<div class='app-button app-button-small' style='width:100%;' onclick="LINKIT.project.update('')">Create</div>
+				</div>`
+			);
 		},
-		update: function () {},
-		create: function () {
+		update: function (projectID = '') {
 			const name = document.getElementById('linkit-project-name').value;
 			const description = document.getElementById('linkit-project-description').value;
 
@@ -52,15 +59,10 @@ const LINKIT = {
 				return;
 			}
 
-			DATA.submit(
-				'projects',
-				null,
-				[
-					{ field: 'name', value: name },
-					{ field: 'description', value: description },
-				],
-				'insert'
-			).then((result) => {
+			const postData = { name: name, description: description };
+			if (!isEmpty(projectID)) postData.id = projectID;
+
+			DATA.submit('projects', null, postData, 'set').then((result) => {
 				if (result && result.data) {
 					LINKIT.settings.projects = result.data.projects;
 					LINKIT.settings.projectid = result.data.projectid;
@@ -68,10 +70,7 @@ const LINKIT = {
 				}
 			});
 
-			const back = document.getElementById('app-popup-back');
-			if (back) {
-				back.remove();
-			}
+			POPUP.close();
 		},
 		delete: function () {},
 		select: function (projectID = '') {
@@ -112,7 +111,7 @@ const LINKIT = {
 			}
 
 			// List Projects
-			if (isEmpty(project)) {
+			if (isEmpty(project) && !isEmpty(projects) && projects.length > 0) {
 				projects.forEach((project) => {
 					list += `<div class='linkit-project-item' onclick="LINKIT.project.select('${project.id}')">${project.name}</div>`;
 				});

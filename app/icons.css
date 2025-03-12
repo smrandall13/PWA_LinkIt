@@ -1,0 +1,73 @@
+/* Icons */
+
+.app-icon-settings {
+	background-image: url(../assets/images/settings-white.png);
+}
+.app-icon-download {
+	background-image: url(../assets/images/download-white.png);
+}
+.app-icon-add {
+	background-image: url(../assets/images/add-white.png);
+}
+.app-icon-edit {
+	background-image: url(../assets/images/edit-white.png);
+}
+.app-icon-home {
+	background-image: url(../assets/images/home-white.png);
+}
+.app-icon-help {
+	background-image: url(../assets/images/question-white.png);
+}
+.app-icon-up {
+	background-image: url(../assets/images/up-white.png);
+}
+.app-icon-down,
+.app-icon-dn {
+	background-image: url(../assets/images/down-white.png);
+}
+.app-icon-left {
+	background-image: url(../assets/images/left-white.png);
+}
+.app-icon-right {
+	background-image: url(../assets/images/right-white.png);
+}
+.app-icon-close,
+.app-icon-cross {
+	background-image: url(../assets/images/cross-white.png);
+}
+.app-icon-eye {
+	background-image: url(../assets/images/eye-white.png);
+}
+.app-icon-delete {
+	background-image: url(../assets/images/delete-white.png);
+}
+.app-icon-refresh {
+	background-image: url(../assets/images/refresh-white.png);
+}
+.app-icon-web {
+	background-image: url(../assets/images/web-white.png);
+}
+.app-icon-recycle {
+	background-image: url(../assets/images/recycle-white.png);
+}
+.app-icon-profile {
+	background-image: url(../assets/images/profile-white.png);
+}
+.app-icon-search {
+	background-image: url(../assets/images/search-white.png);
+}
+.app-icon-return {
+	background-image: url(../assets/images/return-white.png);
+}
+.app-icon-split {
+	background-image: url(../assets/images/split-white.png);
+}
+.app-icon-store {
+	background-image: url(../assets/images/store-white.png);
+}
+.app-icon-lookup {
+	background-image: url(../assets/images/lookup-white.png);
+}
+.app-icon-info {
+	background-image: url(../assets/images/info-white.png);
+}

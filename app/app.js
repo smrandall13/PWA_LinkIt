@@ -5,7 +5,6 @@ const appContent = document.getElementById('app-content');
 const APP = {
 	root: '',
 	data: {},
-
 	timeouts: [],
 	intervals: [],
 	executions: [],
@@ -74,7 +73,7 @@ const APP = {
 								cssLink.rel = 'stylesheet';
 								cssLink.href = APP.root + cssPath;
 								cssLink.classList.add('dynamic-style'); // Mark to remove later
-								document.head.appendChild(cssLink);
+								document.getElementById('app-style').after(cssLink);
 							},
 							(error) => {
 								LOG.error('Error loading CSS:' + error);

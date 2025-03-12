@@ -55,5 +55,17 @@
 		"entityid1": "ent-cc6f02",
 		"entityid2": "ent-cc6f04",
 		"type": "Child"
+	},
+	{
+		"projectid": "pro-301517",
+		"entityid1": "ent-cc6f03",
+		"entityid2": "ent-cc6f04",
+		"type": "Sibling"
+	},
+	{
+		"projectid": "pro-301517",
+		"entityid1": "ent-3f82fe",
+		"entityid2": "ent-cc6f05",
+		"type": "Occupant"
 	}
 ]

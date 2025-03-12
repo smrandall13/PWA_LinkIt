@@ -4,3 +4,4 @@
 {"timestamp":"2025-03-12 10:08:04","user":"SYSTEM","action":"INSERT","record_id":"pro-c2e3b3","old_data":null,"new_data":"{\"name\":\"Project 01\",\"description\":\"\",\"id\":\"pro-c2e3b3\"}"}
 {"timestamp":"2025-03-12 10:09:33","user":"SYSTEM","action":"INSERT","record_id":"pro-f7d53c","old_data":null,"new_data":"{\"name\":\"Project 02\",\"description\":\"\",\"id\":\"pro-f7d53c\"}"}
 {"timestamp":"2025-03-12 11:11:45","user":"SYSTEM","action":"INSERT","record_id":"pro-301517","old_data":null,"new_data":"{\"name\":\"Project 01\",\"description\":\"This is the first Project\",\"id\":\"pro-301517\"}"}
+{"timestamp":"2025-03-12 18:20:17","user":"SYSTEM","action":"INSERT","record_id":"pro-d42da2","old_data":null,"new_data":"{\"name\":\"Home Assets\",\"description\":\"List of assets and their prices.\",\"id\":\"pro-d42da2\"}"}

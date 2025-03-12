@@ -182,6 +182,12 @@ const POPUP = {
 				</div>` + content;
 
 			document.getElementById('app-content').appendChild(popup);
+
+			setTimeout(() => {
+				// Get first input field and focus
+				const input = popup.querySelector('input');
+				if (input) input.focus();
+			});
 		}
 	},
 	close: function () {
@@ -346,6 +352,13 @@ const removeEvent = function (element, trigger) {
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
+const uniqueKey = (array, key = '') => {
+	if (!isArray(array) || isEmpty(key)) return [];
+	let list = [...new Set(array.map((item) => item[key]))];
+	list.sort((a, b) => a.localeCompare(b));
+
+	return list;
+};
 const getValue = (inputID) => {
 	if (!isEmpty(inputID)) {
 		const input = document.getElementById(inputID);

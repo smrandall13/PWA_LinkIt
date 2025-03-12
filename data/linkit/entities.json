@@ -61,6 +61,18 @@
 			{ "label": "Weight", "value": "62 lbs" },
 			{ "label": "Sex", "value": "Female" }
 		]
+	},
+	{
+		"name": "Ruby Doe",
+		"type": "Animal",
+		"description": "Chocolate Labrador",
+		"projectid": "pro-301517",
+		"id": "ent-cc6f05",
+		"attributes": [
+			{ "label": "Roles", "value": "Dog" },
+			{ "label": "Weight", "value": "51 lbs" },
+			{ "label": "Sex", "value": "Female" }
+		]
 	}
 ]
 

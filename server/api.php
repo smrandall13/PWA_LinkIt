@@ -40,6 +40,7 @@
 
 			// Read
 			if ($REQUEST === "get") {
+				// Get Records
 				$RETURN_DATA["data"][$table] = DATA::get($database, $table, $fields, $condition);
 				$RETURN_STATUS = 'success';
 
@@ -47,8 +48,12 @@
 			}else if ($REQUEST === "set") {
 				$RETURN_STATUS = DATA::set($database, $table, $fields, $condition);
 				if ($RETURN_STATUS === 'success') {
+					// Get Records
 					$RETURN_DATA["data"][$table] = DATA::get($database, $table);
-					$RETURN_DATA["data"][$table."id"] = DATA::get($database, $table, ['id'], [['field'=>'name', 'operator'=>'=', 'value'=>$fields['name']]]);
+
+					// Get ID
+					$result = DATA::get($database, $table, ['id'], [['field'=>'name', 'operator'=>'=', 'value'=>$fields['name']]]);
+					$RETURN_DATA["data"][$table."id"] = !empty($result) ? $result[0]['id'] : '';
 				}
 
 			// Delete

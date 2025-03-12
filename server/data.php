@@ -47,8 +47,13 @@
 		private static function rotateLog($database, $table) {
 			$logFile = self::logFile($database, $table);
 			if (file_exists($logFile) && filesize($logFile) > self::$MAX_LOG_SIZE) {
-				$archiveFile = self::logArchiveDir($database) . "$table-" . date('Ymd_His') . ".log";
-				rename($logFile, $archiveFile);
+			    $archiveFile = self::logArchiveDir($database) . "$table-" . date('Ymd_His') . ".log";
+			    rename($logFile, $archiveFile);
+
+			    // Compress the rotated file
+			    $compressedFile = $archiveFile . ".gz";
+			    file_put_contents("compress.zlib://".$compressedFile, file_get_contents($archiveFile));
+			    unlink($archiveFile); // Remove uncompressed file after compression
 			}
 		}
 
@@ -208,6 +213,20 @@
 			}
 		}
 
+		// Matches Conditions
+		private static function matchesCondition($record, $condition) {
+			foreach ($condition as $cond) {
+			    $field = $cond['field'];
+			    $operator = $cond['operator'];
+			    $value = $cond['value'];
+
+			    if (!isset($record[$field]) || !self::checkCondition($record[$field], $operator, $value)) {
+				   return false;
+			    }
+			}
+			return true;
+		}
+
 		// Unique ID
 		public static function id($database, $table) {
 			self::validate($database, $table); // Ensure valid database & table
@@ -268,7 +287,6 @@
 			$data = self::data($database, $table);
 			$updated = false;
 			$newRecord = $fields ?? [];
-			$existingIds = array_column($data, 'id');
 
 			if (!empty($condition)) {
 			    foreach ($data as &$record) {
@@ -276,7 +294,7 @@
 					  $oldData = $record;
 					  $record = array_merge($record, $newRecord);
 					  self::log($database, $table, "UPDATE", $record['id'], $oldData, $record);
-					  $updated = true;
+					  $updated = true; // Sent Back for Successful Insert
 				   }
 			    }
 			}
@@ -285,6 +303,7 @@
 			    $newRecord['id'] = self::id($database, $table);
 			    self::log($database, $table, "INSERT", $newRecord['id'], null, $newRecord);
 			    $data[] = $newRecord;
+			    $updated = true; // Sent Back for Successful Update
 			}
 
 			if (self::$inTransaction) {
@@ -381,9 +400,14 @@
 			if (!file_exists($backupPath)) return "Backup file not found.";
 
 			if (copy($backupPath, $dataFile)) {
-			    self::log($database, $table, "RESTORE_BACKUP", null, null, ["backup_file" => $backupFile]);
-			    self::$cache["$database.$table"] = json_decode(file_get_contents($dataFile), true);
-			    return "Backup restored: $backupFile";
+				$data = json_decode(file_get_contents($dataFile), true);
+				if (!is_array($data)) {
+				    self::log($database, $table, "RESTORE_BACKUP_FAILED", null, null, ["backup_file" => $backupFile]);
+				    return "Invalid backup data format.";
+				}
+				self::$cache["$database.$table"] = $data;
+				self::log($database, $table, "RESTORE_BACKUP", null, null, ["backup_file" => $backupFile]);
+				return "Backup restored: $backupFile";
 			}
 
 			return "Failed to restore backup.";

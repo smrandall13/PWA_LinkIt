@@ -5,11 +5,11 @@ const appContent = document.getElementById('app-content');
 const APP = {
 	root: '',
 	data: {},
-	locate: { lat: null, lng: null, acc: null },
+
 	timeouts: [],
 	intervals: [],
 	executions: [],
-	settings: { page: '', theme: '', font: '' },
+	settings: { page: '', theme: '', font: '', locate: { lat: null, lng: null, acc: null }, account: { id: '', first: '', last: '' } },
 	page: {
 		current: '',
 		go: async function (pageID = '') {
@@ -245,10 +245,7 @@ const APP = {
 				menu.innerHTML = menuContent;
 
 				// Toggle
-				const toggleButton = document.getElementById('app-menu-toggle');
-				toggleButton.addEventListener('click', () => {
-					APP.menu.toggle();
-				});
+				addEvent('app-menu-toggle', APP.menu.toggle);
 			}
 		},
 	},
@@ -317,12 +314,16 @@ const APP = {
 			let deferredPrompt;
 			const installBtn = document.getElementById('app-install');
 
-			window.addEventListener('beforeinstallprompt', (e) => {
-				e.preventDefault();
-				deferredPrompt = e;
-			});
+			addEvent(
+				window,
+				(e) => {
+					e.preventDefault();
+					deferredPrompt = e;
+				},
+				'beforeinstallprompt'
+			);
 
-			installBtn.addEventListener('click', () => {
+			addEvent('app-install', () => {
 				deferredPrompt.prompt(); // Show Install Banner
 				deferredPrompt.userChoice.then((choice) => {
 					if (choice.outcome === 'accepted') {
@@ -418,6 +419,9 @@ const APP = {
 						pageID = APP.data.pages[0].id;
 					}
 
+					// Data Initialize
+					DATA.account = APP.settings.account;
+
 					// Menu Initialize
 					APP.menu.init();
 
@@ -443,103 +447,16 @@ const APP = {
 	},
 };
 
-const DATA = {
-	database: '',
-	table: '',
-	submit: function (table = '', condition = '', fields = '', request = 'get') {
-		if (!isEmpty(this.database) && !isEmpty(table)) {
-			return new Promise((resolve, reject) => {
-				FETCH(
-					'',
-					{ command: 'data', request: request, database: this.database, table: table, fields: fields, condition: condition },
-					(response) => {
-						// Check if data is JSON or string
-						if (typeof response === 'string' && isJSON(response)) {
-							response = JSON.parse(response);
-						}
-						resolve(response.data); // Already an object or a raw string
-					},
-					(error) => {
-						reject(error);
-					}
-				);
-			});
-		}
-	},
-	init: function (database = '', table = '') {
-		this.database = database;
-		this.table = table;
-	},
-};
-
-const FETCH_REQUESTS = new Map(); // Track ongoing requests by URL+data
-const FETCH = function (url = '', data = null, successCallback = null, failureCallback = null, options = {}) {
-	if (isEmpty(url)) {
-		url = 'server/api.php';
-	}
-	let fullUrl = url;
-	if (!url.startsWith('http://') && !url.startsWith('https://')) fullUrl = APP.root + url;
-
-	// Check Fetch
-	const key = fullUrl + JSON.stringify(data);
-	if (FETCH_REQUESTS.has(key)) {
-		FETCH_REQUESTS.get(key).abort();
-		FETCH_REQUESTS.delete(key);
-	}
-
-	// Create a new AbortController for this request
-	const controller = new AbortController();
-	const signal = controller.signal;
-	FETCH_REQUESTS.set(key, controller);
-
-	// Default options
-	const defaultOptions = {
-		cache: 'no-store',
-		method: 'POST',
-		mode: 'cors',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		signal, // Attach the signal to allow aborting the request
-	};
-
-	// Only include body if data is provided
-	if (data) {
-		defaultOptions.body = JSON.stringify(data);
-	}
-
-	// Merge user options
-	const fetchOptions = { ...defaultOptions, ...options };
-
-	fetch(fullUrl, fetchOptions)
-		.then((response) => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
-			const contentType = response.headers.get('content-type');
-			if (contentType && contentType.includes('application/json')) {
-				return response.json();
-			} else {
-				return response.text();
-			}
-		})
-		.then((data) => {
-			if (typeof successCallback === 'function') successCallback(data);
-		})
-		.catch((error) => {
-			if (typeof failureCallback === 'function') failureCallback(error);
-		})
-		.finally(() => {
-			FETCH_REQUESTS.delete(key); // Remove completed/canceled requests from the tracking list
-		});
-};
-
 // Initialize PWA functionality
-document.addEventListener('DOMContentLoaded', () => {
-	APP.init(() => {
-		// Wait for the app to initialize // Fade out and remove cover screen
-		const cover = document.getElementById('app-cover');
-		cover.style.opacity = '0'; // Smooth fade-out
-		setTimeout(() => cover.remove(), 1000); // Remove after animation
-	});
-});
+addEvent(
+	document,
+	() => {
+		APP.init(() => {
+			// Wait for the app to initialize // Fade out and remove cover screen
+			const cover = document.getElementById('app-cover');
+			cover.style.opacity = '0'; // Smooth fade-out
+			setTimeout(() => cover.remove(), 1000); // Remove after animation
+		});
+	},
+	'DOMContentLoaded'
+);

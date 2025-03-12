@@ -276,11 +276,12 @@ body.theme-light select option textarea {
 	align-items: center;
 	justify-content: center;
 	gap: 4px;
-	flex: 0;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
 	text-shadow: var(--text-shadow);
+	width: fit-content;
+	flex: 0 0 auto;
 }
 .app-button-rounded {
 	border-radius: 50%;
@@ -946,6 +947,13 @@ body.theme-light select option textarea {
 .app-icon-help {
 	background-image: url(assets/images/question-white.png);
 }
+.app-icon-up {
+	background-image: url(assets/images/up-white.png);
+}
+.app-icon-down,
+.app-icon-dn {
+	background-image: url(assets/images/down-white.png);
+}
 .app-icon-close,
 .app-icon-cross {
 	background-image: url(assets/images/cross-white.png);
@@ -999,7 +1007,6 @@ body.theme-light select option textarea {
 .no-mar {
 	margin: 0 !important;
 }
-
 .app-border {
 	border: var(--border);
 	border-radius: var(--border-radius);

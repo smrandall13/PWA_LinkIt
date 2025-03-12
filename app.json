@@ -1,7 +1,7 @@
 {
 	"name": "Link It",
 	"icon": "icons/app-icon.png",
-	"version": "1.1.1",
+	"version": "1.0.0",
 	"defaultPage": "linkit",
 	"defaultTheme": "Dark",
 	"defaultFont": "Nunito",

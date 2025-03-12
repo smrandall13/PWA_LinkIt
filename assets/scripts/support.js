@@ -27,18 +27,18 @@ const LOG = {
 const LOCATE = {
 	log: function () {
 		// Ensure APP.data has valid location data
-		if (!APP.locate.lat || !APP.locate.lng) return;
+		if (!APP.settings.locate.lat || !APP.settings.locate.lng) return;
 
 		// Send log data to the server for writing
-		FETCH('', { command: 'locate', request: 'log', lat: APP.locate.lat, lng: APP.locate.lng, acc: APP.locate.acc });
+		FETCH('', { command: 'locate', request: 'log', lat: APP.settings.locate.lat, lng: APP.settings.locate.lng, acc: APP.settings.locate.acc });
 	},
 	get: function () {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
-					APP.locate.lat = position.coords.latitude;
-					APP.locate.lng = position.coords.longitude;
-					APP.locate.acc = position.coords.accuracy;
+					APP.settings.locate.lat = position.coords.latitude;
+					APP.settings.locate.lng = position.coords.longitude;
+					APP.settings.locate.acc = position.coords.accuracy;
 
 					// Log location after getting it
 					LOCATE.log();
@@ -193,6 +193,101 @@ const POPUP = {
 	},
 };
 
+const DATA = {
+	database: '',
+	account: null,
+	submit: function (table = '', condition = '', fields = '', request = 'get') {
+		if (!isEmpty(this.database) && !isEmpty(table)) {
+			return new Promise((resolve, reject) => {
+				// Send request
+				const sendData = { command: 'data', request: request, database: this.database, table: table, fields: fields, condition: condition };
+				if (!isEmpty(this.account)) sendData.account = this.account;
+
+				FETCH(
+					'',
+					sendData,
+					(response) => {
+						// Check if data is JSON or string
+						if (typeof response === 'string' && isJSON(response)) {
+							response = JSON.parse(response);
+						}
+						resolve(response.data); // Already an object or a raw string
+					},
+					(error) => {
+						reject(error);
+					}
+				);
+			});
+		}
+	},
+	init: function (database = '', account = '') {
+		this.database = database;
+		this.account = account;
+	},
+};
+
+const FETCH_REQUESTS = new Map(); // Track ongoing requests by URL+data
+const FETCH = function (url = '', data = null, successCallback = null, failureCallback = null, options = {}) {
+	if (isEmpty(url)) {
+		url = 'server/api.php';
+	}
+	let fullUrl = url;
+	if (!url.startsWith('http://') && !url.startsWith('https://')) fullUrl = APP.root + url;
+
+	// Check Fetch
+	const key = fullUrl + JSON.stringify(data);
+	if (FETCH_REQUESTS.has(key)) {
+		FETCH_REQUESTS.get(key).abort();
+		FETCH_REQUESTS.delete(key);
+	}
+
+	// Create a new AbortController for this request
+	const controller = new AbortController();
+	const signal = controller.signal;
+	FETCH_REQUESTS.set(key, controller);
+
+	// Default options
+	const defaultOptions = {
+		cache: 'no-store',
+		method: 'POST',
+		mode: 'cors',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		signal, // Attach the signal to allow aborting the request
+	};
+
+	// Only include body if data is provided
+	if (data) {
+		defaultOptions.body = JSON.stringify(data);
+	}
+
+	// Merge user options
+	const fetchOptions = { ...defaultOptions, ...options };
+
+	fetch(fullUrl, fetchOptions)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			const contentType = response.headers.get('content-type');
+			if (contentType && contentType.includes('application/json')) {
+				return response.json();
+			} else {
+				return response.text();
+			}
+		})
+		.then((data) => {
+			if (typeof successCallback === 'function') successCallback(data);
+		})
+		.catch((error) => {
+			if (typeof failureCallback === 'function') failureCallback(error);
+		})
+		.finally(() => {
+			FETCH_REQUESTS.delete(key); // Remove completed/canceled requests from the tracking list
+		});
+};
+
 // Functions
 const isEmpty = (value) => value === undefined || value === null || (typeof value === 'string' && value.trim() === '') || (Array.isArray(value) && value.length === 0) || (typeof value === 'object' && Object.keys(value).length === 0);
 const isFunction = (variable) => typeof variable === 'function';
@@ -212,6 +307,42 @@ const is = {
 const addClass = (elementID, className) => document.getElementById(elementID).classList.add(className);
 const removeClass = (elementID, className) => document.getElementById(elementID).classList.remove(className);
 const rmClass = removeClass;
+const addEvent = (element, functionCall = null, trigger = 'click') => {
+	if (!element || !functionCall) return; // Exit if missing parameters
+
+	// If element is a string, get the actual DOM element
+	if (typeof element === 'string') {
+		element = document.getElementById(element);
+	}
+
+	if (element) {
+		// Remove existing event listener if stored
+		if (element._eventHandler) {
+			element.removeEventListener(trigger, element._eventHandler);
+		}
+
+		// Define and store the new event handler function
+		element._eventHandler = () => functionCall();
+
+		// Add event listener
+		element.addEventListener(trigger, element._eventHandler);
+	}
+};
+const removeEvent = function (element, trigger) {
+	if (!element || !functionCall) return; // Exit if missing parameters
+
+	// If element is a string, get the actual DOM element
+	if (typeof element === 'string') {
+		element = document.getElementById(element);
+	}
+
+	if (element) {
+		// Remove existing event listener if stored
+		if (element._eventHandler) {
+			element.removeEventListener(trigger, element._eventHandler);
+		}
+	}
+};
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 

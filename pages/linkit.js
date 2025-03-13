@@ -46,7 +46,7 @@ const LINKIT = {
 			entities.forEach((entity, index) => {
 				if (!isEmpty(entity.type) && entity.type !== type) {
 					if (!isEmpty(type)) list.push('</div>');
-					list.push(`<div class='linkit-group'><div class='linkit-group-title'>${entity.type}</div>`);
+					list.push(`<div class='linkit-group'><div class='linkit-group-title'>${entity.type}<div class='linkit-group-toggle app-icon app-icon-small app-icon-down'></div></div>`);
 					type = entity.type;
 				}
 				list.push(`<div class='linkit-entity-item' onclick="LINKIT.entity.select('${entity.id}')">${entity.name}</div>`);

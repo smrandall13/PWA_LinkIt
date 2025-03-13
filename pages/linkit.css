@@ -262,8 +262,19 @@
 .linkit-group-title {
 	font-size: var(--font-size-xsm);
 	width: 100%;
-	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 	margin: 4px 0 8px 8;
+	padding: 0 0px 0 8px;
+	height: 30px;
+	line-height: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	flex: 0;
+	background-color: var(--theme-dark-offset);
+	cursor: pointer;
 }
 .linkit-project-item,
 .linkit-entity-item {

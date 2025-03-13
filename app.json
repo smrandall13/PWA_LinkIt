@@ -24,7 +24,7 @@
 			"name": "Link It",
 			"html": "pages/linkit.html",
 			"style": "pages/linkit.css",
-			"script": "pages/linkit.js"
+			"script": "pages/linkit.js,pages/linkitsvg.js,pages/linkitd3.js"
 		}
 	]
 }

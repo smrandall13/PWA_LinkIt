@@ -310,6 +310,37 @@
 	border-width: 2px;
 	transform: scale(0.99);
 } */
+
+/* SVG */
+#linkit-visual-2d {
+	width: calc(100vw - 16px);
+	height: calc(100vh - 60px);
+	min-width: calc(100vw - 16px);
+	min-height: calc(100vh - 60px);
+	max-width: calc(100vw - 16px);
+	max-height: calc(100vh - 60px);
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: transparent;
+	z-index: 0;
+}
+.node circle {
+	fill: var(--color-accent);
+	stroke: var(--border-color);
+	stroke-width: 1px;
+}
+.node text {
+	font-size: var(--font-size-sm);
+	pointer-events: none;
+	color: var(--theme-dark-text);
+}
+.link {
+	stroke: var(--border-color);
+	stroke-opacity: 0.6;
+	stroke-width: 2px;
+}
+
 /* Override */
 #app-content-container {
 	width: calc(100% - 4px);

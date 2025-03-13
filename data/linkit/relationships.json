@@ -1,71 +1,71 @@
 [
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-3f82fe",
-		"entityid2": "ent-cc6f01",
+		"source": "ent-3f82fe",
+		"target": "ent-cc6f01",
 		"type": "Occupant",
 		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-3f82fe",
-		"entityid2": "ent-cc6f02",
+		"source": "ent-3f82fe",
+		"target": "ent-cc6f02",
 		"type": "Occupant",
 		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-3f82fe",
-		"entityid2": "ent-cc6f03",
+		"source": "ent-3f82fe",
+		"target": "ent-cc6f03",
 		"type": "Occupant"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-3f82fe",
-		"entityid2": "ent-cc6f04",
+		"source": "ent-3f82fe",
+		"target": "ent-cc6f04",
 		"type": "Occupant"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f01",
-		"entityid2": "ent-cc6f02",
+		"source": "ent-cc6f01",
+		"target": "ent-cc6f02",
 		"type": "Spouse",
 		"attributes": [{ "label": "Date", "value": "2013-09-07" }]
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f01",
-		"entityid2": "ent-cc6f03",
+		"source": "ent-cc6f01",
+		"target": "ent-cc6f03",
 		"type": "Child"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f01",
-		"entityid2": "ent-cc6f04",
+		"source": "ent-cc6f01",
+		"target": "ent-cc6f04",
 		"type": "Child"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f02",
-		"entityid2": "ent-cc6f03",
+		"source": "ent-cc6f02",
+		"target": "ent-cc6f03",
 		"type": "Child"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f02",
-		"entityid2": "ent-cc6f04",
+		"source": "ent-cc6f02",
+		"target": "ent-cc6f04",
 		"type": "Child"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-cc6f03",
-		"entityid2": "ent-cc6f04",
+		"source": "ent-cc6f03",
+		"target": "ent-cc6f04",
 		"type": "Sibling"
 	},
 	{
 		"projectid": "pro-301517",
-		"entityid1": "ent-3f82fe",
-		"entityid2": "ent-cc6f05",
+		"source": "ent-3f82fe",
+		"target": "ent-cc6f05",
 		"type": "Occupant"
 	}
 ]

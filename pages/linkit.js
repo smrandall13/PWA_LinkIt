@@ -8,6 +8,7 @@ const LINKIT = {
 		entitytype: '',
 		projects: [],
 		entities: [],
+		relationships: [],
 		projectLimit: 3,
 		entityLimit: 100,
 	},
@@ -68,6 +69,7 @@ const LINKIT = {
 			// 		rmClass('linkit-project-entity', 'app-hidden');
 			// 	}
 			// }
+			LINKIT.relationship.get();
 		},
 		new: function () {
 			const entities = LINKIT.settings.entities;
@@ -180,6 +182,19 @@ const LINKIT = {
 			POPUP.close();
 		},
 	},
+	relationship: {
+		get: function () {
+			DATA.submit('relationships', [{ field: 'projectid', operator: '=', value: LINKIT.settings.projectid }]).then((result) => {
+				if (result && result.data && result.data.relationships && isArray(result.data.relationships)) {
+					LINKIT.settings.relationships = result.data.relationships;
+				}
+				LINKIT.relationship.load();
+			});
+		},
+		load: function () {
+			LINKITSVG.init();
+		},
+	},
 	project: {
 		get: function () {
 			DATA.submit('projects', null).then((result) => {
@@ -266,6 +281,7 @@ const LINKIT = {
 
 			// Add Content to Container
 			container.innerHTML = `
+				<svg id='linkit-visual-2d' class='app-hidden'></svg>
 				<div id='linkit-header-line'></div>
 				<div id='linkit-menu'>
 					<div id='linkit-project-selector' class='linkit-header-selector'>${label}</div>

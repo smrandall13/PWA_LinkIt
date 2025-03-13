@@ -17,9 +17,9 @@ const APP = {
 				return;
 			}
 
-			let htmlPath = ``;
-			let cssPath = ``;
-			let jsPath = ``;
+			let htmlPath = '';
+			let cssPath = '';
+			let jsPath = '';
 			if (pageID === 'home' || pageID === 'settings') {
 				htmlPath = `/app/${pageID}.html`;
 				cssPath = `/app/${pageID}.css`;
@@ -64,47 +64,71 @@ const APP = {
 
 				// Load CSS
 				if (!isEmpty(cssPath)) {
-					try {
-						FETCH(
-							cssPath,
-							null,
-							() => {
-								const cssLink = document.createElement('link');
-								cssLink.rel = 'stylesheet';
-								cssLink.href = APP.root + cssPath;
-								cssLink.classList.add('dynamic-style'); // Mark to remove later
-								document.getElementById('app-style').after(cssLink);
-							},
-							(error) => {
-								LOG.error('Error loading CSS:' + error);
-							},
-							{ method: 'GET' }
-						);
-					} catch (error) {
-						LOG.error('Error loading CSS:' + error);
+					const loadCSS = (cssPath) => {
+						try {
+							FETCH(
+								cssPath,
+								null,
+								() => {
+									const cssLink = document.createElement('link');
+									cssLink.rel = 'stylesheet';
+									cssLink.href = APP.root + cssPath;
+									cssLink.classList.add('dynamic-style'); // Mark to remove later
+									document.getElementById('app-style').after(cssLink);
+								},
+								(error) => {
+									LOG.error('Error loading CSS:' + error);
+								},
+								{ method: 'GET' }
+							);
+						} catch (error) {
+							LOG.error('Error loading CSS:' + error);
+						}
+					};
+
+					// if cssPath contains , then it is a list of css files
+					if (cssPath.includes(',')) {
+						cssPath = cssPath.split(',');
+						cssPath.forEach((path) => {
+							if (!isEmpty(path)) loadCSS(path);
+						});
+					} else {
+						loadCSS(cssPath);
 					}
 				}
 
 				// Load JS
 				if (!isEmpty(jsPath)) {
-					try {
-						FETCH(
-							jsPath,
-							null,
-							() => {
-								const script = document.createElement('script');
-								script.src = APP.root + jsPath;
-								script.classList.add('dynamic-script'); // Mark to remove later
-								script.defer = true;
-								document.body.appendChild(script);
-							},
-							(error) => {
-								LOG.error('Error loading JS:' + error);
-							},
-							{ method: 'GET' }
-						);
-					} catch (error) {
-						LOG.error('Error loading JS:' + error);
+					const loadJS = (jsPath) => {
+						try {
+							FETCH(
+								jsPath,
+								null,
+								() => {
+									const script = document.createElement('script');
+									script.src = APP.root + jsPath;
+									script.classList.add('dynamic-script'); // Mark to remove later
+									script.defer = true;
+									document.getElementById('app-script').after(script);
+								},
+								(error) => {
+									LOG.error('Error loading JS:' + error);
+								},
+								{ method: 'GET' }
+							);
+						} catch (error) {
+							LOG.error('Error loading JS:' + error);
+						}
+					};
+
+					// if jsPath contains , then it is a list of js files
+					if (jsPath.includes(',')) {
+						jsPath = jsPath.split(',');
+						jsPath.forEach((path) => {
+							if (!isEmpty(path)) loadJS(path);
+						});
+					} else {
+						loadJS(jsPath);
 					}
 				}
 

@@ -35,9 +35,6 @@
 			if (!empty($fields)){ 	$RETURN_DATA["fields"] = $fields; }
 			if (!empty($condition)){ $RETURN_DATA["condition"] = $condition; }
 
-			// Unique Fields
-			$UNIQUE_FIELDS = ['name','id'];
-
 			// Read
 			if ($REQUEST === "get") {
 				// Get Records

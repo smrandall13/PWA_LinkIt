@@ -23,7 +23,7 @@
 			"id": "linkit",
 			"name": "Link It",
 			"html": "pages/linkit.html",
-			"style": "pages/linkit.css",
+			"style": "pages/linkit.css,pages/linkitsvg.css",
 			"script": "pages/linkit.js,pages/linkitsvg.js,pages/linkitd3.js"
 		}
 	]

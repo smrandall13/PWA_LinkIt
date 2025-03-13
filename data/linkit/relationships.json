@@ -67,5 +67,71 @@
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f05",
 		"type": "Occupant"
+	},
+	{
+		"projectid": "pro-301517",
+		"source": "ent-cc6f01",
+		"target": "ent-cc6f05",
+		"type": "Pet"
+	},
+	{
+		"projectid": "pro-301517",
+		"source": "ent-cc6f01",
+		"target": "ent-cc6f06",
+		"type": "Sibling"
+	},
+	{
+		"projectid": "pro-301517",
+		"source": "ent-cc6f06",
+		"target": "ent-cc6f07",
+		"type": "Spouse"
+	},
+	{
+		"projectid": "pro-301517",
+		"source": "ent-cc6f06",
+		"target": "ent-cc6f08",
+		"type": "Chld"
+	},
+	{
+		"projectid": "pro-301517",
+		"source": "ent-cc6f07",
+		"target": "ent-cc6f08",
+		"type": "Chld"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd001",
+		"target": "ent-erd101",
+		"type": "Column"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd001",
+		"target": "ent-erd102",
+		"type": "Column"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd001",
+		"target": "ent-erd103",
+		"type": "Column"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd002",
+		"target": "ent-erd201",
+		"type": "Column"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd002",
+		"target": "ent-erd202",
+		"type": "Column"
+	},
+	{
+		"projectid": "pro-301518",
+		"source": "ent-erd101",
+		"target": "ent-erd202",
+		"type": "Foreign Key"
 	}
 ]

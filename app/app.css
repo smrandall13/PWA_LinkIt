@@ -748,7 +748,7 @@ body.theme-light select option textarea {
 	opacity: 0.5;
 	pointer-events: all;
 }
-#app-popup-container {
+.app-popup-container {
 	z-index: 9999;
 	border: var(--border);
 	border-radius: var(--border-radius);

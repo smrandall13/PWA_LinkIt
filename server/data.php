@@ -12,6 +12,8 @@
 		private static $MAX_LOG_SIZE = 5 * 1024 * 1024; // 5MB
 		private static $LOG_RETENTION_DAYS = 30; // Keep logs for 30 days
 
+		private static $UNIQUE_FIELDS = ['id'];
+
 		// Log File Path
 		private static function logFile($database, $table) {
 			$logDir = self::$root . "$database" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR;
@@ -293,6 +295,9 @@
 				   if (self::matchesCondition($record, $condition)) {
 					  $oldData = $record;
 					  $record = array_merge($record, $newRecord);
+					  $record['updated_at'] = date('Y-m-d H:i:s');
+					  $record['deleted_at'] = null; // Restore if previously deleted
+					  $record['updated_by'] = isset($_SESSION['user']) ? $_SESSION['user'] : 'SYSTEM';
 					  self::log($database, $table, "UPDATE", $record['id'], $oldData, $record);
 					  $updated = true; // Sent Back for Successful Insert
 				   }
@@ -301,6 +306,9 @@
 
 			if (!$updated) {
 			    $newRecord['id'] = self::id($database, $table);
+			    $newRecord['created_at'] = date('Y-m-d H:i:s');
+			    $newRecord['created_by'] = isset($_SESSION['user']) ? $_SESSION['user'] : 'SYSTEM';
+
 			    self::log($database, $table, "INSERT", $newRecord['id'], null, $newRecord);
 			    $data[] = $newRecord;
 			    $updated = true; // Sent Back for Successful Update

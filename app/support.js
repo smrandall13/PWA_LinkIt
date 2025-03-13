@@ -165,7 +165,7 @@ const MESSAGE = {
 };
 
 const POPUP = {
-	open: function (title = '', content = '') {
+	open: function (title = '', content = '', boxid = 'app-popup-container') {
 		// Check if Popup already open
 		POPUP.close();
 
@@ -175,7 +175,8 @@ const POPUP = {
 			document.getElementById('app-content').appendChild(back);
 
 			const popup = document.createElement('div');
-			popup.id = 'app-popup-container';
+			popup.id = boxid;
+			popup.classList.add('app-popup-container');
 
 			popup.innerHTML =
 				`<div class='app-box-title'>${title}<div class='app-popup-close' onclick="POPUP.close()"></div></div>

@@ -1,0 +1,59 @@
+/* SVG */
+#linkit-visual-2d {
+	width: calc(100vw - 16px);
+	height: calc(100vh - 60px);
+	min-width: calc(100vw - 16px);
+	min-height: calc(100vh - 60px);
+	max-width: calc(100vw - 16px);
+	max-height: calc(100vh - 60px);
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: transparent;
+	z-index: 0;
+}
+.linkit-svg-node {
+	cursor: pointer;
+	z-index: 0;
+}
+.linkit-svg-node circle {
+	fill: var(--color-accent);
+	stroke: var(--border-color);
+	stroke-width: 1px;
+}
+.linkit-svg-node text {
+	font-size: var(--font-size-sm);
+	pointer-events: none;
+	color: var(--theme-dark-text);
+	fill: var(--theme-dark-text);
+}
+.linkit-svg-hover {
+	z-index: 1;
+}
+.linkit-svg-node.linkit-svg-hover circle {
+	stroke: var(--theme-dark-text);
+}
+.linkit-svg-node.linkit-svg-hover text {
+	font-size: var(--font-size);
+}
+.linkit-svg-link {
+	stroke: var(--border-color);
+	stroke-opacity: 1;
+	stroke-width: 2px;
+	z-index: 0;
+}
+.linkit-svg-link.linkit-svg-hover {
+	stroke: var(--theme-dark-text);
+	stroke-opacity: 1;
+	z-index: 1;
+}
+.linkit-svg-link-label {
+	font-size: var(--font-size-xsm);
+	pointer-events: none;
+	color: var(--theme-dark-text);
+	fill: var(--theme-dark-text);
+	opacity: 0.5;
+}
+.linkit-svg-link-label.linkit-svg-hover {
+	opacity: 0.75;
+}

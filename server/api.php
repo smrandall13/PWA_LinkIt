@@ -45,18 +45,28 @@
 			}else if ($REQUEST === "set") {
 				$RETURN_STATUS = DATA::set($database, $table, $fields, $condition);
 				if ($RETURN_STATUS === 'success') {
-					// Get Records
-					$RETURN_DATA["data"][$table] = DATA::get($database, $table);
 
-					// Get ID
-					$result = DATA::get($database, $table, ['id'], [['field'=>'name', 'operator'=>'=', 'value'=>$fields['name']]]);
+					// Get Entry
+					$getCondition = null;
+					$result = DATA::get($database, $table, ['id','projectid'], [['field'=>'name', 'operator'=>'=', 'value'=>$fields['name']]]);
 					$RETURN_DATA["data"][$table."id"] = !empty($result) ? $result[0]['id'] : '';
+					if (isset($result[0]['projectid'])) $getCondition = [["field"=>"projectid","operator"=>"=","value"=>$result[0]['projectid']]];
+
+					// Get Records
+					$RETURN_DATA["data"][$table] = DATA::get($database, $table,"",$getCondition);
+
 				}
 
 			// Delete
 			}else if ($REQUEST === "delete") {
+
+				// Get Entry
+				$getCondition = null;
+				$result = DATA::get($database, $table, ['id','projectid'],$condition);
+				if (isset($result[0]['projectid'])) $getCondition = [["field"=>"projectid","operator"=>"=","value"=>$result[0]['projectid']]];
+
 				$RETURN_STATUS = DATA::delete($database, $table, $condition);
-				if ($RETURN_STATUS === 'success') $RETURN_DATA["data"] = DATA::get($database, $table);
+				if ($RETURN_STATUS === 'success') $RETURN_DATA["data"][$table] = DATA::get($database, $table,"",$getCondition);
 
 			}
 

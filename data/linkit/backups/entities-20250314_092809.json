@@ -396,8 +396,7 @@
         "description": "",
         "id": "ent-d286fe",
         "created_at": "2025-03-14 09:24:10",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:28:15"
+        "created_by": "SYSTEM"
     },
     {
         "projectid": "pro-301517",
@@ -407,75 +406,6 @@
         "type": "Demo",
         "description": "This is my demo :)",
         "created_at": "2025-03-14 09:25:35",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:28:09"
-    },
-    {
-        "projectid": "pro-301517",
-        "table": "entities",
-        "name": "Demo",
-        "type": "Demo",
-        "description": "Demo",
-        "id": "ent-a1634a",
-        "created_at": "2025-03-14 09:29:35",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:33:42"
-    },
-    {
-        "projectid": "pro-301517",
-        "id": "ent-8aca9b",
-        "table": "entities",
-        "name": "Demo",
-        "type": "Demo",
-        "description": "Demo test",
-        "created_at": "2025-03-14 09:33:36",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:36:27"
-    },
-    {
-        "projectid": "pro-301517",
-        "table": "entities",
-        "name": "Demo",
-        "type": "Demo",
-        "description": "Demo",
-        "id": "ent-f06f19",
-        "created_at": "2025-03-14 09:37:22",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:37:27"
-    },
-    {
-        "projectid": "pro-301517",
-        "table": "entities",
-        "name": "Demo",
-        "type": "Demos",
-        "description": "Demo's Time",
-        "id": "ent-5a1147",
-        "created_at": "2025-03-14 09:38:10",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:38:43"
-    },
-    {
-        "projectid": "pro-301517",
-        "id": "ent-65c881",
-        "table": "entities",
-        "name": "Demo",
-        "type": "Demos",
-        "description": "Demo's Time \"Hello\"",
-        "created_at": "2025-03-14 09:38:19",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-14 09:38:32"
-    },
-    {
-        "projectid": "pro-301517",
-        "table": "entities",
-        "name": "Demo 03",
-        "type": "Test 1",
-        "description": "Demo",
-        "id": "ent-1b082e",
-        "created_at": "2025-03-14 09:45:21",
-        "created_by": "SYSTEM",
-        "updated_at": "2025-03-14 10:07:23",
-        "deleted_at": null,
-        "updated_by": "SYSTEM"
+        "created_by": "SYSTEM"
     }
 ]

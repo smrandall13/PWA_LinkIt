@@ -1,4 +1,5 @@
 const LINKITSVG = {
+	svgid: 'linkit-visual-2d',
 	simulation: null,
 	nodes: null,
 	svg: null,
@@ -9,6 +10,7 @@ const LINKITSVG = {
 	height: 0,
 	repulsion: -300,
 	timeouts: [],
+	data: null,
 	center: function (entityID = '') {
 		const group = LINKITSVG.group; // Get the SVG group element
 		if (group.empty()) return; // Exit if no <g> is found
@@ -45,8 +47,14 @@ const LINKITSVG = {
 		},
 		end: function (event, d) {
 			if (!event.active) LINKITSVG.simulation.alphaTarget(0);
+
+			// Allow Animation
 			d.fx = null;
 			d.fy = null;
+
+			// Stop Animation
+			// d.fx = event.x;
+			// d.fy = event.y;
 			LINKITSVG.dragging = false;
 			LINKITSVG.save();
 		},
@@ -59,12 +67,22 @@ const LINKITSVG = {
 				x: d.x,
 				y: d.y,
 			}));
-			STORAGE.set('linkit-nodes', JSON.stringify(nodePositions));
+			let projectNodes = STORAGE.get('linkit-nodes');
+			const projectid = LINKIT.settings.projectid;
+			if (projectNodes) {
+				projectNodes = JSON.parse(projectNodes);
+			} else {
+				projectNodes = {};
+			}
+			projectNodes[projectid] = { nodes: nodePositions };
+			STORAGE.set('linkit-nodes', JSON.stringify(projectNodes));
 		}, 3000);
 	},
 	load: function () {
-		const nodePositions = JSON.parse(STORAGE.get('linkit-nodes'));
-		if (nodePositions) {
+		const projectNodes = JSON.parse(STORAGE.get('linkit-nodes')) || {};
+		const projectid = LINKIT.settings.projectid;
+		if (projectNodes[projectid]) {
+			const nodePositions = projectNodes[projectid]['nodes'];
 			// Assign saved positions to nodes
 			LINKIT.settings.entities.forEach((node) => {
 				const savedNode = nodePositions.find((n) => n.id === node.id);
@@ -80,20 +98,49 @@ const LINKITSVG = {
 	reset: function () {
 		STORAGE.reset('linkit-nodes');
 	},
+	clear: function () {
+		if (LINKITSVG.simulation) {
+			LINKITSVG.simulation.stop(); // Stop the force simulation
+		}
+
+		if (LINKITSVG.svg) {
+			LINKITSVG.svg.selectAll('*').remove(); // Remove all elements from the SVG
+		}
+
+		// Reset internal state
+		LINKITSVG.simulation = null;
+		LINKITSVG.nodes = null;
+		LINKITSVG.svg = null;
+		LINKITSVG.group = null;
+		LINKITSVG.width = 0;
+		LINKITSVG.height = 0;
+		LINKITSVG.dragging = false;
+		LINKITSVG.data = null;
+
+		document.getElementById(LINKITSVG.svgid).innerHTML = ''; // Clear SVG container
+	},
 	init: function () {
+		// Clear existing SVG
+		LINKITSVG.clear();
+
 		// Data
 		const data = {
 			nodes: [...LINKIT.settings.entities],
 			links: [...LINKIT.settings.relationships],
 		};
+		LINKITSVG.data = data;
 
 		const svgContainer = document.getElementById('app-content-container');
 		let width = svgContainer.offsetWidth || svgContainer.clientWidth;
 		let height = svgContainer.offsetHeight || svgContainer.clientHeight; //.append('svg').attr('width', width).attr('height', height);
 
-		const svg = d3.select('#linkit-visual-2d').append('svg').attr('width', width).attr('height', height);
+		const svg = d3
+			.select('#' + LINKITSVG.svgid)
+			.append('svg')
+			.attr('width', width)
+			.attr('height', height);
 
-		let nodeDistanceX = width / 6;
+		let nodeDistanceX = width / 5;
 
 		// Apply the gradient as an SVG background
 		svg.append('rect').attr('width', width).attr('height', height).style('fill', 'url(#bgGradient)');
@@ -154,8 +201,21 @@ const LINKITSVG = {
 
 		// Center Nodes
 		data.nodes.forEach((node) => {
-			node.x = width / 2 + (Math.random() - 0.5) * 50; // Small random offset to avoid overlap
-			node.y = height / 2 + (Math.random() - 0.5) * 50;
+			if (node.isLinked) {
+				node.x = width / 2 + (Math.random() - 0.5) * 50; // Small random offset to avoid overlap
+				node.y = height / 2 + (Math.random() - 0.5) * 50;
+			} else {
+				node.fx = width / 2 + Math.random() * 100 - 50; // Keep unlinked nodes in place
+				node.fy = height / 2 + Math.random() * 100 - 50;
+			}
+		});
+
+		// Linked / Unlinked Nodes - Identify nodes that are part of a relationship
+		const linkedNodeIds = new Set(data.links.flatMap((link) => [link.source, link.target]));
+
+		// Mark nodes as linked or unlinked
+		data.nodes.forEach((node) => {
+			node.isLinked = linkedNodeIds.has(node.id);
 		});
 
 		LINKITSVG.zoom = zoom;
@@ -178,6 +238,15 @@ const LINKITSVG = {
 			.force('charge', d3.forceManyBody().strength(LINKITSVG.repulsion))
 			.force('center', d3.forceCenter(width / 2, height / 2).strength(0.05))
 			.force('collision', d3.forceCollide().radius(50))
+			.on('tick', () => {
+				// Only update linked nodes' positions
+				node.attr('transform', (d) => (d.isLinked ? `translate(${d.x},${d.y})` : `translate(${d.fx},${d.fy})`));
+				link
+					.attr('x1', (d) => d.source.x)
+					.attr('y1', (d) => d.source.y)
+					.attr('x2', (d) => d.target.x)
+					.attr('y2', (d) => d.target.y);
+			})
 			.alpha(0.3) // Set initial alpha
 			.alphaDecay(0.05); // Slow down animation to prevent abrupt motion
 
@@ -193,10 +262,9 @@ const LINKITSVG = {
 			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
 		});
 
-		LINKITSVG.center();
+		LINKITSVG.center(); // Allows Drag
 
-		// setTimeout(, 1000);
-		LINKITSVG.load();
-		removeClass('linkit-visual-2d', 'app-hidden');
+		LINKITSVG.load(); // Load Saved Node Positions
+		removeClass(LINKITSVG.svgid, 'app-hidden');
 	},
 };

@@ -36,41 +36,32 @@ const LINKIT = {
 		let items = [];
 		let itemid = '';
 		let label = '';
-		let funCreate = '';
-		let funUpdate = '';
-		let funDelete = '';
 		let attributes = [];
 
 		if (table == 'entities') {
 			items = LINKIT.settings.entities;
 			itemid = LINKIT.settings.entityid;
 			label = 'New Entity';
-			funCreate = LINKIT.entity.update(1);
-			funUpdate = LINKIT.entity.update(0);
-			funDelete = LINKIT.entity.delete();
+			funKey = 'entity';
 		}
 		if (table == 'relationships') {
 			items = LINKIT.settings.relationships;
 			itemid = LINKIT.settings.relationshipid;
 			label = 'New Relationship';
-			funCreate = LINKIT.relationship.update(1);
-			funUpdate = LINKIT.relationship.update(0);
-			funDelete = LINKIT.relationship.delete();
+			funKey = 'relationship';
 		}
 		if (table == 'projects') {
 			items = LINKIT.settings.projects;
 			itemid = LINKIT.settings.projectid;
 			label = 'New Project';
-			funCreate = LINKIT.project.update(1);
-			funUpdate = LINKIT.project.update(0);
-			funDelete = LINKIT.project.delete();
+			funKey = 'project';
 		}
 		if (!items || items.length === 0) {
 			return;
 		}
 		const item = itemid ? items.find((item) => item.id === itemid) : null;
 
-		let controls = `<div id='' class='app-button app-button-small' style='width:100%;' onclick="${funCreate}">Create</div>`;
+		let controls = `<div id='linkit-control-create' class='app-button app-button-small' style='width:100%;'>Create</div>`;
 
 		// Types
 		const types = uniqueKey(items, 'type');
@@ -78,8 +69,11 @@ const LINKIT = {
 		if (types && types.length > 0) types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
 
 		const getKeyValue = (key) => {
-			if (isEmpty(key) || !item) return '';
-			if (item && item[key]) return item[key];
+			let value = '';
+			if (isEmpty(key) || !item) value = '';
+			if (item && item[key]) value = item[key];
+			if (isEmpty(value)) value = '';
+			return value;
 		};
 
 		// item Details
@@ -87,13 +81,15 @@ const LINKIT = {
 			if (item && item.id === LINKIT.settings.entityid) {
 				attributes = item.attributes;
 				label = item.name;
-				controls = `<div class='app-button app-button-small' style='width:100%;' onclick="${funUpdate}">Update</div><div class='app-button app-button-small app-button-caution' style='width:100%;' onclick="${funDelete}">Delete</div>`;
+				controls = `<div id='linkit-control-update' class='app-button app-button-small' style='width:100%;'>Update</div>
+				<div id='linkit-control-delete' class='app-button app-button-small app-button-caution' style='width:100%;'>Delete</div>`;
 			}
 		}
 		if (!isArray(attributes)) attributes = [];
 
 		// Core
 		let content = `<div class='app-box-body'>
+				<input type="hidden" id="linkit-form-table" value='${table}' />
 				<div class='app-box-label'>Name</div>
 				<div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Entity Name" value='${getKeyValue('name')}' /></div>
 
@@ -114,7 +110,118 @@ const LINKIT = {
 		content += `<div class='app-box-seperator'></div><div class='app-box-body'>${controls}</div><datalist id='linkit-entity-types'>${typeOptions}</datalist>`;
 
 		// New Project Form
-		POPUP.open(label, content, 'linkit-entity-form');
+		POPUP.open(label, content, 'linkit-edit-form');
+
+		// Controls
+		addEvent('linkit-control-create', () => {
+			LINKIT.update(1);
+		});
+		addEvent('linkit-control-update', () => {
+			LINKIT.update();
+		});
+		addEvent('linkit-control-delete', () => {
+			LINKIT.delete();
+		});
+	},
+	update: function (newItem = 0) {
+		const tableName = getValue('linkit-form-table');
+		if (isEmpty(tableName)) return;
+
+		// Check Item ID
+		let itemid = '';
+		let itemKey = '';
+		if (tableName == 'entities') {
+			itemid = LINKIT.settings.entityid;
+			itemKey = 'entityid';
+		}
+		if (tableName == 'relationships') {
+			itemid = LINKIT.settings.relationshipid;
+			itemKey = 'relationshipid';
+		}
+		if (tableName == 'projects') {
+			itemid = LINKIT.settings.projectid;
+			itemKey = 'projectid';
+		}
+		if (isEmpty(itemid) && newItem === 0) return;
+
+		// Check Name
+		const name = getValue('linkit-form-name');
+		if (isEmpty(name)) {
+			MESSAGE.show('Error', 'Please enter a name.');
+			return;
+		}
+
+		// Data
+		const postData = {};
+		let conditions = [];
+		if (tableName !== 'projects') {
+			postData['projectid'] = LINKIT.settings.projectid;
+		}
+		if (!isEmpty(itemid) && newItem === 0) {
+			conditions = [{ field: 'id', operator: '=', value: itemid }];
+		}
+
+		// Get All inputs, select, textarea for element
+		const form = document.getElementById('linkit-edit-form');
+		const inputs = form.querySelectorAll('input, select, textarea');
+		inputs.forEach((input) => {
+			const key = input.id.split('-')[input.id.split('-').length - 1];
+			postData[key] = input.value;
+		});
+
+		DATA.submit(tableName, conditions, postData, 'set').then((result) => {
+			if (result && result.data) {
+				LINKIT.settings[tableName] = result.data[tableName];
+				LINKIT.settings[itemKey] = result.data[itemKey];
+			}
+			LINKIT.entity.load();
+		});
+
+		// Close New Entry Form
+		POPUP.close();
+	},
+	delete: function (confirm = 0) {
+		const tableName = getValue('linkit-form-table');
+		if (isEmpty(tableName)) return;
+
+		// Check Item ID
+		let itemid = '';
+		let itemLabel = '';
+		let itemKey = '';
+		if (tableName == 'entities') {
+			itemid = LINKIT.settings.entityid;
+			itemKey = 'entityid';
+			itemLabel = 'Entity';
+		}
+		if (tableName == 'relationships') {
+			itemid = LINKIT.settings.relationshipid;
+			itemKey = 'relationshipid';
+			itemLabel = 'Relationship';
+		}
+		if (tableName == 'projects') {
+			itemid = LINKIT.settings.projectid;
+			itemKey = 'projectid';
+			itemLabel = 'Project';
+		}
+		if (isEmpty(itemid)) return;
+
+		// Confirm Delete
+		if (confirm == 0) {
+			MESSAGE.confirm(`Delete ${itemLabel}`, `Are you sure you want to delete this ${itemLabel.toLowerCase()}?`, () => LINKIT.delete(1));
+			return;
+		}
+
+		// Delete
+		DATA.submit(tableName, [{ field: 'id', operator: '=', value: itemid }], null, 'delete').then((result) => {
+			if (result && result.data) {
+				LINKIT.settings[tableName] = result.data[tableName];
+				LINKIT.settings[itemKey] = '';
+			}
+			LINKIT.entity.load();
+		});
+
+		// Close New Entry Form
+		POPUP.close();
 	},
 	entity: {
 		get: function () {
@@ -133,7 +240,7 @@ const LINKIT = {
 			const entity = LINKIT.settings.entities.find((entity) => entity.id === entityID);
 			if (entity && entity.id === entityID) {
 				LINKIT.settings.entityid = entityID;
-				LINKIT.entity.form();
+				LINKIT.form('entities');
 			}
 		},
 		load: function () {
@@ -183,111 +290,7 @@ const LINKIT = {
 			}
 
 			// New Project Form
-			LINKIT.entity.form(1);
-		},
-		form: function (newEntity = 0) {
-			const entities = LINKIT.settings.entities;
-			if (!entities || entities.length === 0) {
-				return;
-			}
-
-			let controls = `<div class='app-button app-button-small' style='width:100%;' onclick="LINKIT.entity.update(${newEntity})">Create</div>`;
-			let attributes = [{ color: 'white' }];
-			let label = 'New Entity';
-
-			// Types
-			const types = uniqueKey(entities, 'type');
-			let typeOptions = '';
-			types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
-
-			let entity = null;
-
-			const getEntityItem = (key) => {
-				if (isEmpty(key) || !entity) return '';
-				if (entity && entity[key]) return entity[key];
-			};
-
-			// Entity Details
-			if (!isEmpty(LINKIT.settings.entityid) && newEntity === 0) {
-				entity = LINKIT.settings.entities.find((entity) => entity.id === LINKIT.settings.entityid);
-				if (entity && entity.id === LINKIT.settings.entityid) {
-					attributes = entity.attributes;
-					label = entity.name;
-					controls = `<div class='app-button app-button-small' style='width:100%;' onclick="LINKIT.entity.update()">Update</div><div class='app-button app-button-small app-button-caution' style='width:100%;' onclick="LINKIT.entity.delete()">Delete</div>`;
-				}
-			}
-			if (!isArray(attributes)) attributes = [];
-
-			let content = `<div class='app-box-body'>
-					<div class='app-box-label'>Name</div>
-					<div class='app-box-value'><input type="text" id="linkit-entity-name" placeholder="Entity Name" value='${getEntityItem('name')}' /></div>
-
-					<div class='app-box-label'>Type</div>
-					<div class='app-box-value'><input type="text" id="linkit-entity-type" placeholder="Entity Type" list='linkit-entity-types' value='${getEntityItem('type')}' /></div>
-
-					<div class='app-box-label'>Description</div>
-					<div class='app-box-value'><textarea id="linkit-entity-description">${getEntityItem('description')}</textarea></div>
-
-				</div><div class='app-box-seperator'></div><div class='app-box-subtitle'>Attributes</div><div id='linkit-entity-attributes' class='app-box-body'>
-
-
-				</div><div class='app-box-seperator'></div><div class='app-box-body'>${controls}</div>
-				<datalist id='linkit-entity-types'>${typeOptions}</datalist>`;
-
-			// New Project Form
-			POPUP.open(label, content, 'linkit-entity-form');
-		},
-		update: function (newEntity = 0) {
-			if (isEmpty(LINKIT.settings.entityid)) return;
-
-			const name = getValue('linkit-entity-name');
-			if (isEmpty(name)) {
-				MESSAGE.show('Error', 'Please enter a name.');
-				return;
-			}
-
-			const postData = { projectid: LINKIT.settings.projectid };
-			if (!isEmpty(LINKIT.settings.entityid) && newEntity === 0) postData.id = entityID;
-
-			// Get All inputs, select, textarea for element
-			const form = document.getElementById('linkit-entity-form');
-			const inputs = form.querySelectorAll('input, select, textarea');
-			inputs.forEach((input) => {
-				const key = input.id.split('-')[input.id.split('-').length - 1];
-				postData[key] = input.value;
-			});
-
-			DATA.submit('entities', null, postData, 'set').then((result) => {
-				if (result && result.data) {
-					LINKIT.settings.entities = result.data.entities;
-					LINKIT.settings.entityid = result.data.entityid;
-				}
-				LINKIT.entity.load();
-			});
-
-			// Close New Entry Form
-			POPUP.close();
-		},
-		delete: function (confirm = 0) {
-			if (isEmpty(LINKIT.settings.entityid)) return;
-
-			// Confirm Delete
-			if (confirm == 0) {
-				MESSAGE.confirm('Delete Entity', 'Are you sure you want to delete this entity?', () => LINKIT.entity.delete(1));
-				return;
-			}
-
-			// Delete
-			DATA.submit('entities', null, { id: LINKIT.settings.entityid }, 'delete').then((result) => {
-				if (result && result.data) {
-					LINKIT.settings.entities = result.data.entities;
-					LINKIT.settings.entityid = result.data.entityid;
-				}
-				LINKIT.entity.load();
-			});
-
-			// Close New Entry Form
-			POPUP.close();
+			LINKIT.form('entities', 1);
 		},
 	},
 	relationship: {

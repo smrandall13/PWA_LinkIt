@@ -192,11 +192,16 @@ const POPUP = {
 		}
 	},
 	close: function () {
-		const popup = document.getElementById('app-popup-container');
-		if (popup) {
-			popup.remove();
-			document.getElementById('app-popup-back').remove();
+		// Get By Class Name
+		let popups = document.getElementsByClassName('app-popup-container');
+		if (popups && popups.length > 0) {
+			popups = Array.from(popups);
+			popups.forEach((popup) => {
+				popup.remove();
+			});
 		}
+		let back = document.getElementById('app-popup-back');
+		if (back) back.remove();
 	},
 };
 

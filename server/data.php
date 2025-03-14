@@ -290,6 +290,12 @@
 			$updated = false;
 			$newRecord = $fields ?? [];
 
+			// Check if an ID is provided
+			$providedId = isset($newRecord['id']) ? $newRecord['id'] : null;
+			if (empty($condition) && !empty($providedId)) {
+			    $condition = [['field' => 'id', 'operator' => '=', 'value' => $providedId]];
+			}
+
 			if (!empty($condition)) {
 			    foreach ($data as &$record) {
 				   if (self::matchesCondition($record, $condition)) {

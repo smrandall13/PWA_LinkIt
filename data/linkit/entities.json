@@ -41,7 +41,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-14 12:19:55",
+        "updated_at": "2025-03-17 16:39:51",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
@@ -129,17 +129,24 @@
         "attributes": [
             {
                 "label": "Roles",
+                "type": "text",
                 "value": "Dog"
             },
             {
                 "label": "Weight",
+                "type": "text",
                 "value": "51 lbs"
             },
             {
                 "label": "Sex",
+                "type": "text",
                 "value": "Female"
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-17 17:56:23",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "Ricky Randall",
@@ -165,15 +172,6 @@
                 "value": "Male"
             }
         ],
-        "table": "entities",
-        "attr_key_1": "Roles",
-        "attr_value_1": "Sibling",
-        "attr_key_2": "Height",
-        "attr_value_2": "6",
-        "attr_key_3": "Weight",
-        "attr_value_3": "220 lbs",
-        "attr_key_4": "Sex",
-        "attr_value_4": "Male",
         "updated_at": "2025-03-14 15:16:10",
         "deleted_at": null,
         "updated_by": "SYSTEM"
@@ -579,7 +577,8 @@
         "attr_value_10": "",
         "id": "ent-10d4e4",
         "created_at": "2025-03-14 16:21:28",
-        "created_by": "SYSTEM"
+        "created_by": "SYSTEM",
+        "deleted_at": "2025-03-17 14:22:58"
     },
     {
         "projectid": "pro-301517",
@@ -611,5 +610,40 @@
         "created_at": "2025-03-14 16:22:19",
         "created_by": "SYSTEM",
         "deleted_at": "2025-03-14 16:23:11"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Core Example",
+        "type": "Demo",
+        "description": "",
+        "id": "ent-1a2edf",
+        "created_at": "2025-03-17 16:54:43",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-17 17:39:35",
+        "deleted_at": null,
+        "updated_by": "SYSTEM",
+        "attributes": [
+            {
+                "label": "Age",
+                "type": "text",
+                "value": "31"
+            },
+            {
+                "label": "Size",
+                "type": "text",
+                "value": "100"
+            },
+            {
+                "label": "Gender",
+                "type": "text",
+                "value": "Male"
+            },
+            {
+                "label": "Phone",
+                "type": "text",
+                "value": "1112223333"
+            }
+        ]
     }
 ]

@@ -8,9 +8,11 @@ const LINKITSVG = {
 	dragging: false,
 	width: 0,
 	height: 0,
-	repulsion: -400,
+	repulsion: -100,
 	timeouts: [],
 	data: null,
+	animate: true,
+	timeouts: [],
 	center: function (entityID = '') {
 		const group = LINKITSVG.group; // Get the SVG group element
 		if (group.empty()) return; // Exit if no <g> is found
@@ -32,6 +34,9 @@ const LINKITSVG = {
 			// Smoothly transition to the new position
 			LINKITSVG.svg.transition().duration(750).call(LINKITSVG.zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(transform.k));
 		}
+	},
+	isLinked: function (node1, node2) {
+		return LINKITSVG.data.links.some((link) => (link.source.id === node1.id && link.target.id === node2.id) || (link.source.id === node2.id && link.target.id === node1.id));
 	},
 	drag: {
 		start: function (event, d) {
@@ -57,8 +62,11 @@ const LINKITSVG = {
 			}
 
 			// Stop Animation
-			// d.fx = event.x;
-			// d.fy = event.y;
+			if (!LINKITSVG.animate) {
+				d.fx = event.x;
+				d.fy = event.y;
+			}
+
 			LINKITSVG.dragging = false;
 			LINKITSVG.save();
 		},
@@ -71,7 +79,7 @@ const LINKITSVG = {
 				x: d.x,
 				y: d.y,
 			}));
-			let projectNodes = STORAGE.get('linkit-nodes');
+			let projectNodes = STORAGE.get('linkitsvg-nodes');
 			const projectid = LINKIT.settings.projectid;
 			if (projectNodes) {
 				projectNodes = JSON.parse(projectNodes);
@@ -79,11 +87,11 @@ const LINKITSVG = {
 				projectNodes = {};
 			}
 			projectNodes[projectid] = { nodes: nodePositions };
-			STORAGE.set('linkit-nodes', JSON.stringify(projectNodes));
+			STORAGE.set('linkitsvg-nodes', JSON.stringify(projectNodes));
 		}, 3000);
 	},
 	load: function () {
-		const projectNodes = JSON.parse(STORAGE.get('linkit-nodes')) || {};
+		const projectNodes = JSON.parse(STORAGE.get('linkitsvg-nodes')) || {};
 		const projectid = LINKIT.settings.projectid;
 		if (projectNodes[projectid]) {
 			const nodePositions = projectNodes[projectid]['nodes'];
@@ -97,10 +105,17 @@ const LINKITSVG = {
 					node.fy = savedNode.y;
 				}
 			});
+
+			const savedZoom = STORAGE.get('linkitsvg-zoom');
+			if (savedZoom) {
+				const parsedTransform = JSON.parse(savedZoom);
+				LINKITSVG.svg.call(LINKITSVG.zoom.transform, d3.zoomIdentity.translate(parsedTransform.x, parsedTransform.y).scale(parsedTransform.k));
+			}
 		}
 	},
 	reset: function () {
-		STORAGE.reset('linkit-nodes');
+		STORAGE.reset('linkitsvg-nodes');
+		STORAGE.reset('linkitsvg-zoom');
 	},
 	clear: function () {
 		if (LINKITSVG.simulation) {
@@ -124,10 +139,18 @@ const LINKITSVG = {
 		document.getElementById(LINKITSVG.svgid).innerHTML = ''; // Clear SVG container
 	},
 	init: function () {
+		clearTimeout(LINKITSVG.timeouts['init']);
+
+		// Make sure d3 is loaded
+		if (!d3) {
+			LINKITSVG.timeouts['init'] = setTimeout(LINKITSVG.init, 1000);
+			return;
+		}
+
 		// Define default dimensions for the rounded rectangles
 		const rectWidth = 80;
 		const rectHeight = 30;
-		const borderRadius = 10;
+		const borderRadius = 4;
 
 		// Clear existing SVG
 		LINKITSVG.clear();
@@ -143,7 +166,8 @@ const LINKITSVG = {
 		const svgContainer = document.getElementById('app-content-container');
 		let width = svgContainer.offsetWidth || svgContainer.clientWidth;
 		let height = svgContainer.offsetHeight || svgContainer.clientHeight; //.append('svg').attr('width', width).attr('height', height);
-		let nodeDistanceX = width / 5; // Adjust distance as needed
+		// let nodeDistanceX = width / 8; // Adjust distance as needed
+		let nodeDistanceX = 240; // Adjust distance as needed
 
 		const svg = d3
 			.select('#' + LINKITSVG.svgid)
@@ -202,7 +226,7 @@ const LINKITSVG = {
 			.attr('class', 'linkit-svg-node')
 			.attr('rx', borderRadius) // Rounded corners
 			.attr('ry', borderRadius)
-			// .attr('x', -rectWidth / 2) // Centering rectangle
+			.attr('x', -rectWidth / 2) // Centering rectangle
 			.attr('y', -rectHeight / 2);
 
 		const textElements = node
@@ -218,13 +242,15 @@ const LINKITSVG = {
 		}
 
 		// Adjust rectangle width based on text size
-		textElements.each(function (d, i) {
-			const textWidth = getTextWidth(this);
-			d.rectWidth = textWidth; // Store width in data for positioning
-		});
+		setTimeout(() => {
+			textElements.each(function (d, i) {
+				const textWidth = getTextWidth(this);
+				d.rectWidth = textWidth; // Store width in data for positioning
+			});
 
-		// Apply calculated width to rectangles
-		rects.attr('width', (d) => d.rectWidth).attr('x', (d) => -d.rectWidth / 2); // Center rectangle horizontally
+			// Apply calculated width to rectangles
+			rects.attr('width', (d) => d.rectWidth).attr('x', (d) => -d.rectWidth / 2); // Center rectangle horizontally
+		}, 50);
 
 		// Zoom
 		const zoom = d3
@@ -232,17 +258,21 @@ const LINKITSVG = {
 			.scaleExtent([0.5, 3]) // Allow zooming in/out
 			.on('zoom', (event) => {
 				group.attr('transform', event.transform);
+				STORAGE.set('linkitsvg-zoom', JSON.stringify(event.transform));
 			});
 
 		// Center Nodes
-		data.nodes.forEach((node) => {
-			if (node.isLinked) {
-				node.x = width / 2 + (Math.random() - 0.5) * 50; // Small random offset to avoid overlap
-				node.y = height / 2 + (Math.random() - 0.5) * 50;
-			} else {
-				node.fx = width / 2 + Math.random() * 100 - 50; // Keep unlinked nodes in place
-				node.fy = height / 2 + Math.random() * 100 - 50;
-			}
+		data.nodes.forEach((node, index) => {
+			// if (node.isLinked) {
+			// 	node.x = width / 2 + (Math.random() - 0.5) * 50; // Small random offset to avoid overlap
+			// 	node.y = height / 2 + (Math.random() - 0.5) * 50;
+			// } else {
+			// 	node.fx = width / 2 + Math.random() * 100 - 50; // Keep unlinked nodes in place
+			// 	node.fy = height / 2 + Math.random() * 100 - 50;
+			// }
+			const angle = (index / data.nodes.length) * Math.PI * 2; // Spread nodes in a circle
+			node.x = width / 2 + Math.cos(angle) * 200; // Spread around center
+			node.y = height / 2 + Math.sin(angle) * 200;
 		});
 
 		// Linked / Unlinked Nodes - Identify nodes that are part of a relationship
@@ -284,8 +314,10 @@ const LINKITSVG = {
 					.attr('x2', (d) => d.target.x)
 					.attr('y2', (d) => d.target.y);
 			})
-			.alpha(0.3) // Set initial alpha
-			.alphaDecay(0.05); // Slow down animation to prevent abrupt motion
+			.alpha(1) // Set initial alpha
+			.alphaDecay(0.01) // Slow down animation to prevent abrupt motion
+			.alphaMin(0.002) // Allow fine adjustments before stopping
+			.restart();
 
 		LINKITSVG.simulation.on('tick', () => {
 			link

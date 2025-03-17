@@ -28,7 +28,6 @@ const LINKIT = {
 		},
 		toggle: function (groupid) {
 			if (isEmpty(groupid)) return;
-			console.log('G', groupid);
 			const group = document.getElementById('linkit-group-' + groupid);
 			if (group) group.classList.toggle('linkit-group-closed');
 		},
@@ -83,7 +82,6 @@ const LINKIT = {
 		if (isEmpty(types) && table == 'projects') types = ['ERD', 'Hierarchy', 'Custom'];
 		let typeOptions = '';
 		if (types && types.length > 0) types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
-		console.log('T', types, typeOptions);
 
 		const getKeyValue = (key) => {
 			let value = '';
@@ -128,60 +126,82 @@ const LINKIT = {
 			content += `<div class='app-box-body'>`;
 		}
 		content += primary;
+
+		// Attributes
+		const createAttributeValue = function (a, attribute) {
+			let value = attribute.value;
+			let defaultValue = attribute.default;
+			if (isEmpty(value)) value = defaultValue;
+			if (isEmpty(defaultValue)) defaultValue = '';
+			if (isEmpty(value)) value = '';
+			let type = attribute.type || 'text';
+			type = 'text';
+
+			if (type == 'integer' || type == 'number' || type == 'range' || type == 'boolean') value = parseInt(value);
+			if (type == 'float' || type == 'decimal') value = parseFloat(value);
+			// if (type == 'date' || type == 'datetime') value = new Date(value);
+
+			let attributeValue = '';
+			let attrID = `linkit-form-attr_value_${a}`;
+			if (type == 'select') {
+				let options = ``;
+				if (attribute.list && attribute.list.length > 0) {
+					attribute.list.forEach((option) => (options += `<option value='${option}'>${option}</option>`));
+				}
+				attributeValue = `<select id='${attrID}' value='${value}'>${options}</select>`;
+			} else if (type == 'color') {
+				attributeValue = `<input type='color' id='${attrID}' value='${value}' />`;
+			} else if (type == 'url' || type == 'link' || type == 'web') {
+				attributeValue = `<input type='url' id='${attrID}' value='${value}' />`;
+			} else if (type == 'date') {
+				attributeValue = `<input type='date' id='${attrID}' value='${value}' />`;
+			} else if (type == 'email') {
+				attributeValue = `<input type='email' id='${attrID}' value='${value}' />`;
+			} else if (type == 'phone' || type == 'tel') {
+				attributeValue = `<input type='tel' id='${attrID}' value='${value}' />`;
+			} else if (type == 'integer' || type == 'number') {
+				attributeValue = `<input type='number' id='${attrID}' value='${value}' />`;
+			} else if (type == 'range') {
+				attributeValue = `<input type='range' id='${attrID}' value='${value}' />`;
+			} else if (type == 'datetime') {
+				attributeValue = `<input type='datetime' id='${attrID}' value='${value}' />`;
+			} else if (type == 'checkbox' || type == 'boolean') {
+				attributeValue = `<div class='app-toggle-wrapper'><label class='app-toggle-switch'><input type='checkbox' id='${attrID}' ${value ? 'checked' : ''} /><span class='app-toggle-slider'></span></label></div>`;
+			} else if (type == 'text' || type == 'varchar') {
+				attributeValue = `<input type='text' id='linkit-form-attr_value_${a}' placeholder="${defaultValue}" value='${value}' />`;
+			}
+			return attributeValue;
+		};
+
+		const createAttrbuteLine = function (num = 0, label = '', value = '') {
+			return `<div class='app-box-value'>
+					<input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' style='max-width:100px;' list='linkit-attributes' />
+				</div>
+				<div class='app-box-value'>${value}</div>`;
+		};
+
+		// Attributes
+		let attributeList = ``;
+		let a = 0;
 		if (table == 'entities' || table == 'relationships') {
-			// Attributes
-			let attributeList = ``;
-			let a = 0;
-			attributes.forEach((attribute) => {
-				a++;
-				let value = attribute.value;
-				let defaultValue = attribute.default;
-				if (isEmpty(value)) value = defaultValue;
-				if (isEmpty(defaultValue)) defaultValue = '';
-				if (isEmpty(value)) value = '';
-
-				if (attribute.type == 'integer' || attribute.type == 'number' || attribute.type == 'range' || attribute.type == 'boolean') value = parseInt(value);
-				if (attribute.type == 'float' || attribute.type == 'decimal') value = parseFloat(value);
-				// if (attribute.type == 'date' || attribute.type == 'datetime') value = new Date(value);
-
-				let attributeValue = '';
-				if (attribute.type == 'select') {
-				} else if (attribute.type == 'color') {
-					attributeValue = `<input type='color' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'url' || attribute.type == 'link' || attribute.type == 'web') {
-					attributeValue = `<input type='url' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'date') {
-					attributeValue = `<input type='date' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'email') {
-					attributeValue = `<input type='email' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'phone' || attribute.type == 'tel') {
-					attributeValue = `<input type='tel' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'integer' || attribute.type == 'number') {
-					attributeValue = `<input type='number' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'range') {
-					attributeValue = `<input type='range' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'datetime') {
-					attributeValue = `<input type='datetime' id='linkit-form-attr_value_${a}' value='${value}' />`;
-				} else if (attribute.type == 'checkbox' || attribute.type == 'boolean') {
-					attributeValue = `<div class='app-toggle-wrapper'>
-										<label class='app-toggle-switch' >
-											<input type='checkbox' id='linkit-form-attr_value_${a}' ${value ? 'checked' : ''} /><span class='app-toggle-slider'></span>
-										</label>
-								</div>`;
-				} else if (attribute.type == 'text' || attribute.type == 'varchar') {
-					attributeValue = `<input type='text' id='linkit-form-attr_value_${a}' placeholder="${defaultValue}" value='${value}' />`;
-				}
-				if (!isEmpty(attributeValue)) {
-					attributeList += `<div class='app-box-value'><input type='text' id='linkit-form-attr_key_${a}' value='${attribute.label}' style='max-width:100px;' list='linkit-attributes' /></div>
-								<div class='app-box-value'>${attributeValue}</div>`;
-				}
-			});
+			if (attributes && attributes.length > 0) {
+				attributes.forEach((attribute) => {
+					a++;
+					attributeList += createAttrbuteLine(a, attribute.label, createAttributeValue(a, attribute));
+				});
+			} else {
+				attributeList += createAttrbuteLine(1, '', `<input type='text' id='linkit-form-attr_value_1' value='' />`);
+				attributeList += createAttrbuteLine(2, '', `<input type='text' id='linkit-form-attr_value_2' value='' />`);
+				attributeList += createAttrbuteLine(3, '', `<input type='text' id='linkit-form-attr_value_3' value='' />`);
+			}
+			a++;
+			attributeList += createAttrbuteLine(a, '', `<input type='text' id='linkit-form-attr_value_${a}' value='' />`);
 
 			// Relationships
 
 			// Add to Content
 			content += `</div><div class='app-box-partial'>
-				<div class='app-box-label'>Attributes<datalist id='linkit-attributes'>${attributeOptions}</datalist></div><div class='app-box-grid'>${attributeList}</div>
+				<div class='app-box-label'>Properties / Traits / Details<datalist id='linkit-attributes'>${attributeOptions}</datalist></div><div class='app-box-grid'>${attributeList}</div>
 			</div>`;
 		}
 		content += `</div>`;
@@ -244,10 +264,36 @@ const LINKIT = {
 		// Get All inputs, select, textarea for element
 		const form = document.getElementById('linkit-edit-form');
 		const inputs = form.querySelectorAll('input, select, textarea');
+		const attributes = [];
 		inputs.forEach((input) => {
 			const key = input.id.split('-')[input.id.split('-').length - 1];
-			postData[key] = input.value;
+			if (input.id.includes('attr_')) {
+				if (input.id.includes('attr_key_')) {
+					let number = input.id.split('_')[2];
+					if (isEmpty(number)) number = 0;
+
+					let label = getValue(`linkit-form-attr_key_${number}`);
+					let type = getValue(`linkit-form-attr_type_${number}`);
+					let value = getValue(`linkit-form-attr_value_${number}`);
+
+					if (!isEmpty(label) && !isEmpty(value) && number > 0) {
+						if (isEmpty(type)) type = 'text';
+						attributes.push({
+							label: label,
+							type: type,
+							value: value,
+						});
+					}
+				}
+			} else {
+				postData[key] = input.value;
+			}
 		});
+
+		// Attributes
+		if (!isEmpty(attributes) && attributes.length > 0) {
+			postData['attributes'] = attributes;
+		}
 
 		DATA.submit(tableName, conditions, postData, 'set').then((result) => {
 			if (result && result.data) {
@@ -385,11 +431,7 @@ const LINKIT = {
 			});
 		},
 		load: function () {
-			if (d3) {
-				LINKITSVG.init();
-			} else {
-				setTimeout(LINKITSVG.init, 1000);
-			}
+			LINKITSVG.init();
 		},
 	},
 	attribute: {
@@ -400,6 +442,38 @@ const LINKIT = {
 				}
 			});
 		},
+	},
+	visual: function (visual = '') {
+		if (!isEmpty(visual)) LINKIT.settings.visual = visual;
+		visual = LINKIT.settings.visual;
+
+		const visual2D = document.getElementById('linkit-visual-2d');
+		visual2D.classList.add('app-hidden');
+
+		const visual3D = document.getElementById('linkit-visual-3d');
+		visual3D.classList.add('app-hidden');
+
+		const visualTable = document.getElementById('linkit-visual-table');
+		visualTable.classList.add('app-hidden');
+
+		// Remove Button Active Class
+		const buttons = document.getElementsByClassName('linkit-control-button');
+		for (let i = 0; i < buttons.length; i++) {
+			const button = buttons[i];
+			button.classList.remove('linkit-control-button-active');
+			// If Button iD contains visual, add active class
+			if (button.id.includes(visual)) {
+				button.classList.add('linkit-control-button-active');
+			}
+		}
+
+		if (visual === '2d') {
+			LINKITSVG.init(); // Delay to ensure d3 is loaded, then init
+		} else if (visual === '3d') {
+			// document.getElementById('linkit-visual-2d').innerHTML = LINKITSVG.draw3D();
+		} else if (visual === 'table') {
+			// document.getElementById('linkit-visual-2d').innerHTML = LINKITSVG.drawTable();
+		}
 	},
 	project: {
 		get: function () {
@@ -495,21 +569,21 @@ const LINKIT = {
 			let visualRight = '';
 			if (!isEmpty(LINKIT.settings.visual)) LINKIT.settings.visual = '2d';
 			if (LINKIT.settings.visual === '2d') {
-				visualLeft = 'linkit-visual-active';
+				visualLeft = 'linkit-control-button-active';
 			} else if (LINKIT.settings.visual === '3d') {
-				visualCenter = 'linkit-visual-active';
+				visualCenter = 'linkit-control-button-active';
 			} else if (LINKIT.settings.visual === 'line') {
-				visualRight = 'linkit-visual-active';
+				visualRight = 'linkit-control-button-active';
 			}
 
 			// Add Content to Container
 			container.innerHTML = `
 				<div id='linkit-header'>
 					<div id='linkit-header-line'></div>
-					<div id='linkit-visual-controls'>
-						<div id='linkit-visual-2d' class='linkit-visual-button linkit-visual-button-left ${visualLeft}'></div>
-						<div id='linkit-visual-3d' class='linkit-visual-button linkit-visual-button-center ${visualCenter}'></div>
-						<div id='linkit-visual-line' class='linkit-visual-button linkit-visual-button-right ${visualRight}'></div>
+					<div id='linkit-controls'>
+						<div id='linkit-control-2d' class='linkit-control-button linkit-control-button-left ${visualLeft}'>2D</div>
+						<div id='linkit-control-3d' class='linkit-control-button linkit-control-button-center ${visualCenter}'>3D</div>
+						<div id='linkit-control-table' class='linkit-control-button linkit-control-button-right ${visualRight}'>Table</div>
 					</div>
 				</div>
 				<div id='linkit-menu'>
@@ -528,12 +602,33 @@ const LINKIT = {
 			addEvent('linkit-project-add', LINKIT.project.new);
 			addEvent('linkit-project-entitynew', LINKIT.entity.new);
 			addEvent('linkit-project-info', LINKIT.project.info);
+			addEvent('linkit-control-2d', () => {
+				LINKIT.visual('2d');
+			});
+			addEvent('linkit-control-3d', () => {
+				LINKIT.visual('3d');
+			});
+			addEvent('linkit-control-table', () => {
+				LINKIT.visual('table');
+			});
 
-			// Append SVG
+			// Parent Reference
+			let reference = document.getElementById('linkit-header');
+
+			// 2D Append SVG
 			const svg = document.createElement('svg');
 			svg.id = 'linkit-visual-2d';
-			let reference = document.getElementById('linkit-header');
 			reference.parentNode.insertBefore(svg, reference);
+
+			// 3D
+			const div3D = document.createElement('div');
+			div3D.id = 'linkit-visual-3d';
+			reference.parentNode.insertBefore(div3D, reference);
+
+			// Table
+			const divTA = document.createElement('div');
+			divTA.id = 'linkit-visual-table';
+			reference.parentNode.insertBefore(divTA, reference);
 
 			// No Project - Init New Project Form
 			if (isEmpty(projects)) LINKIT.project.form();

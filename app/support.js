@@ -165,11 +165,16 @@ const MESSAGE = {
 };
 
 const POPUP = {
-	open: function (title = '', content = '', boxid = 'app-popup-container') {
+	open: function (title = '', content = '', controls = '', boxid = 'app-popup-container') {
 		// Check if Popup already open
 		POPUP.close();
 
 		if (!isEmpty(content)) {
+			let popupContent = `<div class='app-popup-title'>${title}<div class='app-popup-close' onclick="POPUP.close()"></div></div><div class='app-popup-body'>${content}</div>`;
+			if (!isEmpty(controls)) {
+				popupContent += `<div class='app-popup-controls'>${controls}</div>`;
+			}
+
 			const back = document.createElement('div');
 			back.id = 'app-popup-back';
 			document.getElementById('app-content').appendChild(back);
@@ -177,11 +182,7 @@ const POPUP = {
 			const popup = document.createElement('div');
 			popup.id = boxid;
 			popup.classList.add('app-popup-container');
-
-			popup.innerHTML =
-				`<div class='app-box-title'>${title}<div class='app-popup-close' onclick="POPUP.close()"></div></div>
-				</div>` + content;
-
+			popup.innerHTML = popupContent;
 			document.getElementById('app-content').appendChild(popup);
 
 			setTimeout(() => {
@@ -361,6 +362,7 @@ const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const uniqueKey = (array, key = '') => {
 	if (!isArray(array) || isEmpty(key)) return [];
 	let list = [...new Set(array.map((item) => item[key]))];
+	list = list.filter((item) => !isEmpty(item));
 	list.sort((a, b) => a.localeCompare(b));
 
 	return list;

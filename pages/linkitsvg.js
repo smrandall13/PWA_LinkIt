@@ -8,7 +8,7 @@ const LINKITSVG = {
 	dragging: false,
 	width: 0,
 	height: 0,
-	repulsion: -300,
+	repulsion: -400,
 	timeouts: [],
 	data: null,
 	center: function (entityID = '') {
@@ -37,8 +37,10 @@ const LINKITSVG = {
 		start: function (event, d) {
 			LINKITSVG.dragging = false;
 			if (!event.active) LINKITSVG.simulation.alphaTarget(0.3).restart();
-			d.fx = d.x;
-			d.fy = d.y;
+			if (d.isLinked) {
+				d.fx = d.x;
+				d.fy = d.y;
+			}
 		},
 		drag: function (event, d) {
 			LINKITSVG.dragging = true;
@@ -48,9 +50,11 @@ const LINKITSVG = {
 		end: function (event, d) {
 			if (!event.active) LINKITSVG.simulation.alphaTarget(0);
 
-			// Allow Animation
-			d.fx = null;
-			d.fy = null;
+			if (d.isLinked) {
+				// Allow Animation
+				d.fx = null;
+				d.fy = null;
+			}
 
 			// Stop Animation
 			// d.fx = event.x;
@@ -120,6 +124,11 @@ const LINKITSVG = {
 		document.getElementById(LINKITSVG.svgid).innerHTML = ''; // Clear SVG container
 	},
 	init: function () {
+		// Define default dimensions for the rounded rectangles
+		const rectWidth = 80;
+		const rectHeight = 30;
+		const borderRadius = 10;
+
 		// Clear existing SVG
 		LINKITSVG.clear();
 
@@ -130,9 +139,11 @@ const LINKITSVG = {
 		};
 		LINKITSVG.data = data;
 
+		// Width / Height
 		const svgContainer = document.getElementById('app-content-container');
 		let width = svgContainer.offsetWidth || svgContainer.clientWidth;
 		let height = svgContainer.offsetHeight || svgContainer.clientHeight; //.append('svg').attr('width', width).attr('height', height);
+		let nodeDistanceX = width / 5; // Adjust distance as needed
 
 		const svg = d3
 			.select('#' + LINKITSVG.svgid)
@@ -140,10 +151,8 @@ const LINKITSVG = {
 			.attr('width', width)
 			.attr('height', height);
 
-		let nodeDistanceX = width / 5;
-
 		// Apply the gradient as an SVG background
-		svg.append('rect').attr('width', width).attr('height', height).style('fill', 'url(#bgGradient)');
+		svg.append('rect').attr('width', width).attr('height', height).style('fill', 'transparent').style('stroke', 'transparent');
 
 		// Group
 		const group = svg.append('g').attr('class', 'graph-group');
@@ -168,7 +177,6 @@ const LINKITSVG = {
 		// Click Handlers
 		node.on('click', function (event, d) {
 			if (LINKITSVG.dragging) return;
-			// LINKITSVG.center(d.id);
 			LINKIT.entity.select(d.id);
 		});
 
@@ -184,14 +192,41 @@ const LINKITSVG = {
 				link.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', false);
 				linkLabels.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', false); // Select connected links
 			});
-		// Node Elements
-		node.append('circle').attr('r', 10);
-		node
+
+		// Node Elements - Rounded Rectangle - Append text inside the rectangle
+
+		const rects = node
+			.append('rect')
+			.attr('width', rectWidth)
+			.attr('height', rectHeight)
+			.attr('class', 'linkit-svg-node')
+			.attr('rx', borderRadius) // Rounded corners
+			.attr('ry', borderRadius)
+			// .attr('x', -rectWidth / 2) // Centering rectangle
+			.attr('y', -rectHeight / 2);
+
+		const textElements = node
 			.append('text')
-			.attr('dx', 12)
-			.attr('dy', 4)
+			.attr('text-anchor', 'middle')
+			.attr('dy', 5) // Center text within the rectangle
+			.attr('fill', 'white')
 			.text((d) => d.name);
 
+		// Function to calculate text width dynamically
+		function getTextWidth(textElement) {
+			return textElement.getComputedTextLength() + 20; // Add padding
+		}
+
+		// Adjust rectangle width based on text size
+		textElements.each(function (d, i) {
+			const textWidth = getTextWidth(this);
+			d.rectWidth = textWidth; // Store width in data for positioning
+		});
+
+		// Apply calculated width to rectangles
+		rects.attr('width', (d) => d.rectWidth).attr('x', (d) => -d.rectWidth / 2); // Center rectangle horizontally
+
+		// Zoom
 		const zoom = d3
 			.zoom()
 			.scaleExtent([0.5, 3]) // Allow zooming in/out
@@ -234,13 +269,15 @@ const LINKITSVG = {
 					.forceLink(data.links)
 					.id((d) => d.id)
 					.distance(nodeDistanceX)
-			)
-			.force('charge', d3.forceManyBody().strength(LINKITSVG.repulsion))
-			.force('center', d3.forceCenter(width / 2, height / 2).strength(0.05))
+			) // Adjust distance as needed
+			.force(
+				'charge',
+				d3.forceManyBody().strength((d) => (!d.isLinked ? LINKITSVG.repulsion : 0))
+			) // Apply repulsion only to linked nodes
+			.force('center', d3.forceCenter(width / 2, height / 2))
 			.force('collision', d3.forceCollide().radius(50))
 			.on('tick', () => {
-				// Only update linked nodes' positions
-				node.attr('transform', (d) => (d.isLinked ? `translate(${d.x},${d.y})` : `translate(${d.fx},${d.fy})`));
+				node.attr('transform', (d) => `translate(${d.x},${d.y})`);
 				link
 					.attr('x1', (d) => d.source.x)
 					.attr('y1', (d) => d.source.y)
@@ -259,7 +296,7 @@ const LINKITSVG = {
 
 			linkLabels.attr('x', (d) => (d.source.x + d.target.x) / 2).attr('y', (d) => (d.source.y + d.target.y) / 2);
 
-			node.attr('transform', (d) => `translate(${d.x},${d.y})`);
+			node.attr('transform', (d) => `translate(${d.x},${d.y})`); // Keep nodes centered
 		});
 
 		LINKITSVG.center(); // Allows Drag

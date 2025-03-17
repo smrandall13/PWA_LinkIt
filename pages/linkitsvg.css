@@ -21,6 +21,11 @@
 	stroke: var(--border-color);
 	stroke-width: 1px;
 }
+.linkit-svg-node rect {
+	fill: var(--color-accent);
+	stroke: var(--border-color);
+	stroke-width: 1px;
+}
 .linkit-svg-node text {
 	font-size: var(--font-size-sm);
 	pointer-events: none;
@@ -34,7 +39,7 @@
 	stroke: var(--theme-dark-text);
 }
 .linkit-svg-node.linkit-svg-hover text {
-	font-size: var(--font-size);
+	/* font-size: var(--font-size); */
 }
 .linkit-svg-link {
 	stroke: var(--border-color);

@@ -1,0 +1,66 @@
+[
+	{
+		"label": "Core",
+		"origin": "system",
+		"list": [
+			{ "label": "Active", "type": "checkbox", "default": "1" },
+			{ "label": "Color", "type": "color", "default": "" },
+			{ "label": "Date", "type": "date", "default": "" },
+			{ "label": "Date Time", "type": "datetime", "default": "" },
+			{ "label": "Email", "type": "email", "default": "" },
+			{ "label": "Phone", "type": "phone", "default": "" },
+			{ "label": "Website", "type": "url", "default": "" },
+			{ "label": "Age", "type": "number", "default": "" },
+			{ "label": "Weight", "type": "text", "default": "" },
+			{ "label": "Height", "type": "text", "default": "" }
+		]
+	},
+	{
+		"label": "Column",
+		"origin": "system",
+		"list": [
+			{ "label": "Type", "type": "select", "default": "text", "options": ["varchar", "text", "longtext", "integer", "float", "date", "datetime", "boolean"] },
+			{ "label": "Size", "type": "integer", "default": "255" },
+			{ "label": "Primary", "type": "boolean", "default": false },
+			{ "label": "Unique", "type": "boolean", "default": false },
+			{ "label": "Is Null", "type": "boolean", "default": false },
+			{ "label": "default", "type": "text", "default": "" },
+			{ "label": "Foreign Key", "type": "text", "default": "" }
+		]
+	},
+	{
+		"label": "Table",
+		"type": "system",
+		"list": [{ "label": "Primary", "default": "false" }]
+	},
+	{
+		"label": "Person",
+		"type": "system",
+		"list": [
+			{ "label": "Age", "default": "" },
+			{ "label": "Height", "default": "" },
+			{ "label": "Weight", "default": "" },
+			{ "label": "Gender", "type": "select", "default": "", "options": ["", "Male", "Female"] },
+			{ "label": "Race", "default": "" }
+		]
+	},
+	{
+		"label": "Place",
+		"list": [
+			{ "label": "Street", "default": "" },
+			{ "label": "City", "default": "" },
+			{ "label": "State", "default": "" },
+			{ "label": "Zip", "default": "" },
+			{ "label": "Country", "default": "" }
+		]
+	},
+	{
+		"label": "Animal",
+		"list": [
+			{ "label": "Age", "default": "" },
+			{ "label": "Height", "default": "" },
+			{ "label": "Weight", "default": "" },
+			{ "label": "Gender", "type": "select", "default": "", "options": ["", "Male", "Female"] }
+		]
+	}
+]

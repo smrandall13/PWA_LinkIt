@@ -9,6 +9,9 @@
 		private static $transactionData = [];
 		private static $inTransaction = false;
 
+		private static $createBackups = false;
+		private static $createLogs = false;
+
 		private static $MAX_LOG_SIZE = 5 * 1024 * 1024; // 5MB
 		private static $LOG_RETENTION_DAYS = 30; // Keep logs for 30 days
 
@@ -88,7 +91,7 @@
 			if (self::$inTransaction) throw new Exception("A transaction is already active.");
 			self::$transactionData["$database.$table"] = self::data($database, $table);
 			self::$inTransaction = true;
-			self::log($database, $table, "TRANSACTION_BEGIN");
+			if (self::$createLogs) self::log($database, $table, "TRANSACTION_BEGIN");
 		}
 
 		// Commit transaction (write changes to file)
@@ -98,7 +101,7 @@
 			self::write($database, $table, self::$cache["$database.$table"]);
 			self::$transactionData = [];
 			self::$inTransaction = false;
-			self::log($database, $table, "TRANSACTION_COMMIT");
+			if (self::$createLogs) self::log($database, $table, "TRANSACTION_COMMIT");
 		}
 
 		// Rollback transaction (restore original data)
@@ -108,7 +111,7 @@
 			self::$cache["$database.$table"] = self::$transactionData["$database.$table"];
 			self::$transactionData = [];
 			self::$inTransaction = false;
-			self::log($database, $table, "TRANSACTION_ROLLBACK");
+			if (self::$createLogs) self::log($database, $table, "TRANSACTION_ROLLBACK");
 		}
 
 		// Validate Database and Table
@@ -146,7 +149,7 @@
 
 			// **Create a backup before writing new data**
 			if (file_exists($dataFile)) {
-			    copy($dataFile, $backupFile);
+			    if (self::$createBackups) copy($dataFile, $backupFile);
 			}
 
 			// **Write new data**
@@ -304,7 +307,7 @@
 					  $record['updated_at'] = date('Y-m-d H:i:s');
 					  $record['deleted_at'] = null; // Restore if previously deleted
 					  $record['updated_by'] = isset($_SESSION['user']) ? $_SESSION['user'] : 'SYSTEM';
-					  self::log($database, $table, "UPDATE", $record['id'], $oldData, $record);
+					  if (self::$createLogs) self::log($database, $table, "UPDATE", $record['id'], $oldData, $record);
 					  $updated = true; // Sent Back for Successful Insert
 				   }
 			    }
@@ -315,7 +318,7 @@
 			    $newRecord['created_at'] = date('Y-m-d H:i:s');
 			    $newRecord['created_by'] = isset($_SESSION['user']) ? $_SESSION['user'] : 'SYSTEM';
 
-			    self::log($database, $table, "INSERT", $newRecord['id'], null, $newRecord);
+			    if (self::$createLogs) self::log($database, $table, "INSERT", $newRecord['id'], null, $newRecord);
 			    $data[] = $newRecord;
 			    $updated = true; // Sent Back for Successful Update
 			}
@@ -337,19 +340,19 @@
 
 			$updated = false;
 			foreach ($data as &$record) {
-			    if (!isset($record['deleted_at']) && self::matchesCondition($record, $condition)) {
-				   self::log($database, $table, "DELETE", $record['id'], $record);
-				   $record['deleted_at'] = date('Y-m-d H:i:s');
-				   $updated = true;
-			    }
+			    	if (!isset($record['deleted_at']) && self::matchesCondition($record, $condition)) {
+					if (self::$createLogs) self::log($database, $table, "DELETE", $record['id'], $record);
+				   	$record['deleted_at'] = date('Y-m-d H:i:s');
+				   	$updated = true;
+			    	}
 			}
 
 			if ($updated) {
-			    if (self::$inTransaction) {
-				   self::$cache["$database.$table"] = $data;
-			    } else {
-				   self::write($database, $table, $data);
-			    }
+				if (self::$inTransaction) {
+					self::$cache["$database.$table"] = $data;
+				} else {
+					self::write($database, $table, $data);
+				}
 			    return "success";
 			}
 
@@ -364,20 +367,20 @@
 
 			$updated = false;
 			foreach ($data as &$record) {
-			    if (isset($record['deleted_at']) && self::matchesCondition($record, $condition)) {
-				   self::log($database, $table, "RESTORE", $record['id'], $record);
-				   unset($record['deleted_at']);
-				   $updated = true;
-			    }
+				if (isset($record['deleted_at']) && self::matchesCondition($record, $condition)) {
+					if (self::$createLogs) self::log($database, $table, "RESTORE", $record['id'], $record);
+					unset($record['deleted_at']);
+					$updated = true;
+				}
 			}
 
 			if ($updated) {
-			    if (self::$inTransaction) {
-				   self::$cache["$database.$table"] = $data;
-			    } else {
-				   self::write($database, $table, $data);
-			    }
-			    return "success";
+				if (self::$inTransaction) {
+					self::$cache["$database.$table"] = $data;
+				} else {
+					self::write($database, $table, $data);
+				}
+				return "success";
 			}
 
 			return "failure";
@@ -391,14 +394,14 @@
 			$backupFile = $backupDir . "$table-" . date('Ymd_His') . ".json";
 
 			if (!is_dir($backupDir)) {
-			    mkdir($backupDir, 0777, true);
+			    	mkdir($backupDir, 0777, true);
 			}
 
 			if (file_exists($dataFile)) {
-			    if (copy($dataFile, $backupFile)) {
-				   self::log($database, $table, "BACKUP", null, null, ["backup_file" => $backupFile]);
-				   return "Backup created: " . basename($backupFile);
-			    }
+				if (copy($dataFile, $backupFile)) {
+					if (self::$createLogs) self::log($database, $table, "BACKUP", null, null, ["backup_file" => $backupFile]);
+					return "Backup created: " . basename($backupFile);
+				}
 			}
 
 			return "No data file to backup.";
@@ -416,11 +419,11 @@
 			if (copy($backupPath, $dataFile)) {
 				$data = json_decode(file_get_contents($dataFile), true);
 				if (!is_array($data)) {
-				    self::log($database, $table, "RESTORE_BACKUP_FAILED", null, null, ["backup_file" => $backupFile]);
-				    return "Invalid backup data format.";
+					if (self::$createLogs) self::log($database, $table, "RESTORE_BACKUP_FAILED", null, null, ["backup_file" => $backupFile]);
+				    	return "Invalid backup data format.";
 				}
 				self::$cache["$database.$table"] = $data;
-				self::log($database, $table, "RESTORE_BACKUP", null, null, ["backup_file" => $backupFile]);
+				if (self::$createLogs) self::log($database, $table, "RESTORE_BACKUP", null, null, ["backup_file" => $backupFile]);
 				return "Backup restored: $backupFile";
 			}
 

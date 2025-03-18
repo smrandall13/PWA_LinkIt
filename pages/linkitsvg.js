@@ -142,7 +142,7 @@ const LINKITSVG = {
 		clearTimeout(LINKITSVG.timeouts['init']);
 
 		// Make sure d3 is loaded
-		if (!d3) {
+		if (typeof d3 === 'undefined' || !d3) {
 			LINKITSVG.timeouts['init'] = setTimeout(LINKITSVG.init, 1000);
 			return;
 		}
@@ -263,13 +263,6 @@ const LINKITSVG = {
 
 		// Center Nodes
 		data.nodes.forEach((node, index) => {
-			// if (node.isLinked) {
-			// 	node.x = width / 2 + (Math.random() - 0.5) * 50; // Small random offset to avoid overlap
-			// 	node.y = height / 2 + (Math.random() - 0.5) * 50;
-			// } else {
-			// 	node.fx = width / 2 + Math.random() * 100 - 50; // Keep unlinked nodes in place
-			// 	node.fy = height / 2 + Math.random() * 100 - 50;
-			// }
 			const angle = (index / data.nodes.length) * Math.PI * 2; // Spread nodes in a circle
 			node.x = width / 2 + Math.cos(angle) * 200; // Spread around center
 			node.y = height / 2 + Math.sin(angle) * 200;

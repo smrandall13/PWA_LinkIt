@@ -270,53 +270,59 @@
     },
     {
         "name": "entities - id",
-        "type": "column",
+        "type": "Column",
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd201",
         "attributes": [
             {
                 "label": "type",
+                "type": "text",
                 "value": "text"
             },
             {
                 "label": "primary key",
+                "type": "text",
                 "value": "true"
             },
             {
                 "label": "unique",
+                "type": "text",
                 "value": "true"
             },
             {
                 "label": "null",
+                "type": "text",
                 "value": "false"
             },
             {
                 "label": "identity",
+                "type": "text",
                 "value": "true"
-            },
-            {
-                "label": "default",
-                "value": ""
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-17 18:45:54",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "entities - projectid",
-        "type": "column",
+        "type": "Column",
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd202",
         "attributes": [
             {
                 "label": "foreight key",
+                "type": "text",
                 "value": "projects - id"
-            },
-            {
-                "label": "default",
-                "value": ""
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-17 18:45:58",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "Relationships",

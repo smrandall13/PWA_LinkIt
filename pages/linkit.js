@@ -39,6 +39,7 @@ const LINKIT = {
 		let itemKey = '';
 		let itemType = '';
 		let label = '';
+		let typeChange = '';
 
 		// Form Details
 		if (table == 'entities') {
@@ -47,6 +48,9 @@ const LINKIT = {
 			label = 'New Entity';
 			funKey = 'entity';
 			itemKey = 'entityid';
+			if (newItem === 1) {
+				typeChange = ` onchange='LINKIT.entity.type(this.value)'`;
+			}
 		} else if (table == 'relationships') {
 			items = LINKIT.settings.relationships;
 			itemid = LINKIT.settings.relationshipid;
@@ -63,7 +67,8 @@ const LINKIT = {
 
 		if ((!items || items.length === 0) && newItem === 0) return; // Exit if No Items
 
-		const item = itemid ? items.find((item) => item.id === itemid) : null;
+		let item = itemid ? items.find((item) => item.id === itemid) : null;
+		if (newItem === 1) item = null;
 
 		// Attribute Options
 		let attributeOptions = '';
@@ -79,7 +84,8 @@ const LINKIT = {
 
 		// Types
 		let types = uniqueKey(items, 'type');
-		if (isEmpty(types) && table == 'projects') types = ['ERD', 'Hierarchy', 'Custom'];
+		if (isEmpty(types) && table == 'projects') types = types = [...types, ...['ERD', 'Hierarchy', 'Custom']];
+		if (table == 'entities') types = [...types, ...['Person', 'Place', 'Thing']];
 		let typeOptions = '';
 		if (types && types.length > 0) types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
 
@@ -104,16 +110,15 @@ const LINKIT = {
 			}
 		}
 		if (newItem === 1) {
-			const coreAttributes = LINKIT.settings.attributes.find((attribute) => attribute.label === 'Core');
-			if (coreAttributes && coreAttributes.list) attributes = coreAttributes.list;
+			const typeAttributes = LINKIT.attribute.type('Core');
+			if (typeAttributes && typeAttributes.length && typeAttributes.length > 0) attributes = typeAttributes;
 		}
 		if (!isArray(attributes)) attributes = [];
 
 		// Primary
-		let primary = `
-				<div class='app-box-label'>Name</div><div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value='${getKeyValue('name')}' /></div>
+		let primary = `<div class='app-box-label'>Name</div><div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value='${getKeyValue('name')}' /></div>
 				<div class='app-box-label'>Type</div><div class='app-box-value'>
-					<input type="text" id="linkit-form-type" placeholder="Type" list='linkit-types' value='${getKeyValue('type')}' />
+					<input type="text" id="linkit-form-type" placeholder='Type' list='linkit-types' value='${getKeyValue('type')}' ${typeChange}/>
 					<datalist id='linkit-types'>${typeOptions}</datalist>
 				</div>
 				<div class='app-box-label'>Description</div><div class='app-box-value'><textarea id="linkit-form-description">${getKeyValue('description')}</textarea></div>`;
@@ -128,80 +133,14 @@ const LINKIT = {
 		content += primary;
 
 		// Attributes
-		const createAttributeValue = function (a, attribute) {
-			let value = attribute.value;
-			let defaultValue = attribute.default;
-			if (isEmpty(value)) value = defaultValue;
-			if (isEmpty(defaultValue)) defaultValue = '';
-			if (isEmpty(value)) value = '';
-			let type = attribute.type || 'text';
-			type = 'text';
+		let attributeList = LINKIT.attribute.list(attributes);
 
-			if (type == 'integer' || type == 'number' || type == 'range' || type == 'boolean') value = parseInt(value);
-			if (type == 'float' || type == 'decimal') value = parseFloat(value);
-			// if (type == 'date' || type == 'datetime') value = new Date(value);
+		// Relationships
 
-			let attributeValue = '';
-			let attrID = `linkit-form-attr_value_${a}`;
-			if (type == 'select') {
-				let options = ``;
-				if (attribute.list && attribute.list.length > 0) {
-					attribute.list.forEach((option) => (options += `<option value='${option}'>${option}</option>`));
-				}
-				attributeValue = `<select id='${attrID}' value='${value}'>${options}</select>`;
-			} else if (type == 'color') {
-				attributeValue = `<input type='color' id='${attrID}' value='${value}' />`;
-			} else if (type == 'url' || type == 'link' || type == 'web') {
-				attributeValue = `<input type='url' id='${attrID}' value='${value}' />`;
-			} else if (type == 'date') {
-				attributeValue = `<input type='date' id='${attrID}' value='${value}' />`;
-			} else if (type == 'email') {
-				attributeValue = `<input type='email' id='${attrID}' value='${value}' />`;
-			} else if (type == 'phone' || type == 'tel') {
-				attributeValue = `<input type='tel' id='${attrID}' value='${value}' />`;
-			} else if (type == 'integer' || type == 'number') {
-				attributeValue = `<input type='number' id='${attrID}' value='${value}' />`;
-			} else if (type == 'range') {
-				attributeValue = `<input type='range' id='${attrID}' value='${value}' />`;
-			} else if (type == 'datetime') {
-				attributeValue = `<input type='datetime' id='${attrID}' value='${value}' />`;
-			} else if (type == 'checkbox' || type == 'boolean') {
-				attributeValue = `<div class='app-toggle-wrapper'><label class='app-toggle-switch'><input type='checkbox' id='${attrID}' ${value ? 'checked' : ''} /><span class='app-toggle-slider'></span></label></div>`;
-			} else if (type == 'text' || type == 'varchar') {
-				attributeValue = `<input type='text' id='linkit-form-attr_value_${a}' placeholder="${defaultValue}" value='${value}' />`;
-			}
-			return attributeValue;
-		};
-
-		const createAttrbuteLine = function (num = 0, label = '', value = '') {
-			return `<div class='app-box-value'>
-					<input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' style='max-width:100px;' list='linkit-attributes' />
-				</div>
-				<div class='app-box-value'>${value}</div>`;
-		};
-
-		// Attributes
-		let attributeList = ``;
-		let a = 0;
+		// Add to Content
 		if (table == 'entities' || table == 'relationships') {
-			if (attributes && attributes.length > 0) {
-				attributes.forEach((attribute) => {
-					a++;
-					attributeList += createAttrbuteLine(a, attribute.label, createAttributeValue(a, attribute));
-				});
-			} else {
-				attributeList += createAttrbuteLine(1, '', `<input type='text' id='linkit-form-attr_value_1' value='' />`);
-				attributeList += createAttrbuteLine(2, '', `<input type='text' id='linkit-form-attr_value_2' value='' />`);
-				attributeList += createAttrbuteLine(3, '', `<input type='text' id='linkit-form-attr_value_3' value='' />`);
-			}
-			a++;
-			attributeList += createAttrbuteLine(a, '', `<input type='text' id='linkit-form-attr_value_${a}' value='' />`);
-
-			// Relationships
-
-			// Add to Content
 			content += `</div><div class='app-box-partial'>
-				<div class='app-box-label'>Properties / Traits / Details<datalist id='linkit-attributes'>${attributeOptions}</datalist></div><div class='app-box-grid'>${attributeList}</div>
+				<div class='app-box-label'>Properties / Traits / Details<datalist id='linkit-attributes'>${attributeOptions}</datalist></div><div id='linkit-attributes-list' class='app-box-grid'>${attributeList}</div>
 			</div>`;
 		}
 		content += `</div>`;
@@ -300,7 +239,11 @@ const LINKIT = {
 				LINKIT.settings[tableName] = result.data[tableName];
 				LINKIT.settings[itemKey] = result.data[itemKey];
 			}
-			LINKIT.entity.load();
+			if (tableName == 'entities' || tableName == 'relationships') {
+				LINKIT.entity.load();
+			} else if (tableName == 'projects') {
+				LINKIT.project.load();
+			}
 		});
 
 		// Close New Entry Form
@@ -343,7 +286,12 @@ const LINKIT = {
 				LINKIT.settings[tableName] = result.data[tableName];
 				LINKIT.settings[itemKey] = '';
 			}
-			LINKIT.entity.load();
+
+			if (tableName == 'entities' || tableName == 'relationships') {
+				LINKIT.entity.load();
+			} else if (tableName == 'projects') {
+				LINKIT.project.load();
+			}
 		});
 
 		// Close New Entry Form
@@ -402,6 +350,18 @@ const LINKIT = {
 			LINKIT.relationship.get();
 			LINKIT.attribute.get();
 		},
+		type: function (type = 'Core') {
+			if (!isEmpty(type)) {
+				const attributes = LINKIT.attribute.type(type);
+				if (attributes) {
+					const attributeElement = document.getElementById('linkit-attributes-list');
+					if (attributeElement) {
+						let attributeList = LINKIT.attribute.list(attributes);
+						attributeElement.innerHTML = attributeList;
+					}
+				}
+			}
+		},
 		new: function () {
 			const entities = LINKIT.settings.entities;
 			LINKIT.settings.entityid = '';
@@ -441,6 +401,83 @@ const LINKIT = {
 					LINKIT.settings.attributes = result.data.attributes;
 				}
 			});
+		},
+		list: function (attributes = []) {
+			// Attributes
+			const createAttributeValue = function (a, attribute) {
+				let value = attribute.value;
+				let defaultValue = attribute.default;
+				if (isEmpty(value)) value = defaultValue;
+				if (isEmpty(defaultValue)) defaultValue = '';
+				if (isEmpty(value)) value = '';
+				let type = attribute.type || 'text';
+				type = 'text';
+
+				if (type == 'integer' || type == 'number' || type == 'range' || type == 'boolean') value = parseInt(value);
+				if (type == 'float' || type == 'decimal') value = parseFloat(value);
+				// if (type == 'date' || type == 'datetime') value = new Date(value);
+
+				let attributeValue = '';
+				let attrID = `linkit-form-attr_value_${a}`;
+				if (type == 'select') {
+					let options = ``;
+					if (attribute.list && attribute.list.length > 0) {
+						attribute.list.forEach((option) => (options += `<option value='${option}'>${option}</option>`));
+					}
+					attributeValue = `<select id='${attrID}' value='${value}'>${options}</select>`;
+				} else if (type == 'color') {
+					attributeValue = `<input type='color' id='${attrID}' value='${value}' />`;
+				} else if (type == 'url' || type == 'link' || type == 'web') {
+					attributeValue = `<input type='url' id='${attrID}' value='${value}' />`;
+				} else if (type == 'date') {
+					attributeValue = `<input type='date' id='${attrID}' value='${value}' />`;
+				} else if (type == 'email') {
+					attributeValue = `<input type='email' id='${attrID}' value='${value}' />`;
+				} else if (type == 'phone' || type == 'tel') {
+					attributeValue = `<input type='tel' id='${attrID}' value='${value}' />`;
+				} else if (type == 'integer' || type == 'number') {
+					attributeValue = `<input type='number' id='${attrID}' value='${value}' />`;
+				} else if (type == 'range') {
+					attributeValue = `<input type='range' id='${attrID}' value='${value}' />`;
+				} else if (type == 'datetime') {
+					attributeValue = `<input type='datetime' id='${attrID}' value='${value}' />`;
+				} else if (type == 'checkbox' || type == 'boolean') {
+					attributeValue = `<div class='app-toggle-wrapper'><label class='app-toggle-switch'><input type='checkbox' id='${attrID}' ${value ? 'checked' : ''} /><span class='app-toggle-slider'></span></label></div>`;
+				} else if (type == 'text' || type == 'varchar') {
+					attributeValue = `<input type='text' id='linkit-form-attr_value_${a}' placeholder="${defaultValue}" value='${value}' />`;
+				}
+				return attributeValue;
+			};
+
+			const createAttrbuteLine = function (num = 0, label = '', value = '') {
+				return `<div class='app-box-value'>
+					<input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' style='max-width:100px;' list='linkit-attributes' />
+				</div>
+				<div class='app-box-value'>${value}</div>`;
+			};
+
+			attributeList = ``;
+			let a = 1;
+			if (attributes && attributes.length > 0) {
+				attributes.forEach((attribute) => {
+					attributeList += createAttrbuteLine(a, attribute.label, createAttributeValue(a, attribute));
+					a++;
+				});
+				attributeList += createAttrbuteLine(a, '', `<input type='text' id='linkit-form-attr_value_${a}' value='' />`);
+			} else {
+				attributeList += createAttrbuteLine(1, '', `<input type='text' id='linkit-form-attr_value_1' value='' />`);
+				attributeList += createAttrbuteLine(2, '', `<input type='text' id='linkit-form-attr_value_2' value='' />`);
+				attributeList += createAttrbuteLine(3, '', `<input type='text' id='linkit-form-attr_value_3' value='' />`);
+			}
+			return attributeList;
+		},
+		type: function (type = '') {
+			let attributes = '';
+			if (!isEmpty(type)) {
+				const coreAttributes = LINKIT.settings.attributes.find((attribute) => attribute.label === type);
+				if (coreAttributes && coreAttributes.list) attributes = coreAttributes.list;
+			}
+			return attributes;
 		},
 	},
 	visual: function (visual = '') {
@@ -490,7 +527,7 @@ const LINKIT = {
 			const projects = LINKIT.settings.projects;
 			if (isEmpty(projectID)) {
 				if (isEmpty(projects)) {
-					LINKIT.project.form();
+					LINKIT.form('projects', 1);
 				} else {
 					if (list.classList.contains('app-hidden')) {
 						list.classList.remove('app-hidden');
@@ -631,7 +668,7 @@ const LINKIT = {
 			reference.parentNode.insertBefore(divTA, reference);
 
 			// No Project - Init New Project Form
-			if (isEmpty(projects)) LINKIT.project.form();
+			if (isEmpty(projects)) LINKIT.form('projects', 1);
 		},
 		new: function () {
 			const projects = LINKIT.settings.projects;
@@ -643,7 +680,7 @@ const LINKIT = {
 			}
 
 			// New Project Form
-			LINKIT.project.form(1);
+			LINKIT.form('projects', 1);
 		},
 		info: function (projectID = '') {
 			if (isEmpty(projectID)) projectID = LINKIT.settings.projectid;

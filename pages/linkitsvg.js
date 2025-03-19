@@ -88,7 +88,7 @@ const LINKITSVG = {
 			}
 			projectNodes[projectid] = { nodes: nodePositions };
 			STORAGE.set('linkitsvg-nodes', JSON.stringify(projectNodes));
-		}, 3000);
+		}, 1000);
 	},
 	load: function () {
 		const projectNodes = JSON.parse(STORAGE.get('linkitsvg-nodes')) || {};
@@ -158,8 +158,9 @@ const LINKITSVG = {
 		// Data
 		const data = {
 			nodes: [...LINKIT.settings.entities],
-			links: [...LINKIT.settings.relationships],
+			links: LINKIT.settings.relationships.map((rel) => ({ ...rel })),
 		};
+
 		LINKITSVG.data = data;
 
 		// Width / Height

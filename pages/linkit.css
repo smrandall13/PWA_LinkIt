@@ -389,7 +389,8 @@
 	margin: 8px auto;
 	padding-left: 24px;
 	padding-right: 16px;
-	left: -308px;
+	position: absolute;
+	left: 316px;
 	width: 290px;
 	max-width: 290px;
 	min-width: 290px;
@@ -417,7 +418,7 @@
 	height: auto;
 }
 .linkit-subcontainer-visible {
-	left: -16px;
+	left: 600px;
 	margin: 8px auto;
 	box-shadow: var(--box-shadow-dark);
 }

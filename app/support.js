@@ -151,6 +151,9 @@ const MESSAGE = {
 	alert: function (title, message) {
 		MESSAGE.show(title, message, 'app-message-caution');
 	},
+	info: function (title, message) {
+		MESSAGE.show(`<div class='app-icon app-icon-small app-icon-info'></div> ${title}`, message, 'app-message-info');
+	},
 	hide: function () {
 		const appMessageBack = document.getElementById('app-message-back');
 		const appMessage = document.getElementById('app-message');

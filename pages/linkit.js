@@ -115,7 +115,7 @@ const LINKIT = {
 			// Attributes
 			let attributes = [];
 			let controls = `<div id='linkit-control-create' class='app-button app-button-small'  style='flex:1;'>Create</div>`;
-			if (!isEmpty(item) && newItem === 0) {
+			if (tableName == 'entities' && !isEmpty(itemid)) {
 				if (item && item.id === LINKIT.settings[itemKey]) {
 					attributes = item.attributes;
 					label = item.type + ': ' + item.name;
@@ -134,6 +134,7 @@ const LINKIT = {
 			let relationships = [];
 			if (tableName == 'entities' && !isEmpty(itemid)) {
 				relationships = LINKIT.settings.relationships.find((item) => item.source === itemid);
+				console.log('R', LINKIT.settings.relationships, relationships);
 			}
 
 			// Tabs
@@ -169,13 +170,14 @@ const LINKIT = {
 
 					<div class='app-box-controls mart-8'>${controls}</div>
 				</div><div class='app-box-partial  linkit-container  max-width-300 z-index-1'>${tabs}
-		`;
+			`;
 
 			if (tableName == 'entities') {
 				content += `<div id='app-tabcontent-attributes' class='app-tab-content'>
 						<div id='linkit-attributes-list' class='app-box-grid linkit-list '>${LINKIT.attribute.list(attributes)}</div>
 
-						<div id='linkit-attributes-button' class='flex-row justify-center app-grid-span mart-4'>
+						<div id='linkit-attributes-button' class='flex-row space-between app-grid-span mart-4'>
+							<div id='linkit-attribute-info' class='linkit-icon app-icon-info ' app-tooltip='Property Info'></div>
 							<div id='linkit-attributes-new-button' class='app-button app-button-small linkit-project-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
 								<div class='app-icon-add app-icon app-icon-small'></div>
 								Property
@@ -257,6 +259,9 @@ const LINKIT = {
 			});
 			addEvent('linkit-attribute-add', () => {
 				LINKIT.attribute.add();
+			});
+			addEvent('linkit-attribute-info', () => {
+				MESSAGE.info(`Property Info`, 'Properties consist of a Group, Label, and Value.<br>Groups are used to group related properties together, Labels are used to identify the property, and Values are used to store the actual data.<br><br>To Remove a property clear the Label and Value fields of the property and click the Update button.<br><br>To add a new property us the + Property button and fill out the New Property form.');
 			});
 
 			// Add On Change to all inputs
@@ -561,6 +566,7 @@ const LINKIT = {
 			DATA.submit('relationships', [{ field: 'projectid', operator: '=', value: LINKIT.settings.projectid }]).then((result) => {
 				if (result && result.data && result.data.relationships && isArray(result.data.relationships)) {
 					LINKIT.settings.relationships = result.data.relationships;
+					console.log('GR', result.data.relationships);
 				}
 				LINKIT.relationship.load();
 			});
@@ -663,10 +669,11 @@ const LINKIT = {
 				});
 
 				let lastGroup = '';
+				let titleLabels = `<div class='font-size-xsm app-box-value'>Label</div><div class='font-size-xsm app-box-value'>Value</div>`;
 				attributes.forEach((attribute) => {
 					if (!isEmpty(attribute.group) && lastGroup !== attribute.group) {
 						lastGroup = attribute.group;
-						attributeList += `<div class='app-box-subtitle app-box-span flex-row justify-center mart-8 marb-4'>${attribute.group}</div>`;
+						attributeList += `<div class='app-box-subtitle app-box-span flex-row justify-center mart-8 marb-4'>${attribute.group}</div>${titleLabels}`;
 					}
 					let editButton = ``; //<div class='app-icon app-icon-xsmall app-icon-edit pointer app-button-onhover' onclick="LINKIT.attribute.edit(${a})"></div>`;
 					attributeList += LINKIT.attribute.line(a, attribute.group, attribute.label, createAttributeValue(a, attribute) + editButton);

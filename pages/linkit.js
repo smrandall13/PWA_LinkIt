@@ -14,240 +14,402 @@ const LINKIT = {
 		attributes: [],
 		projectLimit: 3,
 		entityLimit: 100,
+		timeouts: [],
+		edited: false,
 	},
-	group: {
-		open: function (groupid) {
-			if (isEmpty(groupid)) return;
-			const group = document.getElementById('linkit-group-' + groupid);
-			if (group) group.classList.remove('linkit-group-closed');
-		},
-		close: function (groupid) {
-			if (isEmpty(groupid)) return;
-			const group = document.getElementById('linkit-group-' + groupid);
-			if (group) group.classList.add('linkit-group-closed');
-		},
-		toggle: function (groupid) {
-			if (isEmpty(groupid)) return;
-			const group = document.getElementById('linkit-group-' + groupid);
-			if (group) group.classList.toggle('linkit-group-closed');
-		},
-	},
-	form: function (table = '', newItem = 0) {
-		// Base Variables
-		let items = [];
-		let itemid = '';
-		let itemKey = '';
-		let itemType = '';
-		let label = '';
-		let typeChange = '';
+	form: {
+		open: function (tableName = '', newItem = 0) {
+			LINKIT.form.close();
 
-		// Form Details
-		if (table == 'entities') {
-			items = LINKIT.settings.entities;
-			itemid = LINKIT.settings.entityid;
-			label = 'New Entity';
-			funKey = 'entity';
-			itemKey = 'entityid';
-			if (newItem === 1) {
-				typeChange = ` onchange='LINKIT.entity.type(this.value)'`;
+			// Base Variables
+			let items = [];
+			let itemid = '';
+			let itemKey = '';
+			let label = '';
+			let typeChange = '';
+			let onChange = () => {
+				// LINKIT.update(0, 1);
+				LINKIT.settings.edited = true;
+			};
+			// onChange = ''; // Reset
+
+			// Form Details
+			if (tableName == 'entities') {
+				items = LINKIT.settings.entities;
+				itemid = LINKIT.settings.entityid;
+				label = 'New Entity';
+				funKey = 'entity';
+				itemKey = 'entityid';
+				if (newItem === 1) {
+					typeChange = ` onchange='LINKIT.entity.type(this.value)'`;
+				}
+			} else if (tableName == 'relationships') {
+				items = LINKIT.settings.relationships;
+				itemid = LINKIT.settings.relationshipid;
+				label = 'New Relationship';
+				funKey = 'relationship';
+				itemKey = 'relationshipid';
+			} else if (tableName == 'projects') {
+				items = LINKIT.settings.projects;
+				itemid = LINKIT.settings.projectid;
+				label = 'New Project';
+				funKey = 'project';
+				itemKey = 'projectid';
 			}
-		} else if (table == 'relationships') {
-			items = LINKIT.settings.relationships;
-			itemid = LINKIT.settings.relationshipid;
-			label = 'New Relationship';
-			funKey = 'relationship';
-			itemKey = 'relationshipid';
-		} else if (table == 'projects') {
-			items = LINKIT.settings.projects;
-			itemid = LINKIT.settings.projectid;
-			label = 'New Project';
-			funKey = 'project';
-			itemKey = 'projectid';
-		}
 
-		if ((!items || items.length === 0) && newItem === 0) return; // Exit if No Items
+			if ((!items || items.length === 0) && newItem === 0) return; // Exit if No Items
 
-		let item = itemid ? items.find((item) => item.id === itemid) : null;
-		if (newItem === 1) item = null;
+			let item = itemid ? items.find((item) => item.id === itemid) : null;
+			if (newItem === 1) {
+				item = null;
+				onChange = null;
+			}
+			if (item && item.id === LINKIT.settings.entityid) {
+				// Find In Menu
+				const entity = document.getElementById(`linkit-entity-${item.id}`);
+				document.querySelectorAll('.linkit-entity-item').forEach((item) => item.classList.remove('linkit-entity-item-selected'));
+				entity.classList.add('linkit-entity-item-selected');
+				entity.parentNode.classList.remove('app-group-closed');
+			}
 
-		// Attribute Options
-		let attributeOptions = '';
-		if (LINKIT.settings.attributes && LINKIT.settings.attributes.length > 0) {
-			let uniqueAttributeLabels = [];
-			LINKIT.settings.attributes.forEach((attribute) => {
-				let labels = uniqueKey(attribute.list, 'label');
-				uniqueAttributeLabels = [...uniqueAttributeLabels, ...labels];
+			// Attribute Options
+			let attributeLabels = '';
+			let attributeGroups = '';
+			if (LINKIT.settings.attributes && LINKIT.settings.attributes.length > 0) {
+				// Attribute Labels
+				let uniqueAttributeLabels = [];
+				LINKIT.settings.attributes.forEach((attribute) => {
+					let labels = uniqueKey(attribute.list, 'label');
+					uniqueAttributeLabels = [...uniqueAttributeLabels, ...labels];
+				});
+				uniqueAttributeLabels.forEach((label) => (attributeLabels += `<option value='${label}'>${label}</option>`));
+
+				// Attribute Groups
+				let uniqueAttributeGroups = [];
+				LINKIT.settings.attributes.forEach((attribute) => {
+					let groups = uniqueKey(attribute.list, 'group');
+					uniqueAttributeGroups = [...uniqueAttributeGroups, ...groups];
+				});
+				uniqueAttributeGroups.forEach((group) => (attributeGroups += `<option value='${group}'>${group}</option>`));
+			}
+
+			// Relationship Opetions
+			let relationshipOptions = '';
+
+			// Types
+			let types = uniqueKey(items, 'type');
+			if (isEmpty(types) && tableName == 'projects') types = types = [...types, ...['ERD', 'Hierarchy', 'Custom']];
+			if (tableName == 'entities') types = [...types, ...['Person', 'Place', 'Thing']];
+			types = uniqueKey(types);
+			let typeOptions = '';
+			if (types && types.length > 0) types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
+
+			const getKeyValue = (key) => {
+				let value = '';
+				if (isEmpty(key) || !item) value = '';
+				if (item && item[key]) value = item[key];
+				if (isEmpty(value)) value = '';
+				return value;
+			};
+
+			// Attributes
+			let attributes = [];
+			let controls = `<div id='linkit-control-create' class='app-button app-button-small'  style='flex:1;'>Create</div>`;
+			if (!isEmpty(item) && newItem === 0) {
+				if (item && item.id === LINKIT.settings[itemKey]) {
+					attributes = item.attributes;
+					label = item.type + ': ' + item.name;
+					controls = `<div id='linkit-control-update' class='app-button app-button-small' style='flex:1;'><div class='app-icon app-icon-small app-icon-edit'></div>Update</div>
+					<div id='linkit-control-delete' class='app-button app-button-small app-button-caution' style='flex:1;'><div class='app-icon app-icon-small app-icon-delete'></div>Delete</div>
+				`;
+				}
+			}
+			if (newItem === 1) {
+				const typeAttributes = LINKIT.attribute.type('Core');
+				if (typeAttributes && typeAttributes.length && typeAttributes.length > 0) attributes = typeAttributes;
+			}
+			if (!isArray(attributes)) attributes = [];
+
+			// Relationships
+			let relationships = [];
+			if (tableName == 'entities' && !isEmpty(itemid)) {
+				relationships = LINKIT.settings.relationships.find((item) => item.source === itemid);
+			}
+
+			// Tabs
+			let tabs = `<div class='app-tabs'>`;
+			if (tableName == 'entities') {
+				tabs += `<div id='app-tab-attributes' class='app-tab app-tab-selected' onclick="APP.tab.show('attributes');LINKIT.form.init();">Properties</div>
+					<div id='app-tab-relationships' class='app-tab' onclick="APP.tab.show('relationships');LINKIT.form.init();">Relationships</div>
+					<div id='app-tab-files' class='app-tab' onclick="APP.tab.show('files');LINKIT.form.init();">Files</div>`;
+			} else {
+				tabs += `<div id='app-tab-files' class='app-tab app-tab-selected' onclick="APP.tab.show('files')">Files</div>`;
+			}
+			tabs += `</div>`;
+
+			// Delete Button
+			let deleteButton = '';
+			if (!isEmpty(item) && newItem === 0) {
+				deleteButton = `<div id='linkit-control-delete' class='app-button-caution-onhover app-icon app-icon-xsmall app-icon-delete border-radius pointer float-right'></div>`;
+			}
+
+			// Content
+			let content = `
+			<input type="hidden" id="linkit-form-table" value='${tableName}' />
+
+			<div class='app-box-body flex-row' style='align-items: stretch;'>
+
+				<div class='app-box-partial linkit-container max-width-300'>
+					<div class='app-box-label space-between'>Name</div><div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value='${getKeyValue('name')}' /></div>
+					<div class='app-box-label'>Type</div><div class='app-box-value'>
+						<input type="text" id="linkit-form-type" placeholder='Type' list='linkit-types' value='${getKeyValue('type')}' ${typeChange}/>
+						<datalist id='linkit-types'>${typeOptions}</datalist>
+					</div>
+					<div class='app-box-label'>Description</div><div class='app-box-value'><textarea id="linkit-form-description">${getKeyValue('description')}</textarea></div>
+
+					<div class='app-box-controls mart-8'>${controls}</div>
+				</div><div class='app-box-partial  linkit-container  max-width-300 z-index-1'>${tabs}
+		`;
+
+			if (tableName == 'entities') {
+				content += `<div id='app-tabcontent-attributes' class='app-tab-content'>
+						<div id='linkit-attributes-list' class='app-box-grid linkit-list '>${LINKIT.attribute.list(attributes)}</div>
+
+						<div id='linkit-attributes-button' class='flex-row justify-center app-grid-span mart-4'>
+							<div id='linkit-attributes-new-button' class='app-button app-button-small linkit-project-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
+								<div class='app-icon-add app-icon app-icon-small'></div>
+								Property
+							</div>
+						</div>
+						<datalist id='linkit-attributegroups'>${attributeGroups}</datalist>
+						<datalist id='linkit-attributelabels'>${attributeLabels}</datalist>
+					</div>
+
+					<div id='app-tabcontent-relationships' class='app-tab-content scroll-y app-tab-content-hidden'>
+						<div id='linkit-relationships-list' class='app-box-grid'>${LINKIT.relationship.list(relationships)}</div>
+						<datalist id='linkit-relationships'>${relationshipOptions}</datalist>
+					</div>
+			`;
+			}
+
+			// Files
+			fileClass = 'app-tab-content-hidden';
+			if (tableName == 'projects') fileClass = '';
+			content += `<div id='app-tabcontent-files' class='app-tab-content scroll-y ${fileClass}'>
+						<div id='linkit-files-list' class='app-box-grid'>
+							<div class='align-center' style='width:100%;grid-column: span 2;margin-top:24px;'>Files are not allowed<br>under the current plan.
+								<div class='flex-row justify-center mart-8' >
+									<div class='app-button app-button-small' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		`;
+
+			// Attreibute New
+			if (tableName == 'entities') {
+				content += `<div id='linkit-attributes-edit' class='app-box-partial linkit-container linkit-subcontainer'>
+				<div class='space-between flex-row' style='width:100%;'>New Property <div class='app-icon-left app-icon app-icon-small pointer' onclick="LINKIT.attribute.close()"></div></div>
+				<div class='app-box-label'>Group</div><div class='app-box-value'><input type="text" id="linkit-attr-group" placeholder="Group" list='linkit-attributegroups'/></div>
+				<div class='app-box-label'>Label</div><div class='app-box-value'><input type="text" id="linkit-attr-label" placeholder="Label" list='linkit-attributelabels'/></div>
+				<div class='app-box-label'>Value</div><div class='app-box-value'><input type="text" id="linkit-attr-value" placeholder="Value" /></div>
+
+				<div class='width-100 flex-row mart-8'>
+					<div id='linkit-attribute-add' class='app-button app-button-small'  style='flex:1; width:100%;'>Add Property</div>
+				</div>
+			</div>`;
+			}
+
+			// <div id='linkit-attribute-update' class='app-button app-button-small app-hidden'  style='flex:1;'><div class='app-icon-edit app-icon app-icon-small'></div>Update</div>
+			// <div id='linkit-attribute-delete' class='app-button app-button-small app-button-caution app-hidden'  style='flex:1;'><div class='app-icon-delete app-icon app-icon-small'></div>Delete</div>
+			content += `</div>`;
+
+			const box = document.createElement('div');
+			box.id = 'linkit-edit-form';
+			box.classList.add('linkit-popup-container');
+			box.classList.add('linkit-position-top');
+
+			box.innerHTML = `
+			<div class=' linkit-container linkit-container-title'>
+				${label}
+				<div class='linkit-popup-close' onclick="LINKIT.form.close()"></div>
+			</div><div class='linkit-popup-body'>${content}</div>`;
+			document.getElementById('linkit-container').appendChild(box);
+
+			// Get first input field and focus
+			const input = box.querySelector('input');
+			if (input) input.focus();
+
+			// Add events
+			addEvent('linkit-control-create', () => {
+				LINKIT.update(1);
+			});
+			addEvent('linkit-control-update', () => {
+				LINKIT.update();
+			});
+			addEvent('linkit-control-delete', () => {
+				LINKIT.delete();
 			});
 
-			uniqueAttributeLabels.forEach((label) => (attributeOptions += `<option value='${label}'>${label}</option>`));
-		}
+			addEvent('linkit-attributes-new-button', () => {
+				LINKIT.attribute.toggle();
+			});
+			addEvent('linkit-attribute-add', () => {
+				LINKIT.attribute.add();
+			});
 
-		// Types
-		let types = uniqueKey(items, 'type');
-		if (isEmpty(types) && table == 'projects') types = types = [...types, ...['ERD', 'Hierarchy', 'Custom']];
-		if (table == 'entities') types = [...types, ...['Person', 'Place', 'Thing']];
-		let typeOptions = '';
-		if (types && types.length > 0) types.forEach((type) => (typeOptions += `<option value='${type}'>${type}</option>`));
-
-		const getKeyValue = (key) => {
-			let value = '';
-			if (isEmpty(key) || !item) value = '';
-			if (item && item[key]) value = item[key];
-			if (isEmpty(value)) value = '';
-			return value;
-		};
-
-		// item Details
-		let attributes = [];
-		let controls = `<div id='linkit-control-create' class='app-button app-button-small'  style='flex:1;'>Create</div>`;
-		if (!isEmpty(item) && newItem === 0) {
-			if (item && item.id === LINKIT.settings[itemKey]) {
-				itemType = item.type;
-				attributes = item.attributes;
-				label = item.name;
-				controls = `<div id='linkit-control-update' class='app-button app-button-small' style='flex:1;'>Update</div>
-				<div id='linkit-control-delete' class='app-button app-button-small app-button-caution' style='flex:1;'>Delete</div>`;
-			}
-		}
-		if (newItem === 1) {
-			const typeAttributes = LINKIT.attribute.type('Core');
-			if (typeAttributes && typeAttributes.length && typeAttributes.length > 0) attributes = typeAttributes;
-		}
-		if (!isArray(attributes)) attributes = [];
-
-		// Primary
-		let primary = `<div class='app-box-label'>Name</div><div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value='${getKeyValue('name')}' /></div>
-				<div class='app-box-label'>Type</div><div class='app-box-value'>
-					<input type="text" id="linkit-form-type" placeholder='Type' list='linkit-types' value='${getKeyValue('type')}' ${typeChange}/>
-					<datalist id='linkit-types'>${typeOptions}</datalist>
-				</div>
-				<div class='app-box-label'>Description</div><div class='app-box-value'><textarea id="linkit-form-description">${getKeyValue('description')}</textarea></div>`;
-
-		// Content
-		let content = `<input type="hidden" id="linkit-form-table" value='${table}' />`;
-		if (table == 'entities' || table == 'relationships') {
-			content += `<div class='app-box-body flex-row'><div class='app-box-partial'>`;
-		} else {
-			content += `<div class='app-box-body'>`;
-		}
-		content += primary;
-
-		// Attributes
-		let attributeList = LINKIT.attribute.list(attributes);
-
-		// Relationships
-
-		// Add to Content
-		if (table == 'entities' || table == 'relationships') {
-			content += `</div><div class='app-box-partial'>
-				<div class='app-box-label'>Properties / Traits / Details<datalist id='linkit-attributes'>${attributeOptions}</datalist></div><div id='linkit-attributes-list' class='app-box-grid'>${attributeList}</div>
-			</div>`;
-		}
-		content += `</div>`;
-
-		// New Project Form
-		POPUP.open(label, content, controls, 'linkit-edit-form');
-
-		// Controls
-		addEvent('linkit-control-create', () => {
-			LINKIT.update(1);
-		});
-		addEvent('linkit-control-update', () => {
-			LINKIT.update();
-		});
-		addEvent('linkit-control-delete', () => {
-			LINKIT.delete();
-		});
-	},
-	update: function (newItem = 0) {
-		const tableName = getValue('linkit-form-table');
-		if (isEmpty(tableName)) return;
-
-		// Check Item ID
-		let itemid = '';
-		let itemKey = '';
-		if (tableName == 'entities') {
-			itemid = LINKIT.settings.entityid;
-			itemKey = 'entityid';
-		}
-		if (tableName == 'relationships') {
-			itemid = LINKIT.settings.relationshipid;
-			itemKey = 'relationshipid';
-		}
-		if (tableName == 'projects') {
-			itemid = LINKIT.settings.projectid;
-			itemKey = 'projectid';
-		}
-		if (isEmpty(itemid) && newItem === 0) return;
-
-		// Check Name
-		if (isEmpty(getValue('linkit-form-name'))) {
-			MESSAGE.show('Error', 'Please enter a name.');
-			return;
-		}
-		if (isEmpty(getValue('linkit-form-type'))) {
-			MESSAGE.show('Error', 'Please enter a type.');
-			return;
-		}
-
-		// Data
-		const postData = {};
-		let conditions = [];
-		if (tableName !== 'projects') {
-			postData['projectid'] = LINKIT.settings.projectid;
-		}
-		if (!isEmpty(itemid) && newItem === 0) {
-			conditions = [{ field: 'id', operator: '=', value: itemid }];
-		}
-
-		// Get All inputs, select, textarea for element
-		const form = document.getElementById('linkit-edit-form');
-		const inputs = form.querySelectorAll('input, select, textarea');
-		const attributes = [];
-		inputs.forEach((input) => {
-			const key = input.id.split('-')[input.id.split('-').length - 1];
-			if (input.id.includes('attr_')) {
-				if (input.id.includes('attr_key_')) {
-					let number = input.id.split('_')[2];
-					if (isEmpty(number)) number = 0;
-
-					let label = getValue(`linkit-form-attr_key_${number}`);
-					let type = getValue(`linkit-form-attr_type_${number}`);
-					let value = getValue(`linkit-form-attr_value_${number}`);
-
-					if (!isEmpty(label) && !isEmpty(value) && number > 0) {
-						if (isEmpty(type)) type = 'text';
-						attributes.push({
-							label: label,
-							type: type,
-							value: value,
-						});
+			// Add On Change to all inputs
+			if (isFunction(onChange)) {
+				const inputs = document.getElementById('linkit-edit-form').querySelectorAll('input, textarea, select');
+				for (let i = 0; i < inputs.length; i++) {
+					const input = inputs[i];
+					if (input.id) {
+						addEvent(input.id, onChange);
 					}
 				}
-			} else {
-				postData[key] = input.value;
 			}
-		});
-
-		// Attributes
-		if (!isEmpty(attributes) && attributes.length > 0) {
-			postData['attributes'] = attributes;
-		}
-
-		DATA.submit(tableName, conditions, postData, 'set').then((result) => {
-			if (result && result.data) {
-				LINKIT.settings[tableName] = result.data[tableName];
-				LINKIT.settings[itemKey] = result.data[itemKey];
+		},
+		close: function (confirm = 0) {
+			if (LINKIT.settings.edited == 1) {
+				if (confirm == 0) {
+					MESSAGE.confirm('Close Form', 'Some inputs have changed.<br>Closing the form will discard any changes.<br>Are you sure you want to close this form?', () => LINKIT.form.close(1));
+					return;
+				}
 			}
-			if (tableName == 'entities' || tableName == 'relationships') {
-				LINKIT.entity.load();
-			} else if (tableName == 'projects') {
-				LINKIT.project.load();
-			}
-		});
+			// Check if Popup already open
+			if (document.getElementById('linkit-edit-form')) document.getElementById('linkit-edit-form').remove();
+		},
+		init: function () {
+			LINKIT.attribute.close();
+			LINKIT.relationship.close();
+			LINKIT.file.close();
+		},
+		reset: function (silent = 0) {
+			LINKIT.form.init();
 
-		// Close New Entry Form
-		POPUP.close();
+			const tableName = getValue('linkit-form-table');
+			if (!isEmpty(tableName)) {
+				if (silent == 1) LINKIT.form.close();
+				setTimeout(() => {
+					if (tableName == 'entities') {
+						LINKIT.entity.load();
+						if (silent == 1) LINKIT.entity.select(LINKIT.settings.entityid);
+					} else if (tableName == 'projects') {
+						LINKIT.project.load();
+						if (silent == 1) LINKIT.entity.select(LINKIT.settings.projectid);
+					}
+					LINKIT.settings.edited = false;
+				}, 200);
+			}
+		},
+	},
+	update: function (newItem = 0, silent = 0) {
+		let timeLimit = 100;
+		if (silent == 1) timeLimit = 1000;
+
+		// Update Timeout
+		clearTimeout(LINKIT.settings.timeouts['update']);
+		LINKIT.settings.timeouts['update'] = setTimeout(() => {
+			const tableName = getValue('linkit-form-table');
+			if (isEmpty(tableName)) return;
+
+			// Check Item ID
+			let itemid = '';
+			let itemKey = '';
+			if (tableName == 'entities') {
+				itemid = LINKIT.settings.entityid;
+				itemKey = 'entityid';
+			}
+			if (tableName == 'relationships') {
+				itemid = LINKIT.settings.relationshipid;
+				itemKey = 'relationshipid';
+			}
+			if (tableName == 'projects') {
+				itemid = LINKIT.settings.projectid;
+				itemKey = 'projectid';
+			}
+			if (isEmpty(itemid) && newItem === 0) return;
+
+			// Check Name
+			if (isEmpty(getValue('linkit-form-name'))) {
+				MESSAGE.show('Error', 'Please enter a name.');
+				return;
+			}
+			if (isEmpty(getValue('linkit-form-type'))) {
+				MESSAGE.show('Error', 'Please enter a type.');
+				return;
+			}
+
+			// Data
+			const postData = {};
+			let conditions = [];
+			if (tableName !== 'projects') {
+				postData['projectid'] = LINKIT.settings.projectid;
+			}
+			if (!isEmpty(itemid) && newItem === 0) {
+				conditions = [{ field: 'id', operator: '=', value: itemid }];
+			}
+
+			const sanitizeString = (input) => {
+				if (typeof input === 'string') {
+					return input.trim().replace(/[\r\n\t]+/g, ' '); // Replace newlines, carriage returns, and tabs with space
+				}
+				return input; // Return as-is if not a string
+			};
+
+			// Get All inputs, select, textarea for element
+			const form = document.getElementById('linkit-edit-form');
+			const inputs = form.querySelectorAll('input, select, textarea');
+			const attributes = [];
+			inputs.forEach((input) => {
+				const key = sanitizeString(input.id.split('-')[input.id.split('-').length - 1]);
+
+				if (input.id.includes('attr_')) {
+					if (input.id.includes('attr_key_')) {
+						let number = input.id.split('_')[2];
+						if (isEmpty(number)) number = 0;
+
+						let label = sanitizeString(getValue(`linkit-form-attr_key_${number}`));
+						let group = sanitizeString(getValue(`linkit-form-attr_group_${number}`));
+						let type = sanitizeString(getValue(`linkit-form-attr_type_${number}`));
+						let value = sanitizeString(getValue(`linkit-form-attr_value_${number}`));
+
+						if (!isEmpty(label) && !isEmpty(value) && number > 0) {
+							if (isEmpty(type)) type = 'text';
+							attributes.push({
+								label: label,
+								group: group,
+								type: type,
+								value: value,
+							});
+						}
+					}
+				} else {
+					postData[key] = sanitizeString(input.value);
+				}
+			});
+
+			// Attributes
+			if (!isEmpty(attributes) && attributes.length > 0) {
+				postData['attributes'] = attributes;
+			}
+
+			// Update Data
+			DATA.submit(tableName, conditions, postData, 'set').then((result) => {
+				if (result && result.data) {
+					LINKIT.settings[tableName] = result.data[tableName];
+					LINKIT.settings[itemKey] = result.data[itemKey];
+				}
+
+				LINKIT.form.reset(silent);
+			});
+
+			// Close New Entry Form
+			if (silent == 0) {
+				LINKIT.form.close();
+			}
+		}, timeLimit);
 	},
 	delete: function (confirm = 0) {
 		const tableName = getValue('linkit-form-table');
@@ -295,7 +457,7 @@ const LINKIT = {
 		});
 
 		// Close New Entry Form
-		POPUP.close();
+		LINKIT.form.close();
 	},
 	entity: {
 		get: function () {
@@ -309,12 +471,15 @@ const LINKIT = {
 			});
 		},
 		select: function (entityID = '') {
+			console.log('E1', entityID);
 			if (isEmpty(entityID)) return;
+			console.log('E2', entityID);
 
 			const entity = LINKIT.settings.entities.find((entity) => entity.id === entityID);
 			if (entity && entity.id === entityID) {
+				console.log('E3', entityID);
 				LINKIT.settings.entityid = entityID;
-				LINKIT.form('entities');
+				LINKIT.form.open('entities');
 			}
 		},
 		load: function () {
@@ -334,11 +499,11 @@ const LINKIT = {
 			entities.forEach((entity, index) => {
 				if (!isEmpty(entity.type) && entity.type !== type) {
 					if (!isEmpty(type)) list.push('</div>');
-					list.push(`<div id='linkit-group-${group}'class='linkit-group linkit-group-closed'><div class='linkit-group-title' onclick="LINKIT.group.toggle('${group}')" >${entity.type}<div class='linkit-group-toggle app-icon app-icon-small app-icon-down'></div></div>`);
+					list.push(`<div id='app-group-${group}'class='app-group app-group-closed'><div class='app-group-title' onclick="APP.group.toggle('${group}')" >${entity.type}<div class='app-group-toggle app-icon app-icon-small app-icon-down'></div></div>`);
 					type = entity.type;
 					group++;
 				}
-				list.push(`<div class='linkit-entity-item' onclick="LINKIT.entity.select('${entity.id}')">${entity.name}</div>`);
+				list.push(`<div id='linkit-entity-${entity.id}' class='linkit-entity-item' onclick="LINKIT.entity.select('${entity.id}')">${entity.name}</div>`);
 				if (index == entities.length - 1) {
 					const projectEntities = document.getElementById('linkit-project-entities');
 					projectEntities.innerHTML = list.join('');
@@ -352,7 +517,17 @@ const LINKIT = {
 		},
 		type: function (type = 'Core') {
 			if (!isEmpty(type)) {
-				const attributes = LINKIT.attribute.type(type);
+				let attributes = LINKIT.attribute.type(type);
+				if (!attributes || attributes.length == 0) {
+					// Get All Attributes for the last entity created with matching type
+					const entity = LINKIT.settings.entities.find((entity) => entity.type === type);
+					if (entity) {
+						attributes = [...entity.attributes];
+						attributes.forEach((attribute) => {
+							attribute.value = '';
+						});
+					}
+				}
 				if (attributes) {
 					const attributeElement = document.getElementById('linkit-attributes-list');
 					if (attributeElement) {
@@ -378,7 +553,7 @@ const LINKIT = {
 			}
 
 			// New Project Form
-			LINKIT.form('entities', 1);
+			LINKIT.form.open('entities', 1);
 		},
 	},
 	relationship: {
@@ -393,6 +568,12 @@ const LINKIT = {
 		load: function () {
 			LINKITSVG.init();
 		},
+		open: function () {},
+		close: function () {},
+		toggle: function () {},
+		list: function () {
+			return '';
+		},
 	},
 	attribute: {
 		get: function () {
@@ -401,6 +582,13 @@ const LINKIT = {
 					LINKIT.settings.attributes = result.data.attributes;
 				}
 			});
+		},
+		line: function (num, group, label, value) {
+			return `<div class='app-box-value'>
+			<input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' style='max-width:100px;' list='linkit-attributelabels' />
+			<input type='hidden' id='linkit-form-attr_group_${num}' value='${group}' list='linkit-attributegroups' />
+		</div>
+		<div class='app-box-value'>${value}</div>`;
 		},
 		list: function (attributes = []) {
 			// Attributes
@@ -449,27 +637,102 @@ const LINKIT = {
 				return attributeValue;
 			};
 
-			const createAttrbuteLine = function (num = 0, label = '', value = '') {
-				return `<div class='app-box-value'>
-					<input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' style='max-width:100px;' list='linkit-attributes' />
-				</div>
-				<div class='app-box-value'>${value}</div>`;
-			};
-
 			attributeList = ``;
 			let a = 1;
 			if (attributes && attributes.length > 0) {
+				attributes.sort((a, b) => {
+					if (a.group && b.group) {
+						const group = a.group.localeCompare(b.group);
+						if (group !== 0) return group; // Sort By Group
+					}
+
+					if (isEmpty(a.type)) {
+						a.type = 'text';
+					}
+					if (isEmpty(b.type)) {
+						b.type = 'text';
+					}
+					const type = a.type.localeCompare(b.type);
+					if (type !== 0) return type; // Sort By Type
+
+					const label = a.label.localeCompare(b.label);
+					if (label !== 0) return label; // Sort By Label
+
+					const value = a.value.localeCompare(b.value);
+					return value;
+				});
+
+				let lastGroup = '';
 				attributes.forEach((attribute) => {
-					attributeList += createAttrbuteLine(a, attribute.label, createAttributeValue(a, attribute));
+					if (!isEmpty(attribute.group) && lastGroup !== attribute.group) {
+						lastGroup = attribute.group;
+						attributeList += `<div class='app-box-subtitle app-box-span flex-row justify-center mart-8 marb-4'>${attribute.group}</div>`;
+					}
+					let editButton = ``; //<div class='app-icon app-icon-xsmall app-icon-edit pointer app-button-onhover' onclick="LINKIT.attribute.edit(${a})"></div>`;
+					attributeList += LINKIT.attribute.line(a, attribute.group, attribute.label, createAttributeValue(a, attribute) + editButton);
 					a++;
 				});
-				attributeList += createAttrbuteLine(a, '', `<input type='text' id='linkit-form-attr_value_${a}' value='' />`);
-			} else {
-				attributeList += createAttrbuteLine(1, '', `<input type='text' id='linkit-form-attr_value_1' value='' />`);
-				attributeList += createAttrbuteLine(2, '', `<input type='text' id='linkit-form-attr_value_2' value='' />`);
-				attributeList += createAttrbuteLine(3, '', `<input type='text' id='linkit-form-attr_value_3' value='' />`);
 			}
 			return attributeList;
+		},
+		toggle: function () {
+			const form = document.getElementById('linkit-attributes-edit');
+			if (!form.classList.contains('linkit-subcontainer-visible')) {
+				LINKIT.attribute.open();
+			} else {
+				LINKIT.attribute.close();
+			}
+		},
+		open: function () {
+			const form = document.getElementById('linkit-attributes-edit');
+			const button = document.getElementById('linkit-attributes-new-button');
+			let icon = null;
+			if (button) icon = button.querySelector('.app-icon');
+			if (form) form.classList.add('linkit-subcontainer-visible');
+			if (icon) {
+				icon.classList.remove('app-icon-add');
+				icon.classList.add('app-icon-minus');
+			}
+		},
+		close: function () {
+			const form = document.getElementById('linkit-attributes-edit');
+			const button = document.getElementById('linkit-attributes-new-button');
+			let icon = null;
+			if (button) icon = button.querySelector('.app-icon');
+			if (form) form.classList.remove('linkit-subcontainer-visible');
+			if (icon) {
+				icon.classList.add('app-icon-add');
+				icon.classList.remove('app-icon-minus');
+			}
+		},
+		reset: function () {
+			setValue('linkit-attr-group');
+			setValue('linkit-attr-label');
+			setValue('linkit-attr-value');
+			LINKIT.attribute.close();
+		},
+		add: function () {
+			const group = getValue('linkit-attr-group');
+			const label = getValue('linkit-attr-label');
+			const value = getValue('linkit-attr-value');
+			let type = getValue('linkit-attr-type');
+			if (isEmpty(type)) type = 'text';
+
+			if (isEmpty(label) || isEmpty(value)) {
+				MESSAGE.error('Please enter a label and value.');
+				return;
+			}
+
+			// Get the number of attributes
+			const list = document.getElementById('linkit-attributes-list');
+			const inputs = list.querySelectorAll('input[id^="linkit-form-attr_key_"]');
+			let num = inputs.length + 1;
+
+			const line = LINKIT.attribute.line(num, group, label, `<input type='text' id='linkit-form-attr_value_${num}' value='${value}' />`);
+			let html = list.innerHTML + line;
+			list.innerHTML = html;
+			setTimeout(LINKIT.update, 200); // Update Entity
+			LINKIT.attribute.reset();
 		},
 		type: function (type = '') {
 			let attributes = '';
@@ -479,6 +742,12 @@ const LINKIT = {
 			}
 			return attributes;
 		},
+	},
+	file: {
+		open: function () {},
+		close: function () {},
+		toggle: function () {},
+		list: function () {},
 	},
 	visual: function (visual = '') {
 		if (!isEmpty(visual)) LINKIT.settings.visual = visual;
@@ -527,7 +796,7 @@ const LINKIT = {
 			const projects = LINKIT.settings.projects;
 			if (isEmpty(projectID)) {
 				if (isEmpty(projects)) {
-					LINKIT.form('projects', 1);
+					LINKIT.form.open('projects', 1);
 				} else {
 					if (list.classList.contains('app-hidden')) {
 						list.classList.remove('app-hidden');
@@ -625,7 +894,7 @@ const LINKIT = {
 				</div>
 				<div id='linkit-menu'>
 					<div id='linkit-project-selector' class='linkit-header-selector'>${label}</div>
-					<div id='linkit-project-list' class='app-hidden'><div class='linkit-group-title'>Projects</div>${list}</div>
+					<div id='linkit-project-list' class='app-hidden'><div class='app-group-title'>Projects</div>${list}</div>
 					<div class='linkit-project-category'>Entities</div>
 					<div id='linkit-project-entitynew' class='app-button app-button-small linkit-project-button'><div class='app-icon app-icon-xsmall app-icon-add'></div>New Entity</div>
 					<div id='linkit-project-entities'></div>
@@ -668,7 +937,7 @@ const LINKIT = {
 			reference.parentNode.insertBefore(divTA, reference);
 
 			// No Project - Init New Project Form
-			if (isEmpty(projects)) LINKIT.form('projects', 1);
+			if (isEmpty(projects)) LINKIT.form.open('projects', 1);
 		},
 		new: function () {
 			const projects = LINKIT.settings.projects;
@@ -680,7 +949,7 @@ const LINKIT = {
 			}
 
 			// New Project Form
-			LINKIT.form('projects', 1);
+			LINKIT.form.open('projects', 1);
 		},
 		info: function (projectID = '') {
 			if (isEmpty(projectID)) projectID = LINKIT.settings.projectid;
@@ -688,7 +957,7 @@ const LINKIT = {
 
 			const project = LINKIT.settings.projects.find((project) => project.id == projectID);
 			if (isEmpty(project)) return;
-			LINKIT.form('projects');
+			LINKIT.form.open('projects');
 		},
 	},
 	load: function () {
@@ -726,7 +995,7 @@ const LINKIT = {
 			if (!isEmpty(title)) {
 				message = title + '<br>';
 			}
-			message += `Upgrade to a better plan to add more.<br>
+			message += `Upgrade your plan to add more.<br>
 			<div class='flex-row justify-center mart-8'>
 				<div class='app-button app-button-small' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
 			</div>`;

@@ -3,16 +3,15 @@
 		"label": "Core",
 		"origin": "system",
 		"list": [
-			{ "label": "Active", "type": "checkbox", "default": "1" },
-			{ "label": "Color", "type": "color", "default": "" },
-			{ "label": "Date", "type": "date", "default": "" },
-			{ "label": "Date Time", "type": "datetime", "default": "" },
-			{ "label": "Email", "type": "email", "default": "" },
-			{ "label": "Phone", "type": "phone", "default": "" },
-			{ "label": "Website", "type": "url", "default": "" },
-			{ "label": "Age", "type": "number", "default": "" },
-			{ "label": "Weight", "type": "text", "default": "" },
-			{ "label": "Height", "type": "text", "default": "" }
+			{ "label": "Color", "type": "color", "default": "", "group": "Physical" },
+			{ "label": "Date", "type": "date", "default": "", "group": "Date" },
+			{ "label": "Date Time", "type": "datetime", "default": "", "group": "Date" },
+			{ "label": "Email", "type": "email", "default": "", "group": "Contact" },
+			{ "label": "Phone", "type": "phone", "default": "", "group": "Contact" },
+			{ "label": "Website", "type": "url", "default": "", "group": "Contact" },
+			{ "label": "Age", "type": "number", "default": "", "group": "Physical" },
+			{ "label": "Weight", "type": "text", "default": "", "group": "Physical" },
+			{ "label": "Height", "type": "text", "default": "", "group": "Physical" }
 		]
 	},
 	{
@@ -61,6 +60,15 @@
 			{ "label": "Height", "default": "" },
 			{ "label": "Weight", "default": "" },
 			{ "label": "Gender", "type": "select", "default": "", "options": ["", "Male", "Female"] }
+		]
+	},
+	{
+		"label": "Thing",
+		"list": [
+			{ "label": "Color", "default": "", "type": "color" },
+			{ "label": "Height", "default": "" },
+			{ "label": "Weight", "default": "" },
+			{ "label": "Mass", "default": "" }
 		]
 	}
 ]

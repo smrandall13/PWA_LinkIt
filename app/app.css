@@ -178,12 +178,10 @@ body.theme-light select option textarea {
 .app-button-active {
 	background-color: var(--color-hover);
 }
-
 .app-button-caution {
 	background-color: var(--button-caution-back);
 	color: var(--button-caution-color);
 }
-
 .app-button-caution:hover {
 	background: var(--button-caution-hover-back);
 }
@@ -659,6 +657,7 @@ body.theme-light select option textarea {
 	min-width: 100%;
 	max-width: 100%;
 	grid-template-columns: auto 1fr;
+	grid-template-rows: auto;
 	grid-gap: 4px;
 	font-size: var(--font-size);
 }
@@ -667,6 +666,7 @@ body.theme-light select option textarea {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	flex: 1;
 }
 .app-box-body.flex-row,
 .app-box-controls {
@@ -687,8 +687,10 @@ body.theme-light select option textarea {
 	justify-content: start;
 	align-items: start;
 	gap: 4px;
+	padding: 0 4px;
 }
-.app-box-span {
+.app-box-span,
+.app-grid-span {
 	grid-column: span 2;
 }
 
@@ -716,8 +718,9 @@ body.theme-light select option textarea {
 	flex-direction: row;
 	align-items: center;
 	justify-content: flex-start;
-	min-height: 24px;
+	/* min-height: 24px; */
 	line-height: 24px;
+	gap: 4px;
 }
 .app-box-body .app-box-label,
 .app-box-partial .app-box-label {
@@ -741,6 +744,113 @@ body.theme-light select option textarea {
 	width: 100%;
 }
 
+/* Group */
+.app-group {
+	border: var(--border);
+	border-radius: var(--border-radius);
+	background-color: var(--theme-dark-back);
+	color: var(--theme-dark-text);
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 4px;
+	overflow: hidden;
+}
+.app-group-closed {
+	height: 38px;
+	min-height: 38px;
+	max-height: 38px;
+}
+.app-group-title {
+	font-size: var(--font-size-sm);
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin: 4px 0 8px 8;
+	padding: 0 0px 0 8px;
+	height: 30px;
+	line-height: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	border-top-left-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+	flex: 0;
+	background-color: var(--theme-dark-offset);
+	cursor: pointer;
+}
+.app-group-closed .app-group-title {
+	background-color: transparent;
+	border-bottom-left-radius: var(--border-radius);
+	border-bottom-right-radius: var(--border-radius);
+}
+/* Tab */
+
+.app-tabs {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	height: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	overflow: hidden;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	border-bottom: var(--border);
+	border-color: var(--color-accent);
+}
+.app-tab {
+	width: auto;
+	flex: 0 0 auto;
+	height: 30px;
+	min-height: 30px;
+	max-height: 30px;
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	color: var(--theme-dark-text);
+	font-size: var(--font-size-sm);
+	padding: 0 8px;
+	border: var(--border);
+	border-radius: var(--border-radius);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.app-tab:hover {
+	background-color: var(--theme-dark-offset);
+}
+.app-tab-selected {
+	background-color: var(--theme-dark-offset);
+	border-color: var(--color-accent);
+}
+.app-tab-content {
+	flex: 1;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 4px;
+	/* border-top: var(--border);
+	border-radius: var(--border-radius); */
+}
+.app-tab-content-hidden {
+	display: none;
+}
 /* Table */
 .app-table {
 	display: table;
@@ -834,6 +944,7 @@ body.theme-light select option textarea {
 	justify-content: start;
 	align-items: start;
 	gap: 8px;
+	padding: 8px 0;
 }
 .app-popup-controls {
 	display: flex;
@@ -844,7 +955,6 @@ body.theme-light select option textarea {
 	justify-content: start;
 	width: 100%;
 	min-width: 100%;
-	margin-top: 8px;
 	padding-top: 8px;
 	border-top: var(--border);
 }
@@ -876,7 +986,13 @@ body.theme-light select option textarea {
 }
 
 .app-icon-xsmall {
-	background-size: 60%;
+	/* background-size: 80%; */
+	width: 24px;
+	min-width: 24px;
+	max-width: 24px;
+	height: 24px;
+	min-height: 24px;
+	max-height: 24px;
 }
 
 /* Responsive Behavior */

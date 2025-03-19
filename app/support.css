@@ -1,4 +1,8 @@
 /* Support */
+.pointer {
+	cursor: pointer;
+	pointer-events: all;
+}
 .no-border {
 	border-color: transparent !important;
 }
@@ -13,6 +17,12 @@
 .app-border {
 	border: var(--border);
 	border-radius: var(--border-radius);
+}
+.border-radius {
+	border-radius: var(--border-radius);
+}
+.border-left {
+	border-left: var(--border);
 }
 .app-hidden {
 	display: none !important;
@@ -80,6 +90,13 @@
 	margin: auto;
 }
 
+.float-left {
+	float: left;
+}
+.float-right {
+	float: right;
+}
+
 .align-center {
 	text-align: center !important;
 	justify-content: center !important;
@@ -94,4 +111,54 @@
 
 .border-wrap {
 	border: var(--border);
+}
+
+.scroll-y {
+	overflow-y: auto;
+}
+
+.scroll-x {
+	overflow-x: auto;
+}
+
+.mart-16 {
+	margin-top: 16px;
+}
+.mart-8 {
+	margin-top: 8px;
+}
+.mart-4 {
+	margin-top: 4px;
+}
+.marb-4 {
+	margin-bottom: 4px;
+}
+.marb-8 {
+	margin-bottom: 8px;
+}
+.marb-16 {
+	margin-bottom: 16px;
+}
+.justify-center {
+	justify-content: center;
+}
+.space-between {
+	justify-content: space-between !important;
+}
+.width-100 {
+	width: 100%;
+}
+.max-width-300 {
+	max-width: 300px;
+}
+
+.z-index-0 {
+	z-index: 0;
+}
+.z-index-1 {
+	z-index: 1;
+}
+
+.z-index-2 {
+	z-index: 2;
 }

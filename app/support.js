@@ -165,7 +165,7 @@ const MESSAGE = {
 };
 
 const POPUP = {
-	open: function (title = '', content = '', controls = '', boxid = 'app-popup-container') {
+	open: function (title = '', content = '', controls = '', boxid = 'app-popup-container', classList = '', displayBack = true, callback = null) {
 		// Check if Popup already open
 		POPUP.close();
 
@@ -175,21 +175,26 @@ const POPUP = {
 				popupContent += `<div class='app-popup-controls'>${controls}</div>`;
 			}
 
-			const back = document.createElement('div');
-			back.id = 'app-popup-back';
-			document.getElementById('app-content').appendChild(back);
+			if (displayBack) {
+				const back = document.createElement('div');
+				back.id = 'app-popup-back';
+				document.getElementById('app-content').appendChild(back);
+			}
 
 			const popup = document.createElement('div');
 			popup.id = boxid;
 			popup.classList.add('app-popup-container');
+			if (!isEmpty(classList)) popup.classList.add(classList);
 			popup.innerHTML = popupContent;
 			document.getElementById('app-content').appendChild(popup);
 
-			setTimeout(() => {
-				// Get first input field and focus
-				const input = popup.querySelector('input');
-				if (input) input.focus();
-			});
+			if (isFunction(callback)) {
+				callback();
+			}
+
+			// Get first input field and focus
+			const input = popup.querySelector('input');
+			if (input) input.focus();
 		}
 	},
 	close: function () {
@@ -359,11 +364,17 @@ const removeEvent = function (element, trigger) {
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-const uniqueKey = (array, key = '') => {
-	if (!isArray(array) || isEmpty(key)) return [];
-	let list = [...new Set(array.map((item) => item[key]))];
-	list = list.filter((item) => !isEmpty(item));
-	list.sort((a, b) => a.localeCompare(b));
+const uniqueKey = (array = null, key = '') => {
+	if (!isArray(array)) return [];
+	let list = [];
+	if (isEmpty(key)) {
+		list = [...new Set(array)];
+	} else {
+		list = [...new Set(array.map((item) => item[key]))];
+	}
+
+	list = list.filter((item) => !isEmpty(item)); // Remove Empty
+	list.sort((a, b) => a.localeCompare(b)); // Sort
 
 	return list;
 };

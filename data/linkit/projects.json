@@ -10,9 +10,14 @@
         "updated_by": "SYSTEM"
     },
     {
-        "name": "LINKIT ERD",
+        "name": "LINKIT ERD 1",
         "description": "LINKIT Entity Relationship Diagram",
-        "id": "pro-301518"
+        "id": "pro-301518",
+        "table": "projects",
+        "type": "ERD",
+        "updated_at": "2025-03-18 14:30:31",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "table": "projects",

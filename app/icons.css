@@ -9,6 +9,9 @@
 .app-icon-add {
 	background-image: url(../assets/images/add-white.png);
 }
+.app-icon-minus {
+	background-image: url(../assets/images/minus-white.png);
+}
 .app-icon-edit {
 	background-image: url(../assets/images/edit-white.png);
 }

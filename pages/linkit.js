@@ -28,10 +28,8 @@ const LINKIT = {
 			let label = '';
 			let typeChange = '';
 			let onChange = () => {
-				// LINKIT.update(0, 1);
 				LINKIT.settings.edited = true;
 			};
-			// onChange = ''; // Reset
 
 			// Form Details
 			if (tableName == 'entities') {
@@ -123,14 +121,13 @@ const LINKIT = {
 
 			// Attributes
 			let attributes = [];
-			let controls = `<div id='linkit-control-create' class='app-button app-button-small'  style='flex:1;'>Create</div>`;
-			if (tableName == 'entities' && !isEmpty(itemid)) {
+			let controls = `<div id='linkit-control-create' class='app-button app-button-small linkit-button' style='flex:1;'>Create</div>`;
+			if (!isEmpty(itemid)) {
 				if (item && item.id === LINKIT.settings[itemKey]) {
-					attributes = item.attributes;
+					if (tableName == 'entities') attributes = item.attributes;
 					label = item.type + ': ' + item.name;
-					controls = `<div id='linkit-control-update' class='app-button app-button-small' style='flex:1;'><div class='app-icon app-icon-small app-icon-edit'></div>Update</div>
-					<div id='linkit-control-delete' class='app-button app-button-small app-button-caution' style='flex:1;'><div class='app-icon app-icon-small app-icon-delete'></div>Delete</div>
-				`;
+					controls = `<div id='linkit-control-update' class='app-button app-button-small linkit-button ' style='flex:1;'><div class='app-icon app-icon-small app-icon-edit'></div>Update</div>
+					<div id='linkit-control-delete' class='app-button app-button-small app-button-caution linkit-button linkit-button-caution' style='flex:1;'><div class='app-icon app-icon-small app-icon-delete'></div>Delete</div>`;
 				}
 			}
 			if (newItem === 1) {
@@ -157,12 +154,9 @@ const LINKIT = {
 			tabs += `</div>`;
 
 			// Content
-			let content = `
-			<input type="hidden" id="linkit-form-table" value='${tableName}' />
-
-			<div class='app-box-body flex-row' style='align-items: stretch;'>
-
-				<div class='app-box-partial linkit-container max-width-300'>
+			let content = `<div class='app-box-body flex-row' style='align-items: stretch;'>
+				<div id='linkit-edit-form-primary' class='app-box-partial linkit-container max-width-300'>
+					<input type="hidden" id="linkit-form-table" value='${tableName}' />
 					<div class='app-box-label space-between'>Name</div><div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value='${getKeyValue('name')}' /></div>
 					<div class='app-box-label'>Type</div><div class='app-box-value'>
 						<input type="text" id="linkit-form-type" placeholder='Type' list='linkit-types' value='${getKeyValue('type')}' ${typeChange}/>
@@ -171,64 +165,65 @@ const LINKIT = {
 					<div class='app-box-label'>Description</div><div class='app-box-value'><textarea id="linkit-form-description">${getKeyValue('description')}</textarea></div>
 
 					<div class='app-box-controls mart-8'>${controls}</div>
-				</div><div class='app-box-partial  linkit-container  max-width-300 z-index-1'>${tabs}
+				</div>
 			`;
 
+			// Tabs
+			let tabContent = `<div id='linkit-edit-form-tabs' class='app-box-partial  linkit-container  max-width-300 z-index-1'>${tabs}`;
 			if (tableName == 'entities') {
-				content += `<div id='app-tabcontent-attributes' class='app-tab-content'>
-						<div id='linkit-attributes-list' class='app-box-grid linkit-list '>${LINKIT.attribute.list(attributes)}</div>
-						<div id='linkit-attributes-button' class='flex-row space-between app-grid-span mart-4'>
-							<div id='linkit-attribute-info' class='linkit-icon app-icon-info ' app-tooltip='Property Info'></div>
-							<div id='linkit-attributes-new-button' class='app-button app-button-small linkit-project-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
-								<div class='app-icon-add app-icon app-icon-small'></div>
-								Property
-							</div>
+				// Attributes
+				tabContent += `<div id='app-tabcontent-attributes' class='app-tab-content'>
+					<div id='linkit-attributes-list' class='app-box-grid linkit-list '>${LINKIT.attribute.list(attributes)}</div>
+					<div id='linkit-attributes-button' class='flex-row space-between app-grid-span mart-4'>
+						<div id='linkit-attribute-info' class='linkit-icon app-icon-info ' app-tooltip='Property Info'></div>
+						<div id='linkit-attributes-new-button' class='app-button app-button-small linkit-project-button linkit-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
+							<div class='app-icon-add app-icon app-icon-small'></div>
+							Property
 						</div>
-						<datalist id='linkit-attributegroups'>${attributeGroups}</datalist>
-						<datalist id='linkit-attributelabels'>${attributeLabels}</datalist>
 					</div>
+					<datalist id='linkit-attributegroups'>${attributeGroups}</datalist>
+					<datalist id='linkit-attributelabels'>${attributeLabels}</datalist>
+				</div>`;
 
-					<div id='app-tabcontent-relationships' class='app-tab-content app-tab-content-hidden'>
-						<div id='linkit-relationships-list' class='app-box-grid linkit-list'>${LINKIT.relationship.list(relationships)}</div>
+				// Relationships
+				tabContent += `<div id='app-tabcontent-relationships' class='app-tab-content app-tab-content-hidden'>
+					<div id='linkit-relationships-list' class='app-box-grid linkit-list'>${LINKIT.relationship.list(relationships)}</div>
 
-						<div id='linkit-relationships-button' class='flex-row space-between app-grid-span mart-4'>
-							<div id='linkit-relationship-info' class='linkit-icon app-icon-info ' app-tooltip='Relationship Info'></div>
-							<div id='linkit-relationship-new-button' class='app-button app-button-small linkit-project-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
-								<div class='app-icon-add app-icon app-icon-small'></div>
-								Relationship
-							</div>
+					<div id='linkit-relationships-button' class='flex-row space-between app-grid-span mart-4'>
+						<div id='linkit-relationship-info' class='app-button app-button-small linkit-icon app-icon-info app-icon app-icon-small linkit-button' app-tooltip='Relationship Info'></div>
+						<div id='linkit-relationship-new-button' class='app-button app-button-small linkit-project-button linkit-button' style='flex:0 0 auto;width:auto;max-width:none;min-width:auto;'>
+							<div class='app-icon-add app-icon app-icon-small'></div>
+							Relationship
 						</div>
-						<datalist id='linkit-relationshiptypes'>${relationshipTypeOptions}</datalist>
 					</div>
-			`;
+					<datalist id='linkit-relationshiptypes'>${relationshipTypeOptions}</datalist>
+				</div>`;
 			}
 
 			// Files
-			fileClass = 'app-tab-content-hidden';
-			if (tableName == 'projects') fileClass = '';
-			content += `<div id='app-tabcontent-files' class='app-tab-content scroll-y ${fileClass}'>
-						<div id='linkit-files-list' class='app-box-grid'>
-							<div class='align-center' style='width:100%;grid-column: span 2;margin-top:24px;'>Files are not allowed<br>under the current plan.
-								<div class='flex-row justify-center mart-8' >
-									<div class='app-button app-button-small' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
-								</div>
+			tabContent += `<div id='app-tabcontent-files' class='app-tab-content scroll-y ${tableName == 'projects' ? '' : 'app-tab-content-hidden'}'>
+					<div id='linkit-files-list' class='app-box-grid'>
+						<div class='align-center' style='width:100%;grid-column: span 2;margin-top:24px;'>Files are not allowed<br>under the current plan.
+							<div class='flex-row justify-center mart-8' >
+								<div class='app-button app-button-small  linkit-button' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			`;
+			</div>`;
 
 			// Attributes / Relationships / File
+			let editContent = ``;
 			if (tableName == 'entities') {
 				// Attribute New
-				content += `<div id='linkit-attributes-edit' class='app-box-partial linkit-container linkit-subcontainer'>
+				editContent += `<div id='linkit-attributes-edit' class='app-box-partial linkit-container linkit-subcontainer'>
 					<div class='space-between flex-row' style='width:100%;'>New Property <div class='app-icon-left app-icon app-icon-small pointer' onclick="LINKIT.attribute.close()"></div></div>
 					<div class='app-box-label'>Group</div><div class='app-box-value'><input type="text" id="linkit-attr-group" placeholder="Group" list='linkit-attributegroups'/></div>
 					<div class='app-box-label'>Label</div><div class='app-box-value'><input type="text" id="linkit-attr-label" placeholder="Label" list='linkit-attributelabels'/></div>
 					<div class='app-box-label'>Value</div><div class='app-box-value'><input type="text" id="linkit-attr-value" placeholder="Value" /></div>
 
 					<div class='width-100 flex-row mart-8'>
-						<div id='linkit-attribute-add' class='app-button app-button-small'  style='flex:1; width:100%;'>Add Property</div>
+						<div id='linkit-attribute-add' class='app-button app-button-small linkit-button' style='flex:1; width:100%;'>Add Property</div>
 					</div>
 				</div>`;
 
@@ -249,17 +244,19 @@ const LINKIT = {
 
 				let relationshipOptions = `<option value=''>Select Entity</option>`;
 				if (optionEntities && optionEntities.length > 0) optionEntities.forEach((entity) => (relationshipOptions += `<option value='${entity.id}'>${entity.name}</option>`));
-				content += `<div id='linkit-relationship-edit' class='app-box-partial linkit-container linkit-subcontainer'>
+				editContent += `<div id='linkit-relationship-edit' class='app-box-partial linkit-container linkit-subcontainer'>
 					<div class='space-between flex-row' style='width:100%;'>New Relationship <div class='app-icon-left app-icon app-icon-small pointer' onclick="LINKIT.relationship.close()"></div></div>
 					<div class='app-box-label'>Type</div><div class='app-box-value'><input type="text" id="linkit-relate-type" placeholder="Type" list='linkit-relationshiptypes'/></div>
 					<div class='app-box-label'>Entity</div><div class='app-box-value'><select id="linkit-relate-target">${relationshipOptions}</select></div>
 
 					<div class='width-100 flex-row mart-8'>
-						<div id='linkit-relationship-add' class='app-button app-button-small'  style='flex:1; width:100%;'>Add Relationship</div>
+						<div id='linkit-relationship-add' class='app-button app-button-small linkit-button'  style='flex:1; width:100%;'>Add Relationship</div>
 					</div>
 				</div>`;
 			}
-			content += `</div>`;
+
+			// Add Tab Content and Edit Content
+			content += tabContent + editContent + `</div>`;
 
 			const box = document.createElement('div');
 			box.id = 'linkit-edit-form';
@@ -320,7 +317,7 @@ const LINKIT = {
 			}
 		},
 		close: function (confirm = 0) {
-			if (LINKIT.settings.edited == 1) {
+			if (LINKIT.settings.edited) {
 				if (confirm == 0) {
 					MESSAGE.confirm('Close Form', 'Some inputs have changed.<br>Closing the form will discard any changes.<br>Are you sure you want to close this form?', () => LINKIT.form.close(1));
 					return;
@@ -391,10 +388,11 @@ const LINKIT = {
 			}
 
 			// Data
-			const postData = {};
+			const postData = { fields: {} };
 			let conditions = [];
 			if (tableName !== 'projects') {
-				postData['projectid'] = LINKIT.settings.projectid;
+				postData.projectid = LINKIT.settings.projectid;
+				postData.fields.projectid = LINKIT.settings.projectid;
 			}
 			if (!isEmpty(itemid) && newItem === 0) {
 				conditions = [{ field: 'id', operator: '=', value: itemid }];
@@ -408,44 +406,71 @@ const LINKIT = {
 			};
 
 			// Get All inputs, select, textarea for element
-			const form = document.getElementById('linkit-edit-form');
+			const form = document.getElementById('linkit-edit-form-primary');
 			const inputs = form.querySelectorAll('input, select, textarea');
-			const attributes = [];
 			inputs.forEach((input) => {
 				const key = sanitizeString(input.id.split('-')[input.id.split('-').length - 1]);
-
-				if (input.id.includes('attr_')) {
-					if (input.id.includes('attr_key_')) {
-						let number = input.id.split('_')[2];
-						if (isEmpty(number)) number = 0;
-
-						let label = sanitizeString(getValue(`linkit-form-attr_key_${number}`));
-						let group = sanitizeString(getValue(`linkit-form-attr_group_${number}`));
-						let type = sanitizeString(getValue(`linkit-form-attr_type_${number}`));
-						let value = sanitizeString(getValue(`linkit-form-attr_value_${number}`));
-
-						if (!isEmpty(label) && !isEmpty(value) && number > 0) {
-							if (isEmpty(type)) type = 'text';
-							attributes.push({
-								label: label,
-								group: group,
-								type: type,
-								value: value,
-							});
-						}
-					}
-				} else {
-					postData[key] = sanitizeString(input.value);
-				}
+				postData.fields[key] = sanitizeString(input.value);
 			});
 
 			// Attributes
-			if (!isEmpty(attributes) && attributes.length > 0) {
-				postData['attributes'] = attributes;
-			}
+			const attributesTab = document.getElementById('app-tabcontent-attributes');
+			const attributesInputs = attributesTab.querySelectorAll('input, select, textarea');
+			const attributes = [];
+			attributesInputs.forEach((input) => {
+				if (input.id.includes('attr_key_')) {
+					let number = input.id.split('_')[2];
+					if (isEmpty(number)) number = 0;
+
+					let label = sanitizeString(getValue(`linkit-form-attr_key_${number}`));
+					let group = sanitizeString(getValue(`linkit-form-attr_group_${number}`));
+					let type = sanitizeString(getValue(`linkit-form-attr_type_${number}`));
+					let value = sanitizeString(getValue(`linkit-form-attr_value_${number}`));
+
+					if (!isEmpty(label) && !isEmpty(value) && number > 0) {
+						if (isEmpty(type)) type = 'text';
+						attributes.push({
+							label: label,
+							group: group,
+							type: type,
+							value: value,
+						});
+					}
+				}
+			});
+			if (!isEmpty(attributes) && attributes.length > 0) postData.fields.attributes = attributes;
+
+			// Relationships
+			const relationshipsTab = document.getElementById('app-tabcontent-relationships');
+			const relationshipsInputs = relationshipsTab.querySelectorAll('input, select, textarea');
+			const relationships = [];
+			relationshipsInputs.forEach((input) => {
+				if (input.id.includes('relate_source_')) {
+					let key = input.id.replace('linkit-form-relate_source_', '');
+					if (!isEmpty(key)) {
+						let source = sanitizeString(getValue(`linkit-form-relate_source_${key}`));
+						let target = sanitizeString(getValue(`linkit-form-relate_target_${key}`));
+						let sourcetype = sanitizeString(getValue(`linkit-form-relate_sourcetype_${key}`));
+						let targettype = sanitizeString(getValue(`linkit-form-relate_targettype_${key}`));
+
+						if (!isEmpty(source) && !isEmpty(target) && !isEmpty(sourcetype)) {
+							if (isEmpty(targettype)) targettype = sourcetype;
+							relationships.push({
+								id: key,
+								source: source,
+								target: target,
+								sourcetype: sourcetype,
+								targettype: targettype,
+							});
+						}
+					}
+				}
+			});
+			if (!isEmpty(relationships) && relationships.length > 0) postData.relationships = relationships;
 
 			// Update Data
 			DATA.submit(tableName, conditions, postData, 'set').then((result) => {
+				LINKIT.settings.edited = false;
 				if (result && result.data) {
 					LINKIT.settings[tableName] = result.data[tableName];
 					LINKIT.settings[itemKey] = result.data[itemKey];
@@ -455,9 +480,7 @@ const LINKIT = {
 			});
 
 			// Close New Entry Form
-			if (silent == 0) {
-				LINKIT.form.close();
-			}
+			if (silent == 0) LINKIT.form.close();
 		}, timeLimit);
 	},
 	delete: function (confirm = 0) {
@@ -520,15 +543,28 @@ const LINKIT = {
 			});
 		},
 		select: function (entityID = '') {
-			console.log('E1', entityID);
 			if (isEmpty(entityID)) return;
-			console.log('E2', entityID);
+
+			// Clear Selection
+			const nodes = document.getElementsByClassName('linkit-svg-node');
+			if (nodes && nodes.length > 0) {
+				for (let i = 0; i < nodes.length; i++) {
+					nodes[i].classList.remove('linkit-svg-selected');
+				}
+			}
 
 			const entity = LINKIT.settings.entities.find((entity) => entity.id === entityID);
 			if (entity && entity.id === entityID) {
-				console.log('E3', entityID);
 				LINKIT.settings.entityid = entityID;
 				LINKIT.form.open('entities');
+
+				// Visual Changes
+				if (LINKIT.settings.visual == '2d') {
+					const node = document.getElementById(`node-${entityID}`);
+					if (node) {
+						node.classList.add('linkit-svg-selected');
+					}
+				}
 			}
 		},
 		load: function () {
@@ -610,7 +646,6 @@ const LINKIT = {
 			DATA.submit('relationships', [{ field: 'projectid', operator: '=', value: LINKIT.settings.projectid }]).then((result) => {
 				if (result && result.data && result.data.relationships && isArray(result.data.relationships)) {
 					LINKIT.settings.relationships = result.data.relationships;
-					console.log('GR', result.data.relationships);
 				}
 				LINKIT.relationship.load();
 			});
@@ -649,28 +684,35 @@ const LINKIT = {
 			}
 		},
 		reset: function () {
-			setValue('linkit-relate-type');
+			setValue('linkit-relate_type');
 			setValue('linkit-relate-target');
 			LINKIT.relationship.close();
 		},
-		line: function (relateID, type, source, target, otherEntities) {
+		line: function (relateID, relateType, entity, source, target, otherEntities) {
 			if (source && source.name) {
-				let otherOptions = `<option value=''>Unknown</option>`;
+				let selectID = target.id;
+				let selectorID = `linkit-form-relate_target_${relateID}`;
 
+				let hidden = `<input type='hidden' id='linkit-form-relate_target_${relateID}' value='${entity.id}'  />`;
+				if (source.id == entity.id) {
+					hidden += `<input type='hidden' id='linkit-form-relate_source_${relateID}' value='${entity.id}'  />`;
+				} else {
+					selectID = source.id;
+					selectorID = `linkit-form-relate_source_${relateID}`;
+				}
+
+				let otherOptions = `<option value=''>Unknown</option>`;
 				if (otherEntities && otherEntities.length > 0) {
 					otherEntities.sort((a, b) => a.name.localeCompare(b.name));
-					otherEntities.forEach((entity) => {
-						const selected = entity.id === target.id ? 'selected' : '';
-						otherOptions += `<option value='${entity.id}' ${selected}>${entity.name}</option>`;
+					otherEntities.forEach((item) => {
+						otherOptions += `<option value='${item.id}' ${item.id === selectID ? 'selected' : ''}>${item.name}</option>`;
 					});
 				}
-				return `<div class='app-box-value'>
-					<input type='hidden' id='linkit-form-relate_source_${relateID}' value='${source.id}'  />
-					<input type='text' id='linkit-form-relate_type_${relateID}' value='${type}' list='linkit-relationshiptypes' style='max-width:100px;' />
+
+				return `<div class='app-box-value'>${hidden}
+					<input type='text' id='linkit-form-relate_type_${relateID}' value='${relateType}' list='linkit-relationshiptypes' style='max-width:100px;' />
 				</div>
-				<div class='app-box-value'>
-					<select id='linkit-form-relate_target_${relateID}'>${otherOptions}</select>
-				</div>`;
+				<div class='app-box-value'><select id='${selectorID}'>${otherOptions}</select></div>`;
 			} else {
 				return '';
 			}
@@ -681,17 +723,11 @@ const LINKIT = {
 			let relationshipOptions = '';
 			if (otherEntities && otherEntities.length > 0) otherEntities.forEach((entity) => (relationshipOptions += `<option value='${entity.id}'>${entity.name}</option>`));
 
+			let relationshipList = `<div class='width-100 align-center app-box-span'>No Relationships</div>`;
 			if (relationships && relationships.length > 0) {
-				let relationshipList = ``;
 				relationships.sort((a, b) => {
-					if (isEmpty(a.type)) {
-						a.type = 'Child';
-					}
-					if (isEmpty(b.type)) {
-						b.type = 'Child';
-					}
-					const type = a.type.localeCompare(b.type);
-					if (type !== 0) return type; // Sort By Type
+					const sourcetype = a.sourcetype.localeCompare(b.sourcetype);
+					if (sourcetype !== 0) return sourcetype; // Sort By Type
 
 					const source = a.source.localeCompare(b.source);
 					if (source !== 0) return source; // Sort By Label
@@ -700,29 +736,44 @@ const LINKIT = {
 					return target;
 				});
 
+				relationshipList = '';
 				let lastType = '';
-				let titleLabels = `<div class='font-size-xsm app-box-value'>Entity</div><div class='font-size-xsm app-box-value'>Type</div>`;
+				let titleLabels = `<div class='font-size-xsm app-box-value'>Type</div><div class='font-size-xsm app-box-value'>Entity</div>`;
 				relationships.forEach((relationship) => {
+					const entity = LINKIT.settings.entities.find((entity) => entity.id === LINKIT.settings.entityid);
+
 					if (!isEmpty(relationship.type) && lastType !== relationship.type) {
 						lastType = relationship.type;
 						relationshipList += `<div class='app-box-subtitle app-box-span flex-row justify-center mart-8 marb-4'></div>${titleLabels}`;
 					}
+
 					const source = LINKIT.settings.entities.find((entity) => entity.id === relationship.source);
 					const target = LINKIT.settings.entities.find((entity) => entity.id === relationship.target);
 
-					const entity = LINKIT.settings.entities.find((entity) => entity.id === LINKIT.settings.entityid);
-					let other = source;
-					if (source.id === entity.id) other = target;
-					const type = relationship.type;
-					relationshipList += LINKIT.relationship.line(relationship.id, type, entity, other, otherEntities);
+					relationshipList += LINKIT.relationship.line(relationship.id, relationship.type, entity, source, target, otherEntities);
 				});
-				return relationshipList;
 			}
-			return '';
+			return relationshipList;
+		},
+		add: function () {
+			const type = getValue('linkit-relate-type');
+			const target = getValue('linkit-relate-target');
+			if (isEmpty(type) || isEmpty(target)) {
+				MESSAGE.alert('Error', 'Please enter a type and target.');
+				return;
+			}
+			if (!isEmpty(type) && !isEmpty(target)) {
+				const entity = LINKIT.settings.entities.find((entity) => entity.id === LINKIT.settings.entityid);
+				const other = LINKIT.settings.entities.find((entity) => entity.id === target);
+				const otherEntities = LINKIT.settings.entities.filter((entity) => entity.id !== LINKIT.settings.entityid);
+				const relationship = LINKIT.relationship.line(0, type, entity, other, otherEntities);
+				LINKIT.relationship.add(relationship);
+			}
 		},
 	},
 	attribute: {
 		get: function () {
+			// Get Attribute Types
 			DATA.submit('attributes').then((result) => {
 				if (result && result.data && result.data.attributes && isArray(result.data.attributes)) {
 					LINKIT.settings.attributes = result.data.attributes;
@@ -783,7 +834,7 @@ const LINKIT = {
 				return attributeValue;
 			};
 
-			let attributeList = ``;
+			let attributeList = `<div class='width-100 align-center app-box-span'>No Properties</div>`;
 			let a = 1;
 			if (attributes && attributes.length > 0) {
 				attributes.sort((a, b) => {
@@ -809,13 +860,14 @@ const LINKIT = {
 				});
 
 				let lastGroup = '';
+				attributeList = '';
 				let titleLabels = `<div class='font-size-xsm app-box-value'>Label</div><div class='font-size-xsm app-box-value'>Value</div>`;
 				attributes.forEach((attribute) => {
 					if (!isEmpty(attribute.group) && lastGroup !== attribute.group) {
 						lastGroup = attribute.group;
 						attributeList += `<div class='app-box-subtitle app-box-span flex-row justify-center mart-8 marb-4'>${attribute.group}</div>${titleLabels}`;
 					}
-					let editButton = ``; //<div class='app-icon app-icon-xsmall app-icon-edit pointer app-button-onhover' onclick="LINKIT.attribute.edit(${a})"></div>`;
+					let editButton = ``;
 					attributeList += LINKIT.attribute.line(a, attribute.group, attribute.label, createAttributeValue(a, attribute) + editButton);
 					a++;
 				});
@@ -930,6 +982,7 @@ const LINKIT = {
 	},
 	project: {
 		get: function () {
+			// Get All Projects
 			DATA.submit('projects', null).then((result) => {
 				if (result && result.data && result.data.projects && isArray(result.data.projects)) {
 					LINKIT.settings.projects = result.data.projects;
@@ -1005,15 +1058,14 @@ const LINKIT = {
 					list += `<div class='linkit-project-item ${projectClass}' onclick="LINKIT.project.select('${project.id}')">${projectLabel}</div>`;
 				});
 			}
-			list += `<div id='linkit-project-add' class='app-button app-button-small linkit-project-button'><div class='app-icon app-icon-xsmall app-icon-add'></div><div class='app-button-text'>New Project</div></div>`;
+			list += `<div id='linkit-project-add' class='app-button app-button-small linkit-project-button linkit-button'><div class='app-icon app-icon-xsmall app-icon-add'></div><div class='app-button-text'>Project</div></div>`;
 
 			// Entity Button
 			let buttons = '';
 			if (!isEmpty(project)) {
 				LINKIT.entity.get();
 
-				buttons = `<div id='linkit-project-info' class='app-button app-button-small linkit-project-button'><div class='app-icon app-icon-xsmall app-icon-info'></div><div class='app-button-text'>Project Info</div></div>
-					`;
+				buttons = `<div id='linkit-project-info' class='app-button app-button-small linkit-project-button linkit-button linkit-back'><div class='app-icon app-icon-xsmall app-icon-edit'></div><div class='app-button-text'>Project Info</div></div>`;
 			}
 
 			// Visual Class
@@ -1043,10 +1095,10 @@ const LINKIT = {
 					<div id='linkit-project-selector' class='linkit-header-selector'>${label}</div>
 					<div id='linkit-project-list' class='app-hidden'><div class='app-group-title'>Projects</div>${list}</div>
 					<div class='linkit-project-category'>Entities</div>
-					<div id='linkit-project-entitynew' class='app-button app-button-small linkit-project-button'><div class='app-icon app-icon-xsmall app-icon-add'></div>New Entity</div>
+					<div id='linkit-project-entitynew' class='app-button app-button-small linkit-project-button linkit-button linkit-back'><div class='app-icon app-icon-xsmall app-icon-add'></div><div class='app-button-text'>Entity</div></div>
 					<div id='linkit-project-entities'></div>
 					${buttons}
-					<div id='linkit-settings' class='app-button app-button-small linkit-project-button'><div class='app-icon app-icon-xsmall app-icon-settings'></div><div class='app-button-text'>Settings</div></div>
+					<div id='linkit-settings' class='app-button app-button-small linkit-project-button linkit-button linkit-back'><div class='app-icon app-icon-xsmall app-icon-settings'></div><div class='app-button-text'>Settings</div></div>
 				</div>
 			`;
 
@@ -1144,7 +1196,7 @@ const LINKIT = {
 			}
 			message += `Upgrade your plan to add more.<br>
 			<div class='flex-row justify-center mart-8'>
-				<div class='app-button app-button-small' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
+				<div class='app-button app-button-small linkit-button' onclick="LINKIT.plan.upgrade()">Upgrade Plan</div>
 			</div>`;
 			MESSAGE.show('Limit Reached', message);
 		},

@@ -177,24 +177,40 @@ const LINKITSVG = {
 			.attr('height', height);
 
 		// Apply the gradient as an SVG background
-		svg.append('rect').attr('width', width).attr('height', height).style('fill', 'transparent').style('stroke', 'transparent');
+		// svg.append('rect').attr('width', width).attr('height', height).style('fill', 'transparent').style('stroke', 'transparent');
 
 		// Group
-		const group = svg.append('g').attr('class', 'graph-group');
+		const group = svg.append('g').attr('class', 'graph-group'); // Parent Group
 
+		// Links between nodes
 		const link = group.selectAll('.linkit-svg-link').data(data.links).enter().append('line').attr('class', 'linkit-svg-link');
 
-		const linkLabels = group
-			.selectAll('.linkit-svg-link-label')
+		// Labels of each Link
+		const linkTypes = group
+			.selectAll('.linkit-svg-link-type')
 			.data(data.links)
 			.enter()
 			.append('text')
-			.attr('class', 'linkit-svg-link-label')
+			.attr('class', 'linkit-svg-link-type')
 			.attr('text-anchor', 'middle')
-			.text((d) => d.type);
+			.text((d) => {
+				let type = '';
+				if (d.sourcetype === d.targettype || isEmpty(d.targettype)) {
+					type = `${d.sourcetype}`;
+				} else {
+					type = `${d.sourcetype} - ${d.targettype}`;
+				}
+				return type;
+			});
 
 		// Node Attributes
-		const node = group.selectAll('.linkit-svg-node').data(data.nodes).enter().append('g').attr('class', 'linkit-svg-node');
+		const node = group
+			.selectAll('.linkit-svg-node')
+			.data(data.nodes)
+			.enter()
+			.append('g')
+			.attr('class', 'linkit-svg-node')
+			.attr('id', (d) => `node-${d.id}`);
 
 		// Drag Handlers
 		node.call(d3.drag().on('start', LINKITSVG.drag.start).on('drag', LINKITSVG.drag.drag).on('end', LINKITSVG.drag.end));
@@ -210,12 +226,12 @@ const LINKITSVG = {
 			.on('mouseover', function (event, d) {
 				d3.select(this).classed('linkit-svg-hover', true);
 				link.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', true); // Select connected links
-				linkLabels.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', true); // Select connected links
+				linkTypes.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', true); // Select connected links
 			})
 			.on('mouseout', function (event, d) {
 				d3.select(this).classed('linkit-svg-hover', false); // Reset border
 				link.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', false);
-				linkLabels.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', false); // Select connected links
+				linkTypes.filter((l) => l.source === d || l.target === d).classed('linkit-svg-hover', false); // Select connected links
 			});
 
 		// Node Elements - Rounded Rectangle - Append text inside the rectangle
@@ -320,10 +336,11 @@ const LINKITSVG = {
 				.attr('x2', (d) => d.target.x)
 				.attr('y2', (d) => d.target.y);
 
-			linkLabels.attr('x', (d) => (d.source.x + d.target.x) / 2).attr('y', (d) => (d.source.y + d.target.y) / 2);
+			linkTypes.attr('x', (d) => (d.source.x + d.target.x) / 2).attr('y', (d) => (d.source.y + d.target.y) / 2);
 
 			node.attr('transform', (d) => `translate(${d.x},${d.y})`); // Keep nodes centered
 		});
+		LINKITSVG.simulation.on('end', () => LINKITSVG.save);
 
 		LINKITSVG.center(); // Allows Drag
 

@@ -158,35 +158,41 @@
         ]
     },
     {
-        "name": "Ruby ",
-        "type": "Animal",
-        "description": "Chocolate Labrador",
+        "name": "Ruby",
+        "type": "Pet",
+        "description": "White Labrador",
         "projectid": "pro-301517",
         "id": "ent-cc6f05",
         "attributes": [
             {
-                "label": "Roles",
+                "label": "Gender",
+                "group": "Physical",
                 "type": "text",
-                "value": "Dog",
-                "group": "Roles"
+                "value": "Female"
             },
             {
                 "label": "Weight",
+                "group": "Physical",
                 "type": "text",
-                "value": "51 lbs",
-                "group": "Physical"
+                "value": "51 lbs"
             },
             {
-                "label": "Gender",
+                "label": "Roles",
+                "group": "Roles",
                 "type": "text",
-                "value": "Female",
-                "group": "Physical"
+                "value": "Dog"
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-17 17:56:23",
+        "updated_at": "2025-03-21 11:23:44",
         "deleted_at": null,
-        "updated_by": "SYSTEM"
+        "updated_by": "SYSTEM",
+        "000011": "ent-3f82fe",
+        "000012": "ent-cc6f01",
+        "group": "",
+        "label": "",
+        "value": "",
+        "target": ""
     },
     {
         "name": "Ricky Randall",
@@ -710,7 +716,7 @@
         "projectid": "pro-301517",
         "table": "entities",
         "name": "Cash",
-        "type": "Animal",
+        "type": "Pet",
         "description": "Playful, Needy, Friendly",
         "attributes": [
             {
@@ -765,49 +771,8 @@
         "id": "ent-d71386",
         "created_at": "2025-03-18 10:14:33",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-19 11:46:25",
+        "updated_at": "2025-03-21 14:18:22",
         "deleted_at": null,
-        "updated_by": "SYSTEM",
-        "group": "undefined",
-        "label": "undefined",
-        "value": "undefined"
-    },
-    {
-        "projectid": "pro-301517",
-        "table": "entities",
-        "name": "Test 1",
-        "type": "Test",
-        "description": "",
-        "attributes": [
-            {
-                "label": "Color",
-                "type": "text",
-                "value": "Grey"
-            },
-            {
-                "label": "Date",
-                "type": "text",
-                "value": "2016-01-01"
-            },
-            {
-                "label": "Email",
-                "type": "text",
-                "value": "test@test.com"
-            },
-            {
-                "label": "Website",
-                "type": "text",
-                "value": "test.com"
-            },
-            {
-                "label": "Age",
-                "type": "text",
-                "value": "0"
-            }
-        ],
-        "id": "ent-62c75a",
-        "created_at": "2025-03-18 14:05:59",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-19 17:16:39"
+        "updated_by": "SYSTEM"
     }
 ]

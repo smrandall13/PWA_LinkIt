@@ -4,7 +4,8 @@
 		"projectid": "pro-301517",
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f01",
-		"type": "Occupant",
+		"sourcetype": "Home",
+		"targettype": "Occupant",
 		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
 	},
 	{
@@ -12,7 +13,8 @@
 		"projectid": "pro-301517",
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f02",
-		"type": "Occupant",
+		"sourcetype": "Home",
+		"targettype": "Occupant",
 		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
 	},
 	{
@@ -20,21 +22,24 @@
 		"projectid": "pro-301517",
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f03",
-		"type": "Occupant"
+		"sourcetype": "Home",
+		"targettype": "Occupant"
 	},
 	{
 		"id": "rel-000004",
 		"projectid": "pro-301517",
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f04",
-		"type": "Occupant"
+		"sourcetype": "Home",
+		"targettype": "Occupant"
 	},
 	{
 		"id": "rel-000005",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f01",
 		"target": "ent-cc6f02",
-		"type": "Spouse",
+		"sourcetype": "Husband",
+		"targettype": "Wife",
 		"attributes": [{ "label": "Date", "value": "2013-09-07" }]
 	},
 	{
@@ -42,118 +47,135 @@
 		"projectid": "pro-301517",
 		"source": "ent-cc6f01",
 		"target": "ent-cc6f03",
-		"type": "Child"
+		"sourcetype": "Father",
+		"targettype": "Child"
 	},
 	{
 		"id": "rel-000007",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f01",
 		"target": "ent-cc6f04",
-		"type": "Child"
+		"sourcetype": "Father",
+		"targettype": "Child"
 	},
 	{
 		"id": "rel-000008",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f02",
 		"target": "ent-cc6f03",
-		"type": "Child"
+		"sourcetype": "Mother",
+		"targettype": "Child"
 	},
 	{
 		"id": "rel-000009",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f02",
 		"target": "ent-cc6f04",
-		"type": "Child"
+		"sourcetype": "Mother",
+		"targettype": "Child"
 	},
 	{
 		"id": "rel-000010",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f03",
 		"target": "ent-cc6f04",
-		"type": "Sibling"
+		"sourcetype": "Sister",
+		"targettype": "Brother"
 	},
 	{
 		"id": "rel-000011",
 		"projectid": "pro-301517",
 		"source": "ent-3f82fe",
 		"target": "ent-cc6f05",
-		"type": "Occupant"
+		"sourcetype": "Home",
+		"targettype": "Occupant"
 	},
 	{
 		"id": "rel-000012",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f01",
 		"target": "ent-cc6f05",
-		"type": "Pet"
+		"sourcetype": "Owner",
+		"targettype": "Pet"
 	},
 	{
 		"id": "rel-000013",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f01",
 		"target": "ent-cc6f06",
-		"type": "Sibling"
+		"sourcetype": "Brother",
+		"targettype": "Brother"
 	},
 	{
 		"id": "rel-000014",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f06",
 		"target": "ent-cc6f07",
-		"type": "Spouse"
+		"sourcetype": "Spouse",
+		"targettype": "Spouse"
 	},
 	{
 		"id": "rel-000015",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f06",
 		"target": "ent-cc6f08",
-		"type": "Child"
+		"sourcetype": "Step Father",
+		"targettype": "Step Daughter"
 	},
 	{
 		"id": "rel-000016",
 		"projectid": "pro-301517",
 		"source": "ent-cc6f07",
 		"target": "ent-cc6f08",
-		"type": "Child"
+		"sourcetype": "Mother",
+		"targettype": "Daughter"
 	},
 	{
 		"id": "rel-000017",
 		"projectid": "pro-301518",
 		"source": "ent-erd001",
 		"target": "ent-erd101",
-		"type": "Column"
+		"sourcetype": "Table",
+		"targettype": "Column"
 	},
 	{
 		"id": "rel-000018",
 		"projectid": "pro-301518",
 		"source": "ent-erd001",
 		"target": "ent-erd102",
-		"type": "Column"
+		"sourcetype": "Table",
+		"targettype": "Column"
 	},
 	{
 		"id": "rel-000019",
 		"projectid": "pro-301518",
 		"source": "ent-erd001",
 		"target": "ent-erd103",
-		"type": "Column"
+		"sourcetype": "Table",
+		"targettype": "Column"
 	},
 	{
 		"id": "rel-000020",
 		"projectid": "pro-301518",
 		"source": "ent-erd002",
 		"target": "ent-erd201",
-		"type": "Column"
+		"sourcetype": "Table",
+		"targettype": "Column"
 	},
 	{
 		"id": "rel-000021",
 		"projectid": "pro-301518",
 		"source": "ent-erd002",
 		"target": "ent-erd202",
-		"type": "Column"
+		"sourcetype": "Table",
+		"targettype": "Column"
 	},
 	{
 		"id": "rel-000022",
 		"projectid": "pro-301518",
 		"source": "ent-erd101",
 		"target": "ent-erd202",
-		"type": "Foreign Key"
+		"sourcetype": "Foreign Key ",
+		"targettype": "Foreign Key"
 	}
 ]

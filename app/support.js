@@ -217,12 +217,14 @@ const POPUP = {
 const DATA = {
 	database: '',
 	account: null,
-	submit: function (table = '', condition = '', fields = '', request = 'get') {
+	submit: function (table = '', condition = '', data = '', request = 'get') {
 		if (!isEmpty(this.database) && !isEmpty(table)) {
 			return new Promise((resolve, reject) => {
 				// Send request
-				const sendData = { command: 'data', request: request, database: this.database, table: table, fields: fields, condition: condition };
+				const sendData = { command: 'data', request: request, database: this.database, table: table, data: data, condition: condition };
 				if (!isEmpty(this.account)) sendData.account = this.account;
+
+				console.log('SD', sendData);
 
 				FETCH(
 					'',

@@ -22,8 +22,10 @@
 	stroke-width: 1px;
 }
 .linkit-svg-node rect {
-	fill: var(--color-accent);
-	stroke: var(--border-color);
+	fill: var(--theme-dark-back);
+	/* fill: transparent; */
+	stroke: var(--color-accent);
+	/* stroke: var(--border-color); */
 	stroke-width: 1px;
 }
 .linkit-svg-node text {
@@ -31,6 +33,11 @@
 	pointer-events: none;
 	color: var(--theme-dark-text);
 	fill: var(--theme-dark-text);
+}
+.linkit-svg-node.linkit-svg-selected rect {
+	fill: var(--color-accent);
+	stroke: var(--color-accent);
+	stroke-width: 2px;
 }
 .linkit-svg-hover {
 	z-index: 1;
@@ -52,7 +59,7 @@
 	stroke-opacity: 1;
 	z-index: 1;
 }
-.linkit-svg-link-label {
+.linkit-svg-link-type {
 	font-size: var(--font-size-xsm);
 	pointer-events: none;
 	color: var(--theme-dark-text);

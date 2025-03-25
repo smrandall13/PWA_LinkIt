@@ -43,7 +43,7 @@
 	z-index: 1;
 }
 .linkit-svg-node.linkit-svg-hover circle {
-	stroke: var(--theme-dark-text);
+	stroke: var(--color-accent);
 }
 .linkit-svg-node.linkit-svg-hover text {
 	/* font-size: var(--font-size); */
@@ -55,7 +55,7 @@
 	z-index: 0;
 }
 .linkit-svg-link.linkit-svg-hover {
-	stroke: var(--theme-dark-text);
+	stroke: var(--color-accent);
 	stroke-opacity: 1;
 	z-index: 1;
 }
@@ -65,6 +65,9 @@
 	color: var(--theme-dark-text);
 	fill: var(--theme-dark-text);
 	opacity: 0.5;
+}
+.linkit-svg-link-type.linkit-svg-hover {
+	color: var(--color-accent);
 }
 .linkit-svg-link-label.linkit-svg-hover {
 	opacity: 0.75;

@@ -403,6 +403,23 @@ const setValue = (inputID, value) => {
 		}
 	}
 };
+const updateValue = (inputID, value, overrid = 0) => {
+	if (!isEmpty(inputID)) {
+		const input = document.getElementById(inputID);
+		if (input && input.id == inputID) {
+			if (overrid == 1 || input.value == '') {
+				input.value = value;
+			}
+		}
+	}
+};
+
+const removeElement = (elementid) => {
+	if (!isEmpty(elementid)) {
+		const element = document.getElementById(elementid);
+		if (element) element.remove();
+	}
+};
 
 const formatDateTime = (variable = '', dateFormat = '', timeFormat = '') => {
 	const dateString = formatDate(variable, dateFormat);

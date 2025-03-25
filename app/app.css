@@ -50,6 +50,7 @@
 	visibility: visible;
 	opacity: 1;
 	transition-delay: 0s;
+	z-index: 9000;
 }
 body {
 	background-color: var(--theme-dark-back);
@@ -728,6 +729,22 @@ body.theme-light select option textarea {
 .app-grid-span {
 	grid-column: span 2;
 }
+.app-box-cover {
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 8px;
+	justify-content: start;
+	align-items: start;
+	background-color: var(--theme-dark-back);
+	color: var(--theme-dark-text);
+	pointer-events: all;
+}
 
 /* Label */
 .app-box-label {
@@ -1007,6 +1024,9 @@ body.theme-light select option textarea {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
+	transition: all 0.3s ease-in-out;
+	border-radius: var(--border-radius);
+	border-color: transparent;
 }
 .app-icon-small,
 .app-icon-xsmall {
@@ -1031,6 +1051,19 @@ body.theme-light select option textarea {
 	height: 24px;
 	min-height: 24px;
 	max-height: 24px;
+}
+.app-icon-hover:hover {
+	border: var(--border);
+	border-radius: var(--border-radius);
+	border-color: var(--color-accent);
+}
+.app-icon-inline {
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
 }
 
 /* Responsive Behavior */

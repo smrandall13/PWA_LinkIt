@@ -9,6 +9,7 @@ const LINKITSVG = {
 	width: 0,
 	height: 0,
 	repulsion: -100,
+	distance: 200,
 	timeouts: [],
 	data: null,
 	animate: true,
@@ -166,9 +167,7 @@ const LINKITSVG = {
 		// Width / Height
 		const svgContainer = document.getElementById('app-content-container');
 		let width = svgContainer.offsetWidth || svgContainer.clientWidth;
-		let height = svgContainer.offsetHeight || svgContainer.clientHeight; //.append('svg').attr('width', width).attr('height', height);
-		// let nodeDistanceX = width / 8; // Adjust distance as needed
-		let nodeDistanceX = 240; // Adjust distance as needed
+		let height = svgContainer.offsetHeight || svgContainer.clientHeight;
 
 		const svg = d3
 			.select('#' + LINKITSVG.svgid)
@@ -308,7 +307,7 @@ const LINKITSVG = {
 				d3
 					.forceLink(data.links)
 					.id((d) => d.id)
-					.distance(nodeDistanceX)
+					.distance(LINKITSVG.distance)
 			) // Adjust distance as needed
 			.force(
 				'charge',

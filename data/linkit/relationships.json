@@ -1,181 +1,242 @@
 [
-	{
-		"id": "rel-000001",
-		"projectid": "pro-301517",
-		"source": "ent-3f82fe",
-		"target": "ent-cc6f01",
-		"sourcetype": "Home",
-		"targettype": "Occupant",
-		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
-	},
-	{
-		"id": "rel-000002",
-		"projectid": "pro-301517",
-		"source": "ent-3f82fe",
-		"target": "ent-cc6f02",
-		"sourcetype": "Home",
-		"targettype": "Occupant",
-		"attributes": [{ "label": "Date", "value": "2010-10-10" }]
-	},
-	{
-		"id": "rel-000003",
-		"projectid": "pro-301517",
-		"source": "ent-3f82fe",
-		"target": "ent-cc6f03",
-		"sourcetype": "Home",
-		"targettype": "Occupant"
-	},
-	{
-		"id": "rel-000004",
-		"projectid": "pro-301517",
-		"source": "ent-3f82fe",
-		"target": "ent-cc6f04",
-		"sourcetype": "Home",
-		"targettype": "Occupant"
-	},
-	{
-		"id": "rel-000005",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f01",
-		"target": "ent-cc6f02",
-		"sourcetype": "Husband",
-		"targettype": "Wife",
-		"attributes": [{ "label": "Date", "value": "2013-09-07" }]
-	},
-	{
-		"id": "rel-000006",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f01",
-		"target": "ent-cc6f03",
-		"sourcetype": "Father",
-		"targettype": "Child"
-	},
-	{
-		"id": "rel-000007",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f01",
-		"target": "ent-cc6f04",
-		"sourcetype": "Father",
-		"targettype": "Child"
-	},
-	{
-		"id": "rel-000008",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f02",
-		"target": "ent-cc6f03",
-		"sourcetype": "Mother",
-		"targettype": "Child"
-	},
-	{
-		"id": "rel-000009",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f02",
-		"target": "ent-cc6f04",
-		"sourcetype": "Mother",
-		"targettype": "Child"
-	},
-	{
-		"id": "rel-000010",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f03",
-		"target": "ent-cc6f04",
-		"sourcetype": "Sister",
-		"targettype": "Brother"
-	},
-	{
-		"id": "rel-000011",
-		"projectid": "pro-301517",
-		"source": "ent-3f82fe",
-		"target": "ent-cc6f05",
-		"sourcetype": "Home",
-		"targettype": "Occupant"
-	},
-	{
-		"id": "rel-000012",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f01",
-		"target": "ent-cc6f05",
-		"sourcetype": "Owner",
-		"targettype": "Pet"
-	},
-	{
-		"id": "rel-000013",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f01",
-		"target": "ent-cc6f06",
-		"sourcetype": "Brother",
-		"targettype": "Brother"
-	},
-	{
-		"id": "rel-000014",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f06",
-		"target": "ent-cc6f07",
-		"sourcetype": "Spouse",
-		"targettype": "Spouse"
-	},
-	{
-		"id": "rel-000015",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f06",
-		"target": "ent-cc6f08",
-		"sourcetype": "Step Father",
-		"targettype": "Step Daughter"
-	},
-	{
-		"id": "rel-000016",
-		"projectid": "pro-301517",
-		"source": "ent-cc6f07",
-		"target": "ent-cc6f08",
-		"sourcetype": "Mother",
-		"targettype": "Daughter"
-	},
-	{
-		"id": "rel-000017",
-		"projectid": "pro-301518",
-		"source": "ent-erd001",
-		"target": "ent-erd101",
-		"sourcetype": "Table",
-		"targettype": "Column"
-	},
-	{
-		"id": "rel-000018",
-		"projectid": "pro-301518",
-		"source": "ent-erd001",
-		"target": "ent-erd102",
-		"sourcetype": "Table",
-		"targettype": "Column"
-	},
-	{
-		"id": "rel-000019",
-		"projectid": "pro-301518",
-		"source": "ent-erd001",
-		"target": "ent-erd103",
-		"sourcetype": "Table",
-		"targettype": "Column"
-	},
-	{
-		"id": "rel-000020",
-		"projectid": "pro-301518",
-		"source": "ent-erd002",
-		"target": "ent-erd201",
-		"sourcetype": "Table",
-		"targettype": "Column"
-	},
-	{
-		"id": "rel-000021",
-		"projectid": "pro-301518",
-		"source": "ent-erd002",
-		"target": "ent-erd202",
-		"sourcetype": "Table",
-		"targettype": "Column"
-	},
-	{
-		"id": "rel-000022",
-		"projectid": "pro-301518",
-		"source": "ent-erd101",
-		"target": "ent-erd202",
-		"sourcetype": "Foreign Key ",
-		"targettype": "Foreign Key"
-	}
+    {
+        "id": "rel-000001",
+        "projectid": "pro-301517",
+        "source": "ent-3f82fe",
+        "target": "ent-cc6f01",
+        "sourcetype": "Home",
+        "targettype": "Occupant",
+        "attributes": [
+            {
+                "label": "Date",
+                "value": "2010-10-10"
+            }
+        ]
+    },
+    {
+        "id": "rel-000002",
+        "projectid": "pro-301517",
+        "source": "ent-3f82fe",
+        "target": "ent-cc6f02",
+        "sourcetype": "Home",
+        "targettype": "Occupant",
+        "attributes": [
+            {
+                "label": "Date",
+                "value": "2010-10-10"
+            }
+        ]
+    },
+    {
+        "id": "rel-000003",
+        "projectid": "pro-301517",
+        "source": "ent-3f82fe",
+        "target": "ent-cc6f03",
+        "sourcetype": "Home",
+        "targettype": "Occupant"
+    },
+    {
+        "id": "rel-000004",
+        "projectid": "pro-301517",
+        "source": "ent-3f82fe",
+        "target": "ent-cc6f04",
+        "sourcetype": "Home",
+        "targettype": "Occupant"
+    },
+    {
+        "id": "rel-000005",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f01",
+        "target": "ent-cc6f02",
+        "sourcetype": "Husband",
+        "targettype": "Wife",
+        "attributes": [
+            {
+                "label": "Date",
+                "value": "2013-09-07"
+            }
+        ]
+    },
+    {
+        "id": "rel-000006",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f01",
+        "target": "ent-cc6f03",
+        "sourcetype": "Father",
+        "targettype": "Child"
+    },
+    {
+        "id": "rel-000007",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f01",
+        "target": "ent-cc6f04",
+        "sourcetype": "Father",
+        "targettype": "Daughter",
+        "updated_at": "2025-03-24 15:10:23",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "id": "rel-000008",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f02",
+        "target": "ent-cc6f03",
+        "sourcetype": "Mother",
+        "targettype": "Child"
+    },
+    {
+        "id": "rel-000009",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f02",
+        "target": "ent-cc6f04",
+        "sourcetype": "Mother",
+        "targettype": "Daughter",
+        "updated_at": "2025-03-24 15:10:42",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "id": "rel-000010",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f03",
+        "target": "ent-cc6f04",
+        "sourcetype": "Sister",
+        "targettype": "Brother"
+    },
+    {
+        "id": "rel-000011",
+        "projectid": "pro-301517",
+        "source": "ent-3f82fe",
+        "target": "ent-cc6f05",
+        "sourcetype": "Home",
+        "targettype": "Occupant"
+    },
+    {
+        "id": "rel-000012",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f01",
+        "target": "ent-cc6f05",
+        "sourcetype": "Owner",
+        "targettype": "Pet"
+    },
+    {
+        "id": "rel-000013",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f01",
+        "target": "ent-cc6f06",
+        "sourcetype": "Brother",
+        "targettype": "Brother"
+    },
+    {
+        "id": "rel-000014",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f06",
+        "target": "ent-cc6f07",
+        "sourcetype": "Spouse",
+        "targettype": "Spouse"
+    },
+    {
+        "id": "rel-000015",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f06",
+        "target": "ent-cc6f08",
+        "sourcetype": "Step Father",
+        "targettype": "Step Daughter"
+    },
+    {
+        "id": "rel-000016",
+        "projectid": "pro-301517",
+        "source": "ent-cc6f07",
+        "target": "ent-cc6f08",
+        "sourcetype": "Mother",
+        "targettype": "Daughter"
+    },
+    {
+        "id": "rel-000017",
+        "projectid": "pro-301518",
+        "source": "ent-erd001",
+        "target": "ent-erd101",
+        "sourcetype": "Table",
+        "targettype": "Column"
+    },
+    {
+        "id": "rel-000018",
+        "projectid": "pro-301518",
+        "source": "ent-erd001",
+        "target": "ent-erd102",
+        "sourcetype": "Table",
+        "targettype": "Column"
+    },
+    {
+        "id": "rel-000019",
+        "projectid": "pro-301518",
+        "source": "ent-erd001",
+        "target": "ent-erd103",
+        "sourcetype": "Table",
+        "targettype": "Column"
+    },
+    {
+        "id": "rel-000020",
+        "projectid": "pro-301518",
+        "source": "ent-erd002",
+        "target": "ent-erd201",
+        "sourcetype": "Table",
+        "targettype": "Column"
+    },
+    {
+        "id": "rel-000021",
+        "projectid": "pro-301518",
+        "source": "ent-erd002",
+        "target": "ent-erd202",
+        "sourcetype": "Table",
+        "targettype": "Column"
+    },
+    {
+        "id": "rel-000022",
+        "projectid": "pro-301518",
+        "source": "ent-erd101",
+        "target": "ent-erd202",
+        "sourcetype": "Foreign Key ",
+        "targettype": "Foreign Key"
+    },
+    {
+        "projectid": "pro-301517",
+        "source": "ent-d71386",
+        "target": "ent-cc6f06",
+        "targettype": "Owner",
+        "sourcetype": "Pet",
+        "id": "rel-73f695",
+        "created_at": "2025-03-24 14:58:02",
+        "created_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "source": "ent-d71386",
+        "target": "ent-cc6f07",
+        "targettype": "Owner",
+        "sourcetype": "Pet",
+        "id": "rel-3b69cf",
+        "created_at": "2025-03-24 15:02:03",
+        "created_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "source": "ent-cb3bfe",
+        "target": "ent-cc6f06",
+        "targettype": "",
+        "sourcetype": "Brother",
+        "id": "rel-e02e6b",
+        "created_at": "2025-03-24 15:03:03",
+        "created_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "source": "ent-cb3bfe",
+        "target": "ent-cc6f01",
+        "targettype": "",
+        "sourcetype": "Brother",
+        "id": "rel-fb69e2",
+        "created_at": "2025-03-24 15:03:21",
+        "created_by": "SYSTEM"
+    }
 ]

@@ -121,6 +121,35 @@
 	overflow-x: auto;
 }
 
+.gap-4 {
+	gap: 4px;
+}
+.gap-8 {
+	gap: 8px;
+}
+.gap-16 {
+	gap: 16px;
+}
+
+.pad-0 {
+	padding: 0 !important;
+}
+.pad-4 {
+	padding: 4px !important;
+}
+.pad-8 {
+	padding: 8px !important;
+}
+.mar-0 {
+	margin: 0 !important;
+}
+.mar-4 {
+	margin: 4px !important;
+}
+.mar-8 {
+	margin: 8px !important;
+}
+
 .mart-16 {
 	margin-top: 16px;
 }

@@ -7,19 +7,43 @@
         "id": "ent-3f82fe",
         "attributes": [
             {
-                "label": "Address",
-                "value": "1111 Stocktan Rd, Texas 77388",
-                "group": "Addresses"
+                "label": "City",
+                "group": "Address",
+                "type": "text",
+                "value": "Spring"
+            },
+            {
+                "label": "State",
+                "group": "Address",
+                "type": "text",
+                "value": "Texas"
+            },
+            {
+                "label": "Street",
+                "group": "Address",
+                "type": "text",
+                "value": "1111 Stocktan Rd"
+            },
+            {
+                "label": "Zipcode",
+                "group": "Address",
+                "type": "text",
+                "value": "77388"
             },
             {
                 "label": "Color",
-                "value": "White",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "Grey"
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-21 14:55:44",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
-        "name": "Shaun Michael Randall",
+        "name": "Shaun Randall",
         "type": "Person",
         "description": "Man of the house",
         "projectid": "pro-301517",
@@ -63,7 +87,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-18 15:58:26",
+        "updated_at": "2025-03-24 11:33:33",
         "deleted_at": null,
         "updated_by": "SYSTEM",
         "group": "",
@@ -227,33 +251,41 @@
         "updated_by": "SYSTEM"
     },
     {
-        "name": "Christy",
+        "name": "Christy Randall",
         "type": "Person",
         "description": "Ricky's Wife",
         "projectid": "pro-301517",
         "id": "ent-cc6f07",
         "attributes": [
             {
-                "label": "Relation",
-                "value": "Sibling",
-                "group": "Roles"
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
             },
             {
                 "label": "Height",
-                "value": "5' 2\"",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "5"
             },
             {
                 "label": "Weight",
-                "value": "140 lbs",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "140 lbs"
             },
             {
-                "label": "Gender",
-                "value": "Female",
-                "group": "Physical"
+                "label": "Relation",
+                "group": "Roles",
+                "type": "text",
+                "value": "Sibling"
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-24 14:58:52",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "Taylor",
@@ -720,10 +752,10 @@
         "description": "Playful, Needy, Friendly",
         "attributes": [
             {
-                "label": "Age",
+                "label": "Birth Year",
                 "group": "Physical",
                 "type": "text",
-                "value": "5"
+                "value": "2020"
             },
             {
                 "label": "Breed",
@@ -760,18 +792,81 @@
                 "group": "Physical",
                 "type": "text",
                 "value": "120 lbs"
-            },
-            {
-                "label": "Test",
-                "group": "Test",
-                "type": "text",
-                "value": "Test"
             }
         ],
         "id": "ent-d71386",
         "created_at": "2025-03-18 10:14:33",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-21 14:18:22",
+        "updated_at": "2025-03-24 14:55:46",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Chris Randall",
+        "type": "Person",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Male"
+            },
+            {
+                "label": "Race",
+                "group": "Physical",
+                "type": "text",
+                "value": "White"
+            }
+        ],
+        "id": "ent-cc41df",
+        "created_at": "2025-03-24 11:52:25",
+        "created_by": "SYSTEM",
+        "deleted_at": "2025-03-24 11:54:48"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Chris Randall",
+        "type": "Person",
+        "description": "Type Test",
+        "id": "ent-a57553",
+        "created_at": "2025-03-24 11:55:56",
+        "created_by": "SYSTEM",
+        "deleted_at": "2025-03-24 11:56:12"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Chris Randall",
+        "type": "Person",
+        "description": "",
+        "id": "ent-cb3bfe",
+        "created_at": "2025-03-24 11:59:18",
+        "created_by": "SYSTEM",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Male"
+            },
+            {
+                "label": "Height",
+                "group": "Physical",
+                "type": "text",
+                "value": "6ft 5in"
+            },
+            {
+                "label": "Race",
+                "group": "Physical",
+                "type": "text",
+                "value": "White"
+            }
+        ],
+        "updated_at": "2025-03-24 15:02:53",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     }

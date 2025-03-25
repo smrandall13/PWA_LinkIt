@@ -221,13 +221,17 @@
 		// Matches Conditions
 		private static function matchesCondition($record, $condition) {
 			foreach ($condition as $cond) {
-			    $field = $cond['field'];
-			    $operator = $cond['operator'];
-			    $value = $cond['value'];
+				if (!isset($cond['field']) || !isset($cond['operator']) || !isset($cond['value'])){
+					return false;
+				  }else{
+					$field = $cond['field'];
+					$operator = $cond['operator'];
+					$value = $cond['value'];
 
-			    if (!isset($record[$field]) || !self::checkCondition($record[$field], $operator, $value)) {
-				   return false;
-			    }
+					if (!isset($record[$field]) || !self::checkCondition($record[$field], $operator, $value)) {
+						return false;
+					}
+				}
 			}
 			return true;
 		}
@@ -266,13 +270,18 @@
 			if (!empty($condition)) {
 			    $data = array_values(array_filter($data, function ($row) use ($condition) {
 				   foreach ($condition as $cond) {
-					  $field = $cond['field'];
-					  $operator = $cond['operator'];
-					  $value = $cond['value'];
 
-					  if (!isset($row[$field]) || !self::checkCondition($row[$field], $operator, $value)) {
-						 return false;
-					  }
+					  if (!isset($cond['field']) || !isset($cond['operator']) || !isset($cond['value'])){
+						return false;
+					  }else{
+						$field = $cond['field'];
+						$operator = $cond['operator'];
+						$value = $cond['value'];
+
+						if (!isset($row[$field]) || !self::checkCondition($row[$field], $operator, $value)) {
+							return false;
+						}
+					}
 				   }
 				   return true;
 			    }));

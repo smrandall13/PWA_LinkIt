@@ -69,6 +69,8 @@
 	font-size: var(--font-size-lg);
 }
 
+.color-accent {color:var(--color-accent) !important;}
+
 .flex-row {
 	display: flex !important;
 	flex-direction: row !important;

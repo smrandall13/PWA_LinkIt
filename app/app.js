@@ -507,7 +507,34 @@ const APP = {
 					// Location
 					LOCATE.init(APP.data.trackLocation);
 
-					callback();
+					// Key Bindings
+					const executeFunction = (functionString,element) => {
+						if (!isEmpty(functionString)){
+							if (functionString.includes('(')){
+								eval(functionString);
+							} else{
+								if (element && element.id){
+									eval(functionString+"('"+element.id+"')");
+								}else{
+									eval(functionString+"()");									
+								}
+							}
+						}
+					}
+
+					document.addEventListener('keydown', (event) => {
+						const activeElement = document.activeElement;
+						if (event.key === 'Escape') {
+							if (activeElement.matches('[app-action-escape]')) executeFunction(activeElement.getAttribute('app-action-escape'),activeElement);
+						}else if (event.key === 'Enter') {
+							if (activeElement.matches('[app-action-enter]')) executeFunction(activeElement.getAttribute('app-action-enter'),activeElement);							
+						}
+					});
+
+					// Wait for the app to initialize // Fade out and remove cover screen
+					const cover = document.getElementById('app-cover');
+					cover.style.opacity = '0'; // Smooth fade-out
+					setTimeout(() => cover.remove(), 1000); // Remove after animation
 				},
 				(error) => {
 					LOG.error(`Failed to load app.json:`, error);
@@ -524,12 +551,7 @@ const APP = {
 addEvent(
 	document,
 	() => {
-		APP.init(() => {
-			// Wait for the app to initialize // Fade out and remove cover screen
-			const cover = document.getElementById('app-cover');
-			cover.style.opacity = '0'; // Smooth fade-out
-			setTimeout(() => cover.remove(), 1000); // Remove after animation
-		});
+		APP.init();
 	},
 	'DOMContentLoaded'
 );

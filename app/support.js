@@ -217,33 +217,40 @@ const POPUP = {
 const DATA = {
 	database: '',
 	account: null,
-	submit: function (table = '', condition = '', data = '', request = 'get') {
-		if (!isEmpty(this.database) && !isEmpty(table)) {
-			return new Promise((resolve, reject) => {
-				// Send request
-				const sendData = { command: 'data', request: request, database: this.database, table: table, data: data, condition: condition };
-				if (!isEmpty(this.account)) sendData.account = this.account;
+	async submit(table = '', condition = '', data = '', request = 'get') {
+		if (isEmpty(this.database) || isEmpty(table)) {
+			return Promise.reject(new Error('Missing database or table name.'));
+		}
 
-				console.log('SD', sendData);
+		const sendData = {
+			command: 'data',
+			request, // Sets request to request
+			database: this.database,
+			table,
+			data,
+			condition,
+		};
 
+		if (!isEmpty(this.account)) sendData.account = this.account;
+
+		try {
+			const response = await new Promise((resolve, reject) => {
 				FETCH(
 					'',
 					sendData,
-					(response) => {
-						// Check if data is JSON or string
-						if (typeof response === 'string' && isJSON(response)) {
-							response = JSON.parse(response);
-						}
-						resolve(response.data); // Already an object or a raw string
-					},
-					(error) => {
-						reject(error);
-					}
+					(res) => resolve(res),
+					(err) => reject(err)
 				);
 			});
+
+			const responseData = typeof response === 'string' && isJSON(response) ? JSON.parse(response) : response;
+
+			return responseData.data;
+		} catch (error) {
+			throw error;
 		}
 	},
-	init: function (database = '', account = '') {
+	init(database = '', account = '') {
 		this.database = database;
 		this.account = account;
 	},
@@ -318,6 +325,7 @@ const isNumber = (variable) => typeof variable === 'number';
 const isString = (variable) => typeof variable === 'string';
 const isJSON = (variable) => typeof variable === 'object' && variable !== null;
 const isArray = (variable) => Array.isArray(variable);
+const isObject = (variable) => typeof variable === 'object' && variable !== null;
 const is = {
 	number: isNumber,
 	string: isString,
@@ -329,7 +337,6 @@ const is = {
 
 const addClass = (elementID, className) => document.getElementById(elementID).classList.add(className);
 const removeClass = (elementID, className) => document.getElementById(elementID).classList.remove(className);
-const rmClass = removeClass;
 const addEvent = (element, functionCall = null, trigger = 'click') => {
 	if (!element || !functionCall) return; // Exit if missing parameters
 
@@ -366,9 +373,7 @@ const removeEvent = function (element, trigger) {
 		}
 	}
 };
-
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
 const uniqueKey = (array = null, key = '') => {
 	if (!isArray(array)) return [];
 	let list = [];
@@ -383,25 +388,24 @@ const uniqueKey = (array = null, key = '') => {
 
 	return list;
 };
-const getValue = (inputID) => {
-	if (!isEmpty(inputID)) {
-		const input = document.getElementById(inputID);
-		if (input && input.id == inputID && input.value) {
-			return input.value;
-		} else {
-			return '';
-		}
-	}
+const getElement = (element)=>{
+	if (!element) return null;
+	if (!isObject(element)) element = document.getElementById(element);
+	if (!element) return null;
+	return element;
+}
+const getValue = (input) => {
+	input = getElement(input);
+	if (!input) return null;
+	
+	if (input && input.value) return input.value; 
 	return '';
 };
-
-const setValue = (inputID, value) => {
-	if (!isEmpty(inputID)) {
-		const input = document.getElementById(inputID);
-		if (input && input.id == inputID) {
-			input.value = value;
-		}
-	}
+const setValue = (input, value) => {
+	input = getElement(input);
+	if (!input) return null;	
+	if (isEmpty(value)) value = '';
+	if (input && input.value) input.value = value;
 };
 const updateValue = (inputID, value, overrid = 0) => {
 	if (!isEmpty(inputID)) {
@@ -412,6 +416,70 @@ const updateValue = (inputID, value, overrid = 0) => {
 			}
 		}
 	}
+};
+
+const inputVisible = (input) => {
+	return input.matches('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])') && input.offsetParent !== null;
+};
+const inputNext = (input) => {
+	input = getElement(input);
+	if (!input) return null;
+
+	// Helper to find the next input from a parent container
+	function findNextInParent(element) {
+		let inputs = element.querySelectorAll('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])');
+		if (inputs.length === 0) return null;
+
+		inputs = Array.from(inputs).filter(inputVisible);
+		const currentIndex = inputs.indexOf(input);
+		// Return the next input if available
+		if (currentIndex >= 0 && currentIndex < inputs.length - 1) return inputs[currentIndex + 1];
+		return null;
+	}
+
+	// Recursive function to traverse up the DOM tree
+	function findNext(element) {
+		if (!element || element === document.body) return null;
+
+		// Check for next siblings first
+		let sibling = element.nextElementSibling;
+		while (sibling) {
+			// Check the sibling itself
+			if (inputVisible(sibling) && sibling.id != input.id) {
+				return sibling;
+			}
+
+			// Check within sibling descendants
+			const descendant = sibling.querySelector('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])');
+			if (descendant && inputVisible(descendant) && descendant.id != input.id)  {
+				return descendant;
+			}
+
+			sibling = sibling.nextElementSibling;
+		}
+
+		// No next sibling found—search within parent for inputs after the current input
+		if (element.parentElement) {
+			const parentResult = findNextInParent(element.parentElement);
+			if (parentResult) return parentResult;
+
+			// Move up one level and repeat
+			return findNext(element.parentElement);
+		} else {
+			return null;
+		}
+	}
+
+	// Start the search
+	nextInput = findNext(input);
+	if (nextInput) nextInput.focus();
+
+	return nextInput;
+};
+const inputFocus = (input) => {
+	input = getElement(input);
+	if (!input) return null;
+	input.focus();
 };
 
 const removeElement = (elementid) => {

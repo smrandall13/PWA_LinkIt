@@ -1,6 +1,6 @@
 // Components
 // import { MyButton } from './assets/components.js';
-
+const appBody = document.getElementById('app-body');
 const appContent = document.getElementById('app-content');
 const APP = {
 	root: '',
@@ -303,24 +303,29 @@ const APP = {
 	theme: {
 		key: 'app-theme',
 		themes: [
-			{ name: 'Light', class: 'theme-light' },
-			{ name: 'Dark', class: 'theme-dark' },
+			{ name: 'Light', class: 'theme-light', color:'#121c2d' },
+			{ name: 'Dark', class: 'theme-dark', color:'#121c2d'},
 		],
-
 		apply: function (themeName) {
-			if (isEmpty(themeName)) {
-				themeName = APP.theme.themes[0].name;
-			}
+			if (isEmpty(themeName)) themeName = APP.theme.themes[0].name;
 
 			const theme = APP.theme.themes.find((t) => t.name === themeName);
-			if (!theme) {
-				theme = APP.theme.themes[0];
+			if (!theme) theme = APP.theme.themes[0];
+			
+			const themeColor = theme.color || '#121c2d';
+			const styleSheet = theme.class || 'theme-dark';
+
+			const appTheme = document.getElementById('app-theme');
+			console.log("S",themeName,styleSheet,appTheme.href)
+			if (!appTheme.href.includes(styleSheet)) {
+
+				document.getElementById('app-theme-color').content = themeColor
+				document.getElementById('app-theme').href = `app/${styleSheet}.css`;
+
+				APP.theme.themes.forEach((t) => (document.body.classList.remove(t.class))); // Remove All Theme Classes
+				document.body.classList.add(theme.class); // Add Current Theme Class
 			}
 
-			APP.theme.themes.forEach((t) => {
-				document.body.classList.remove(t.class);
-			});
-			document.body.classList.add(theme.class);
 			APP.settings.theme = theme.name;
 			STORAGE.set(APP.theme.key, theme.name);
 		},
@@ -452,12 +457,8 @@ const APP = {
 
 					// Check Theme
 					let themeName = STORAGE.get('app-theme');
-					if (isEmpty(themeName)) {
-						themeName = APP.data.defaultTheme;
-					}
-					if (isEmpty(themeName) || !APP.theme.themes.find((f) => f.name === themeName)) {
-						themeName = APP.theme.themes[0].name;
-					}
+					if (isEmpty(themeName)) themeName = APP.data.defaultTheme;
+					if (isEmpty(themeName) || !APP.theme.themes.find((f) => f.name === themeName)) themeName = APP.theme.themes[0].name;
 					APP.theme.apply(themeName);
 
 					// App Info
@@ -479,15 +480,9 @@ const APP = {
 
 					// Check Page
 					let pageID = STORAGE.get('app-page');
-					if (isEmpty(pageID)) {
-						pageID = APP.data.defaultPage;
-					}
-					if (pageID === 'home' && APP.data.displayHome === false) {
-						pageID = '';
-					}
-					if (pageID === 'settings' && APP.data.displaySettings === false) {
-						pageID = '';
-					}
+					if (isEmpty(pageID)) pageID = APP.data.defaultPage;
+					if (pageID === 'home' && APP.data.displayHome === false) pageID = '';
+					if (pageID === 'settings' && APP.data.displaySettings === false) pageID = '';
 					if (pageID !== 'home' && pageID !== 'settings' && (isEmpty(pageID) || !APP.data.pages.find((p) => p.id === pageID))) {
 						pageID = APP.data.pages[0].id;
 					}
@@ -499,9 +494,7 @@ const APP = {
 					APP.menu.init();
 
 					// PWA Initialize
-					if (APP.data.allowInstall) {
-						APP.pwa.init();
-					}
+					if (APP.data.allowInstall) APP.pwa.init();
 					APP.page.go(pageID);
 
 					// Location
@@ -530,6 +523,9 @@ const APP = {
 							if (activeElement.matches('[app-action-enter]')) executeFunction(activeElement.getAttribute('app-action-enter'),activeElement);							
 						}
 					});
+
+					// Tooltip
+					TOOLTIP.init();
 
 					// Wait for the app to initialize // Fade out and remove cover screen
 					const cover = document.getElementById('app-cover');

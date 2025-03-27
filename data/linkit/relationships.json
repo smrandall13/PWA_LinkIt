@@ -223,54 +223,10 @@
         "projectid": "pro-301517",
         "source": "ent-cb3bfe",
         "target": "ent-cc6f06",
-        "targettype": "",
-        "sourcetype": "Brother",
-        "id": "rel-e02e6b",
-        "created_at": "2025-03-24 15:03:03",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-25 11:30:42"
-    },
-    {
-        "projectid": "pro-301517",
-        "source": "ent-cb3bfe",
-        "target": "ent-cc6f01",
-        "targettype": "",
-        "sourcetype": "Brother",
-        "id": "rel-fb69e2",
-        "created_at": "2025-03-24 15:03:21",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-25 11:30:42"
-    },
-    {
-        "projectid": "pro-301517",
-        "source": "ent-cb3bfe",
-        "target": "ent-cc6f06",
         "targettype": "Brother",
         "sourcetype": "Brother",
-        "id": "rel-bbfe2f",
-        "created_at": "2025-03-25 11:31:11",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-25 11:32:32"
-    },
-    {
-        "projectid": "pro-301517",
-        "source": "ent-cb3bfe",
-        "target": "ent-cc6f01",
-        "targettype": "Brother",
-        "sourcetype": "Brother",
-        "id": "rel-506874",
-        "created_at": "2025-03-25 11:31:19",
-        "created_by": "SYSTEM",
-        "deleted_at": "2025-03-25 11:32:32"
-    },
-    {
-        "projectid": "pro-301517",
-        "source": "ent-cb3bfe",
-        "target": "ent-cc6f06",
-        "targettype": "Brother",
-        "sourcetype": "Brother",
-        "id": "rel-8d766e",
-        "created_at": "2025-03-25 11:33:19",
+        "id": "rel-4f0e0a",
+        "created_at": "2025-03-26 09:18:27",
         "created_by": "SYSTEM"
     },
     {
@@ -279,8 +235,18 @@
         "target": "ent-cc6f01",
         "targettype": "Brother",
         "sourcetype": "Brother",
-        "id": "rel-8e460f",
-        "created_at": "2025-03-25 11:33:40",
+        "id": "rel-bf116a",
+        "created_at": "2025-03-26 09:25:13",
+        "created_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "source": "ent-4d28f2",
+        "target": "ent-cb3bfe",
+        "targettype": "Boyfriend",
+        "sourcetype": "Girlfriend",
+        "id": "rel-c1c77a",
+        "created_at": "2025-03-26 10:32:07",
         "created_by": "SYSTEM"
     }
 ]

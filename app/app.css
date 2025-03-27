@@ -21,40 +21,19 @@
 }
 
 /* Tooltip */
-[app-tooltip] {
-	position: relative;
-	display: inline-block;
-	cursor: pointer;
-}
-
-[app-tooltip]::after {
-	content: attr(app-tooltip);
-	position: absolute;
-	bottom: 100%;
-	left: 50%;
-	transform: translateX(-50%);
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
-	padding: 4px 8px;
-	border: var(--border);
-	border-radius: var(--border-radius);
-	font-size: 12px;
-	opacity: 0;
-	visibility: hidden;
-	/* max-width: 200px; Adjust as needed */
-	white-space: nowrap; /* Allows wrapping */
-	text-align: center;
-	transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s;
-}
-[app-tooltip]:hover::after {
-	visibility: visible;
-	opacity: 1;
-	transition-delay: 0s;
-	z-index: 9000;
+#app-tooltip {
+	display:block;
+	position:absolute;
+	background-color:var(--color-back);
+	color:var(--color-text);
+	padding:4px 8px;
+	border:var(--border);
+	border-radius:var(--border-radius);
+	font-size:var(--font-size-sm);
 }
 body {
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	line-height: var(--line-height);
 	font-size: var(--font-size-base);
 	font-family: var(--font-family);
@@ -76,13 +55,8 @@ body.font-roboto {
 	font-family: 'Roboto', sans-serif;
 }
 
-body.theme-light {
-	background-color: var(--theme-light-back);
-	color: var(--theme-light-text);
-}
-
 .app-pre {
-	background: var(--menu-back);
+	background: var(--color-menu-back);
 	padding: 16px;
 	border-radius: var(--border-radius);
 }
@@ -112,7 +86,7 @@ textarea,
 input:focus,
 select:focus,
 textarea:focus {
-	background: var(--input-dark-back);
+	background: var(--color-input-back);
 	color: var(--input-dark-text);
 	padding: 4px;
 	line-height: 1.5rem;
@@ -124,7 +98,7 @@ textarea:focus {
 	outline: none;
 	border-style: solid;
 	border-width: 1px;
-	border-color: var(--input-dark-border);
+	border-color: var(--color-input-border);
 }
 
 input[type='color'] {
@@ -175,7 +149,7 @@ body.theme-light select option textarea {
 }
 /* Default Button Styles */
 .app-button {
-	background-color: var(--button-back);
+	background-color: var(--color-button-back);
 	color: var(--color-text);
 	border: none;
 	padding: var(--button-padding);
@@ -184,7 +158,7 @@ body.theme-light select option textarea {
 	height: var(--button-height);
 	min-height: var(--button-height);
 	cursor: pointer;
-	transition: background 0.3s ease-in-out;
+	transition: background 0.3s ease, transform 0.1s ease;
 	display: inline-flex;
 	flex-direction: row;
 	align-items: center;
@@ -197,6 +171,12 @@ body.theme-light select option textarea {
 	width: fit-content;
 	flex: 0 0 auto;
 }
+.app-button-full {
+	justify-content:space-between;
+}
+.app-button-icon {
+	background-size:80%;
+}
 .app-button-rounded {
 	border-radius: 50%;
 }
@@ -204,6 +184,13 @@ body.theme-light select option textarea {
 	height: var(--button-height-sm);
 	min-height: var(--button-height-sm);
 	max-height: var(--button-height-sm);
+}
+.app-button-icononly {
+	padding: 0;
+	width:var(--button-height);
+}
+.app-button-small.app-button-icononly {
+	width:var(--button-height-sm);
 }
 
 .app-button:hover,
@@ -286,9 +273,13 @@ body.theme-light select option textarea {
 #app-icon {
 	width: 40px;
 	height: 40px;
+	background-image:url(../assets/images/favicon.png);
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
+}
+body.theme-light #app-icon {
+	background-image:url(../assets/images/favicon-light.png);
 }
 
 .app-name {
@@ -302,14 +293,14 @@ body.theme-light select option textarea {
 }
 
 .app-install {
-	background: var(--button-back);
+	background: var(--color-button-back);
 	color: var(--color-text);
 	padding: 8px 12px;
 	border-radius: var(--border-radius);
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	background: var(--button-back);
+	background: var(--color-button-back);
 	color: var(--color-text);
 	padding: 8px 12px;
 	cursor: pointer;
@@ -349,7 +340,7 @@ body.theme-light select option textarea {
 #app-menu:not(.app-hidden) {
 	z-index: 1;
 	position: absolute;
-	background: var(--menu-back);
+	background: var(--color-menu-back);
 	width: 192px;
 	min-width: 192px;
 	max-width: 192px;
@@ -388,7 +379,7 @@ body.theme-light select option textarea {
 #app-menu-toggle div,
 #app-menu-toggle:after,
 #app-menu-toggle:before {
-	background-color: var(--menu-toggle-color);
+	background-color: var(--color-menu-toggle);
 	border-radius: var(--border-radius);
 	content: '';
 	display: block;
@@ -542,8 +533,8 @@ body.theme-light select option textarea {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -555,7 +546,7 @@ body.theme-light select option textarea {
 #app-cover-image {
 	width: 200px;
 	height: 200px;
-	background-image: url(../assets/images/app-loadimg.png);
+	background-image: url(../assets/images/favicon.png);
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -568,7 +559,7 @@ body.theme-light select option textarea {
 
 /* Message */
 #app-message-back {
-	background-color: var(--theme-dark-back);
+	background-color: var(--color-back);
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -585,8 +576,8 @@ body.theme-light select option textarea {
 	width: auto;
 	min-width: 300px;
 	height: auto;
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	border-radius: var(--border-radius);
 	display: flex;
 	flex-direction: column;
@@ -648,8 +639,8 @@ body.theme-light select option textarea {
 
 /* Box */
 .app-box {
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	padding: 8px;
 	border-radius: var(--border-radius);
 	display: flex;
@@ -741,8 +732,8 @@ body.theme-light select option textarea {
 	padding: 8px;
 	justify-content: start;
 	align-items: start;
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	pointer-events: all;
 }
 
@@ -800,8 +791,8 @@ body.theme-light select option textarea {
 .app-group {
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	width: 100%;
 	max-width: 100%;
 	min-width: 100%;
@@ -833,7 +824,7 @@ body.theme-light select option textarea {
 	border-top-left-radius: var(--border-radius);
 	border-top-right-radius: var(--border-radius);
 	flex: 0;
-	background-color: var(--theme-dark-offset);
+	background-color: var(--color-back-offset);
 	cursor: pointer;
 }
 .app-group-closed .app-group-title {
@@ -873,7 +864,7 @@ body.theme-light select option textarea {
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
-	color: var(--theme-dark-text);
+	color: var(--color-text);
 	font-size: var(--font-size-sm);
 	padding: 0 8px;
 	z-index: 0;
@@ -886,10 +877,10 @@ body.theme-light select option textarea {
 	border-bottom-right-radius: 0;
 }
 .app-tab:hover {
-	background-color: var(--theme-dark-offset);
+	background-color: var(--color-back-offset);
 }
 .app-tab-selected {
-	background-color: var(--theme-dark-offset);
+	background-color: var(--color-back-offset);
 	border-color: var(--color-accent);
 	z-index: 1;
 }
@@ -937,7 +928,7 @@ body.theme-light select option textarea {
 	text-align: center;
 }
 .app-table-row:nth-child(odd) {
-	background-color: var(--theme-dark-offset);
+	background-color: var(--color-back-offset);
 }
 
 #app-popup-back {
@@ -947,7 +938,7 @@ body.theme-light select option textarea {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background-color: var(--theme-dark-back);
+	background-color: var(--color-back);
 	border-radius: var(--border-radius);
 	opacity: 0.5;
 	pointer-events: all;
@@ -956,8 +947,8 @@ body.theme-light select option textarea {
 	z-index: 9999;
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	padding: 8px;
 	width: auto;
 	min-width: 300px;
@@ -1028,7 +1019,7 @@ body.theme-light select option textarea {
 	border-radius: var(--border-radius);
 	border-color: transparent;
 }
-.app-icon-small,
+.app-button-small .app-icon,.app-icon-small,
 .app-icon-xsmall {
 	width: 30px;
 	min-width: 30px;
@@ -1038,11 +1029,10 @@ body.theme-light select option textarea {
 	max-height: 30px;
 	margin: 0;
 	padding: 0;
-	background-size: 80%;
+	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
 }
-
 .app-icon-xsmall {
 	/* background-size: 80%; */
 	width: 24px;
@@ -1051,6 +1041,9 @@ body.theme-light select option textarea {
 	height: 24px;
 	min-height: 24px;
 	max-height: 24px;
+}
+.app-button-small .app-icon,.app-button-small .app-icon-small {
+	background-size:80%;
 }
 .app-icon-hover:hover {
 	border: var(--border);
@@ -1064,6 +1057,10 @@ body.theme-light select option textarea {
 	display: inline-block;
 	width: 20px;
 	height: 20px;
+}
+
+.theme-light .app-icon {
+	filter: brightness(0) saturate(100%) invert(47%) sepia(68%) saturate(302%) hue-rotate(115deg) brightness(97%) contrast(101%);	  
 }
 
 /* Responsive Behavior */

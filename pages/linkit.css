@@ -53,8 +53,8 @@
 	width:auto;
 	max-width:calc(100% - 240px);
 	min-width:300px;
-	background-color:var(--theme-dark-back);
-	color:var(--theme-dark-text);
+	background-color:var(--color-back);
+	color:var(--color-text);
 	border: var(--border);
 	border-color:var(--color-accent);
 	border-radius: var(--border-radius);
@@ -261,9 +261,10 @@
 	text-align: center;
 	align-items: center;
 	cursor: pointer;
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	border-radius: var(--border-radius);
+	border-color:var(--color-accent);
 	padding: 0 8px;
 }
 .linkit-control-button-left {
@@ -281,17 +282,18 @@
 	border-bottom-left-radius: 0;
 }
 .linkit-control-button-active {
-	border-color: var(--color-accent);
-}
-.linkit-control-button:hover {
 	background-color: var(--color-accent);
+}
+.linkit-control-button-active .app-icon, .linkit-control-button:hover .app-icon {filter:none;}
+.linkit-control-button:hover {
+	background-color: var(--color-hover);
 }
 #linkit-project-selector {
 	font-size: var(--font-size);
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	border-color: var(--color-accent);
 	padding: 0 8px;
 	width: auto;
@@ -333,8 +335,8 @@
 	height: auto;
 	min-height: 30px;
 	max-height: calc(100vh - 100px);
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	font-size: var(--font-size);
 	border: var(--border);
 	border-radius: var(--border-radius);
@@ -354,8 +356,8 @@
 	cursor: pointer;
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	font-size: var(--font-size-sm);
 	padding: 0 8px;
 	width: 100%;
@@ -430,8 +432,8 @@
 .linkit-subcontainer {
 	border: var(--border);
 	border-radius: var(--border-radius);
-	background: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background: var(--color-back);
+	color: var(--color-text);
 	box-shadow: var(--box-shadow-dark);
 	border-color: var(--color-accent);
 	padding: 8px;
@@ -491,7 +493,7 @@
 	box-shadow: var(--box-shadow-dark);
 }
 .linkit-icon-info {
-	border: 1px solid var(--theme-dark-text);
+	border: 1px solid var(--color-text);
 	border-radius: 50%;
 }
 .linkit-icon,
@@ -505,7 +507,7 @@
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
-	color: var(--theme-dark-text);
+	color: var(--color-text);
 	font-size: var(--font-size-xsm);
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -523,6 +525,7 @@
 	min-width: 300px;
 	max-width: calc(100% - 16px);
 	height: auto;
+	min-height: 500px;
 	flex: 1;
 	left: 16px;
 	display: inline-flex;
@@ -643,7 +646,7 @@
 	border: var(--border);
 	border-color: var(--color-accent);
 	border-radius: var(--border-radius);
-	color: var(--theme-dark-text);
+	color: var(--color-text);
 	cursor: pointer;
 	font-size: var(--font-size-sm);
 	height: 30px;
@@ -660,8 +663,8 @@
 	background-color: var(--color-caution);
 }
 .linkit-back {
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 }
 .linkit-list-box {
 	grid-column: span 2;
@@ -692,8 +695,8 @@
 	border: var(--border);
 	border-color:var(--color-accent);
 	border-radius: var(--border-radius);
-	background-color: var(--theme-dark-back);
-	color: var(--theme-dark-text);
+	background-color: var(--color-back);
+	color: var(--color-text);
 	font-size: var(--font-size);
 	padding: 0 8px;
 	height: 30px;
@@ -761,9 +764,6 @@ textarea:not(.linkit-input) {
 .linkit-input:focus {
 	border-color: var(--color-highlight);
 }
-.app-tab-content {
-	/* max-height: 200px; */
-}
 #app-content-container {
 	width: calc(100% - 4px);
 	min-width: calc(100% - 4px);
@@ -775,5 +775,7 @@ textarea:not(.linkit-input) {
 	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
-	background-image: radial-gradient(var(--theme-dark-back), #000000);
+}
+#app-content.linkit-visual {
+	background-image: var(--color-radial-back)
 }

@@ -132,7 +132,10 @@ const MESSAGE = {
 	},
 	confirm: function (title = '', message = '', confirmFunction = null) {
 		if (!isEmpty(message) && !isEmpty(confirmFunction)) {
-			message += "<div id='app-message-controls'><button id='app-message-confirm' class='app-button app-button-caution'>Yes</button><button id='app-message-cancel' class='app-button'>No</button></div>";
+			message += "<div id='app-message-controls'>";
+				message += BUTTON('app-message-confirm','','Yes',{class:'app-button-caution'});
+				message += BUTTON('app-message-cancel','','No');
+			message += "</div>";
 			MESSAGE.show(title, message, '', () => {
 				const confirmButton = document.getElementById('app-message-confirm');
 				confirmButton.addEventListener('click', () => {
@@ -214,6 +217,36 @@ const POPUP = {
 	},
 };
 
+const TOOLTIP = {
+	show: function (element=null, message='') {
+		TOOLTIP.hide();
+		element = getElement(element); // Insures the element is an object / If id then returns element
+		if (!element) return;
+		if (isEmpty(message)) message = element.getAttribute('app-tooltip');
+		if (isEmpty(message)) return; 
+		const tooltip = document.createElement('div');
+		tooltip.id = 'app-tooltip';
+		tooltip.innerHTML = message;
+		document.getElementById('app-body').appendChild(tooltip);
+		const rect = element.getBoundingClientRect();
+		tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+		tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+	},
+	hide: function () {
+		const tooltip = document.getElementById('app-tooltip');
+		if (tooltip) tooltip.remove();
+	},
+	init:function(){
+		const elements = document.querySelectorAll('[app-tooltip]');
+		if (elements.length > 0) {
+			elements.forEach((element) => {
+				addEvent(element, () => TOOLTIP.show(element), 'mouseover');
+				addEvent(element, TOOLTIP.hide, 'mouseout');
+			});
+		}
+	}
+}
+
 const DATA = {
 	database: '',
 	account: null,
@@ -255,6 +288,55 @@ const DATA = {
 		this.account = account;
 	},
 };
+
+const BUTTON = function(buttonid='',icon='',text='',buttonAttr={},iconAttr={},textAttr={},click=null,returnType=''){
+		
+	const button = document.createElement('button');
+	if (!isEmpty(buttonid)) button.id = buttonid;
+
+	// Button Icon
+	let buttonIcon = null;
+	if (!isEmpty(icon)){
+		buttonIcon = document.createElement('div');
+		buttonIcon.classList.add('app-icon');
+		if (icon.includes('app-icon-')) {
+			buttonIcon.classList.add(icon);
+		}else{
+			buttonIcon.classList.add('app-icon-'+icon);
+		}
+		if (iconAttr && !isEmpty(iconAttr.class)) addClass(buttonIcon,iconAttr.class);
+		if (iconAttr && !isEmpty(iconAttr.style)) buttonIcon.style = iconAttr.style;
+	}
+
+	// Button Text
+	let buttonText = null;
+	if (!isEmpty(text)){
+		buttonText = document.createElement('div');
+		buttonText.classList.add('app-button-text');
+		buttonText.innerHTML = text;
+		if (textAttr && !isEmpty(textAttr.class)) addClass(buttonText,textAttr.class);
+		if (textAttr && !isEmpty(textAttr.style)) buttonText.style = textAttr.style;
+	}
+
+	// Button Class
+	button.classList.add('app-button');
+	if (buttonAttr && !isEmpty(buttonAttr.class)) addClass(button,buttonAttr.class);
+	if (buttonAttr && !isEmpty(buttonAttr.style)) button.style = buttonAttr.style;
+	if (buttonAttr && !isEmpty(buttonAttr.tooltip)) button['app-tooltip'] = buttonAttr.tooltip;
+	if (buttonIcon && buttonText) button.classList.add('app-button-full');
+	if (buttonIcon && !buttonText) button.classList.add('app-button-icononly');
+
+	// Append
+	if (buttonIcon) button.appendChild(buttonIcon);
+	if (buttonText) button.appendChild(buttonText);
+
+	// Return
+	if (returnType == 'html' || isEmpty(returnType)) return button.outerHTML;
+	if (returnType == 'element'){
+		if (isFunction(click)) addEvent(button,click);
+		return button;
+	}	
+}
 
 const FETCH_REQUESTS = new Map(); // Track ongoing requests by URL+data
 const FETCH = function (url = '', data = null, successCallback = null, failureCallback = null, options = {}) {
@@ -335,42 +417,47 @@ const is = {
 	empty: isEmpty,
 };
 
-const addClass = (elementID, className) => document.getElementById(elementID).classList.add(className);
-const removeClass = (elementID, className) => document.getElementById(elementID).classList.remove(className);
-const addEvent = (element, functionCall = null, trigger = 'click') => {
+const addClass = (elementID, className) => {
+	const element = getElement(elementID);
+	if (!element) return;
+	if (className.includes(' ')) {
+		className = className.split(' ');
+		className.forEach((name) => element.classList.add(name));
+	} else {
+		element.classList.add(className);
+	}
+}
+const removeClass = (elementID, className) => {
+	const element = getElement(elementID);
+	if (!element) return;
+	if (className.includes(' ')) {
+		className = className.split(' ');
+		className.forEach((name) => element.classList.remove(name));
+	} else {
+		element.classList.remove(className);
+	}
+}
+const addEvent = (elementID, functionCall = null, trigger = 'click') => {
+	const element = getElement(elementID);
 	if (!element || !functionCall) return; // Exit if missing parameters
-
-	// If element is a string, get the actual DOM element
-	if (typeof element === 'string') {
-		element = document.getElementById(element);
+	// Remove existing event listener if stored
+	if (element._eventHandler) {
+		element.removeEventListener(trigger, element._eventHandler);
 	}
 
-	if (element) {
-		// Remove existing event listener if stored
-		if (element._eventHandler) {
-			element.removeEventListener(trigger, element._eventHandler);
-		}
+	// Define and store the new event handler function
+	element._eventHandler = () => functionCall();
 
-		// Define and store the new event handler function
-		element._eventHandler = () => functionCall();
-
-		// Add event listener
-		element.addEventListener(trigger, element._eventHandler);
-	}
+	// Add event listener
+	element.addEventListener(trigger, element._eventHandler);
 };
-const removeEvent = function (element, trigger) {
+const removeEvent = function (elementID, trigger) {
+	const element = getElement(elementID);
 	if (!element || !functionCall) return; // Exit if missing parameters
 
-	// If element is a string, get the actual DOM element
-	if (typeof element === 'string') {
-		element = document.getElementById(element);
-	}
-
-	if (element) {
-		// Remove existing event listener if stored
-		if (element._eventHandler) {
-			element.removeEventListener(trigger, element._eventHandler);
-		}
+	// Remove existing event listener if stored
+	if (element._eventHandler) {
+		element.removeEventListener(trigger, element._eventHandler);
 	}
 };
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -394,35 +481,30 @@ const getElement = (element)=>{
 	if (!element) return null;
 	return element;
 }
-const getValue = (input) => {
-	input = getElement(input);
+const getValue = (inputID) => {
+	const input = getElement(inputID);
 	if (!input) return null;
 	
 	if (input && input.value) return input.value; 
 	return '';
 };
-const setValue = (input, value) => {
-	input = getElement(input);
+const setValue = (inputID, value) => {
+	const input = getElement(inputID);
 	if (!input) return null;	
 	if (isEmpty(value)) value = '';
 	if (input && input.value) input.value = value;
 };
 const updateValue = (inputID, value, overrid = 0) => {
-	if (!isEmpty(inputID)) {
-		const input = document.getElementById(inputID);
-		if (input && input.id == inputID) {
-			if (overrid == 1 || input.value == '') {
-				input.value = value;
-			}
-		}
-	}
+	const input = getElement(inputID);
+	if (!input) return null;	
+	if (overrid == 1 || input.value == '') input.value = value;
 };
 
 const inputVisible = (input) => {
 	return input.matches('input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled])') && input.offsetParent !== null;
 };
-const inputNext = (input) => {
-	input = getElement(input);
+const inputNext = (inputID) => {
+	const input = getElement(inputID);
 	if (!input) return null;
 
 	// Helper to find the next input from a parent container
@@ -471,22 +553,20 @@ const inputNext = (input) => {
 	}
 
 	// Start the search
-	nextInput = findNext(input);
+	let nextInput = findNext(input);
 	if (nextInput) nextInput.focus();
 
 	return nextInput;
 };
-const inputFocus = (input) => {
-	input = getElement(input);
+const inputFocus = (inputID) => {
+	const input = getElement(inputID);
 	if (!input) return null;
 	input.focus();
 };
 
-const removeElement = (elementid) => {
-	if (!isEmpty(elementid)) {
-		const element = document.getElementById(elementid);
-		if (element) element.remove();
-	}
+const removeElement = (elementID) => {
+	const element = getElement(elementID);
+	if (element) element.remove();
 };
 
 const formatDateTime = (variable = '', dateFormat = '', timeFormat = '') => {

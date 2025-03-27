@@ -1,5 +1,5 @@
 /* SVG */
-#linkit-visual-2d {
+#linkit-visual-graph {
 	width: calc(100vw - 16px);
 	height: calc(100vh - 60px);
 	min-width: calc(100vw - 16px);
@@ -18,21 +18,21 @@
 }
 .linkit-svg-node circle {
 	fill: var(--color-accent);
-	stroke: var(--border-color);
+	stroke: var(--color-border);
 	stroke-width: 1px;
 }
 .linkit-svg-node rect {
-	fill: var(--theme-dark-back);
+	fill: var(--color-back);
 	/* fill: transparent; */
 	stroke: var(--color-accent);
-	/* stroke: var(--border-color); */
+	/* stroke: var(--color-border); */
 	stroke-width: 1px;
 }
 .linkit-svg-node text {
 	font-size: var(--font-size-sm);
 	pointer-events: none;
-	color: var(--theme-dark-text);
-	fill: var(--theme-dark-text);
+	color: var(--color-text);
+	fill: var(--color-text);
 }
 .linkit-svg-node.linkit-svg-selected rect {
 	fill: var(--color-accent);
@@ -49,7 +49,7 @@
 	/* font-size: var(--font-size); */
 }
 .linkit-svg-link {
-	stroke: var(--border-color);
+	stroke: var(--color-border);
 	stroke-opacity: 1;
 	stroke-width: 2px;
 	z-index: 0;
@@ -62,8 +62,8 @@
 .linkit-svg-link-type {
 	font-size: var(--font-size-xsm);
 	pointer-events: none;
-	color: var(--theme-dark-text);
-	fill: var(--theme-dark-text);
+	color: var(--color-text);
+	fill: var(--color-text);
 	opacity: 0.5;
 }
 .linkit-svg-link-type.linkit-svg-hover {

@@ -12,6 +12,8 @@
 		private static $createBackups = false;
 		private static $createLogs = false;
 
+		private static $softDelete = false;
+
 		private static $MAX_LOG_SIZE = 5 * 1024 * 1024; // 5MB
 		private static $LOG_RETENTION_DAYS = 30; // Keep logs for 30 days
 
@@ -348,13 +350,24 @@
 			if (empty($condition)) return "failure";
 
 			$updated = false;
-			foreach ($data as &$record) {
-			    	if (!isset($record['deleted_at']) && self::matchesCondition($record, $condition)) {
-					if (self::$createLogs) self::log($database, $table, "DELETE", $record['id'], $record);
-				   	$record['deleted_at'] = date('Y-m-d H:i:s');
-				   	$updated = true;
-			    	}
+			foreach ($data as $key => &$record) {
+				if (self::matchesCondition($record, $condition)) {
+					if (self::$softDelete){
+						if (!isset($record['deleted_at'])) {
+							if (self::$createLogs) self::log($database, $table, "DELETE", $record['id'], $record);
+							$record['deleted_at'] = date('Y-m-d H:i:s');
+							$data[$key] = $record;
+							$updated = true;
+						}
+					}else{
+						if (self::$createLogs) self::log($database, $table, "DELETE", $record['id'], $record);
+						unset($data[$key]);
+						$updated = true;
+					}
+				}
 			}
+			$data = array_values(array_filter($data));
+
 
 			if ($updated) {
 				if (self::$inTransaction) {

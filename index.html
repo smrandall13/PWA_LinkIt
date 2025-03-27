@@ -6,24 +6,26 @@
 		<meta id="app-theme-color" name="theme-color" content="#121c2d" />
 
 		<link rel="manifest" href="manifest.json" />
+		<link id="app-theme" rel="stylesheet" href="app/theme-dark.css" />
 		<link rel="stylesheet" href="app/theme.css" />
 		<link rel="stylesheet" href="app/icons.css" />
+
 		<link id="app-style" rel="stylesheet" href="app/app.css" />
-		<!-- Dynamic Styles -->
 		<link rel="stylesheet" href="app/support.css" />
+		
 		<title id="app-title"></title>
+		
 		<script defer src="app/support.js"></script>
 		<script id="app-script" defer src="app/app.js"></script>
-		<!-- Dynamic Scripts -->
 	</head>
-	<body>
+	<body id="app-body" class="theme-dark">
 		<div id="app-cover">
 			<div id="app-cover-image"></div>
 			<div id="app-cover-text">Loading...</div>
 		</div>
 		<header id="app-header">
 			<div id="app-info">
-				<img id="app-icon" src="" alt="App Icon" />
+				<div id="app-icon"></div>
 				<span id="app-name" class="app-name"></span>
 			</div>
 			<nav id="app-nav" class="app-hidden"></nav>

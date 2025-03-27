@@ -25,32 +25,6 @@
 }
 
 :root {
-	/* Color Palette */
-	--theme-dark-back: #121c2d;
-	--theme-dark-text: #eaeaea;
-	--theme-dark-offset: rgba(255, 255, 255, 0.05);
-	--theme-dark-offset-text: #eaeaea;
-
-	--theme-light-back: #eaeaea;
-	--theme-light-text: #121c2d;
-	--theme-light-offset: rgba(0, 0, 0, 0.05);
-	--theme-light-offset-text: #121c2d;
-
-	--menu-back: rgba(0, 0, 0, 0.15);
-	/* --secondary-text: #eaeaea; */
-
-	--color-hover: #5bde8d;
-	--color-accent: #00a878;
-	--color-highlight: #ffc700;
-	--color-line: #0678ff;
-	--color-text: #eaeaea;
-	--color-border: #00a878;
-	--color-caution: #f44336;
-
-	--color-muted: #a0a0a0;
-
-	--button-back: var(--color-accent);
-	--button-hover-back: #008f6b;
 
 	/* Typography */
 	--font-family: 'Nunito', sans-serif;
@@ -70,12 +44,11 @@
 	--spacing-lg: 2rem;
 
 	/* Borders & Radius */
-	--border-color: #2c3e50;
-	--border: 1px solid var(--border-color);
+	--border: 1px solid var(--color-border);
 	--border-radius: 4px;
 	--border-radius-lg: 8px;
-	--border-accent: 2px solid #00a878;
-	--border-caution: 2px solid #f44336;
+	--border-accent: 2px solid var(--color-accent);
+	--border-caution: 2px solid var(--color-caution);
 
 	/* Shadows */
 	--shadow-sm: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -83,39 +56,27 @@
 	--shadow-lg: 0px 6px 12px rgba(0, 0, 0, 0.2);
 
 	--box-shadow-dark: 2px 2px 4px rgba(0, 168, 120, 0.2), -2px -2px 4px rgba(0, 168, 120, 0.2);
-	--color-shadow: rgb(0, 168, 120);
+	--text-shadow: 0px 0x 2px rgba(0, 0, 0, 0.75);
 
 	/* Button Styles */
 	--button-padding: 0 1.5em;
 	--button-height: 40px;
 	--button-height-sm: 30px;
 	--button-font-size: 1rem;
-	--button-caution-back: #f44336;
-	--button-caution-hover-back: #d32f2f;
-	--button-caution-color: #fff;
+	--button-caution-back: var(--color-caution);
+	--button-caution-hover-back: var(--color-caution-offset);
+	--button-caution-color: var(--color-caution-text);
+	--button-active-shadow: inset 0 0 0 2px var(--color-accent);
 
 	/* Layout */
 	--container-width: 90%;
 	--container-max: 1200px;
-
-	/* Input */
-	--input-dark-back: #1e2a3a;
-	--input-dark-color: #eaeaea;
-	--input-dark-border: #2c3e50;
-
-	--input-light-back: #eaeaea;
-	--input-light-color: #121c2d;
 
 	--input-height: 2rem;
 	--input-size-label: 1rem;
 	--input-size-value: 1rem;
 
 	--transition: all 0.3s ease-in-out;
-
-	/* Menu */
-	--menu-toggle-color: #eaeaea;
-
-	--text-shadow: 0px 0x 2px rgba(0, 0, 0, 0.75);
 
 	--z-position-top: 9999;
 }
@@ -127,6 +88,7 @@
 	box-sizing: border-box;
 	position: relative;
 	user-select: none;
+	overflow:visible;
 }
 html {
 	scroll-behavior: smooth;

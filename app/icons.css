@@ -1,5 +1,7 @@
 /* Icons */
-
+.app-favicon {
+	background-image: url(../assets/icons/favicon.png);
+}
 .app-icon-settings {
 	background-image: url(../assets/images/settings-white.png);
 }
@@ -23,6 +25,9 @@
 }
 .app-icon-up {
 	background-image: url(../assets/images/up-white.png);
+}
+.app-icon-graph {
+	background-image: url(../assets/images/graph-white.png);
 }
 .app-icon-down,
 .app-icon-dn {

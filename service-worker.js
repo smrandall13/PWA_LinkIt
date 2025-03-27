@@ -1,7 +1,7 @@
 const CACHE_VERSION = new Date().toISOString().split('T')[0]; // Auto-version based on date
 const CACHE_NAME = `pwa-cache-${CACHE_VERSION}`;
 
-const ASSETS_APP = ['', 'index.html', 'app.js', 'app.css', 'manifest.json', 'app/home.html', 'app/settings.html', 'app/home.js', 'app/settings.js', 'app/home.css', 'app/settings.css', 'assets/images/favicon.png', 'assets/images/app-loadimg.png', 'assets/images/app-icon.png'];
+const ASSETS_APP = ['', 'index.html', 'app.js', 'app.css', 'manifest.json', 'app/home.html', 'app/settings.html', 'app/home.js', 'app/settings.js', 'app/home.css', 'app/settings.css', 'assets/images/favicon.png'];
 const ASSETS_FONTS = ['assets/fonts/Playfair.ttf', 'assets/fonts/Nunito.ttf', 'assets/fonts/CourierPrime.ttf', 'assets/fonts/Roboto.ttf'];
 const ASSETS_ICONS = [
 	'assets/images/settings-white.png',

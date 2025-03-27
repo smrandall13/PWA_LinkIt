@@ -81,6 +81,10 @@
 	flex-direction: column !important;
 	align-items: center;
 }
+.flex-1 {flex:1;}
+.flex-0 {flex:0;}
+.flex-2 {flex:2;}
+.flex-3 {flex:3;}
 .back-size-50 {
 	background-size: 50%;
 }

@@ -1,0 +1,29 @@
+:root {
+	--color-back: #efefef;
+	--color-back-offset: #f5f5f5;
+	--color-hover: #5bde8d;
+	--color-accent: #00a878;
+	--color-highlight: #ff9800;
+	--color-line: #5bde8d;
+	--color-text: #212121;
+	--color-text-offset: #333333;
+	--color-border: #4e4e4e;
+	--color-caution: #e53935;
+	--color-caution-offset: #c62828;
+	--color-caution-text: #ffffff;
+	--color-muted: #777777;
+	--color-shadow: rgba(0, 0, 0, 0.1);
+	--color-menu-toggle: #212121;
+	--color-menu-back: rgba(0, 0, 0, 0.05);
+
+	/* Input */
+	--color-input-back: #fafafa;
+	--color-input-text: #212121;
+	--color-input-border: #cccccc;
+
+	--color-button-back: var(--color-accent);
+	--color-button-hover: var(--color-hover);
+	--color-button-text: #ffffff;
+
+	--color-radial-back:radial-gradient(var(--color-back), #8f8f8f);
+}

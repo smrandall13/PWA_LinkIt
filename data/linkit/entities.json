@@ -1,6 +1,6 @@
 [
     {
-        "name": "Home",
+        "name": "Randall's Home",
         "description": "Randall Family Home",
         "type": "Place",
         "projectid": "pro-301517",
@@ -38,7 +38,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-21 14:55:44",
+        "updated_at": "2025-03-26 10:32:37",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
@@ -226,29 +226,34 @@
         "id": "ent-cc6f06",
         "attributes": [
             {
-                "label": "Roles",
-                "value": "Sibling",
-                "group": "Roles"
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Male"
             },
             {
                 "label": "Height",
-                "value": "6' 5\"",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "6"
             },
             {
                 "label": "Weight",
-                "value": "220 lbs",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "220 lbs"
             },
             {
-                "label": "Gender",
-                "value": "Male",
-                "group": "Physical"
+                "label": "Birth",
+                "group": "Date",
+                "type": "text",
+                "value": "1981"
             }
         ],
-        "updated_at": "2025-03-14 15:16:10",
+        "updated_at": "2025-03-27 09:32:44",
         "deleted_at": null,
-        "updated_by": "SYSTEM"
+        "updated_by": "SYSTEM",
+        "table": "entities"
     },
     {
         "name": "Christy Randall",
@@ -682,26 +687,6 @@
         "name": "Home",
         "type": "Place",
         "description": "Randall Family Home",
-        "attr_key_1": "Active",
-        "attr_value_1": "on",
-        "attr_key_2": "Color",
-        "attr_value_2": "#000000",
-        "attr_key_3": "Date",
-        "attr_value_3": "",
-        "attr_key_4": "Date Time",
-        "attr_value_4": "",
-        "attr_key_5": "Email",
-        "attr_value_5": "",
-        "attr_key_6": "Phone",
-        "attr_value_6": "",
-        "attr_key_7": "Website",
-        "attr_value_7": "",
-        "attr_key_8": "Age",
-        "attr_value_8": "",
-        "attr_key_9": "Weight",
-        "attr_value_9": "",
-        "attr_key_10": "Height",
-        "attr_value_10": "",
         "id": "ent-cf337d",
         "created_at": "2025-03-14 16:22:19",
         "created_by": "SYSTEM",
@@ -848,46 +833,46 @@
         "created_by": "SYSTEM",
         "attributes": [
             {
-                "label": "City",
-                "group": "Location",
-                "type": "text",
-                "value": "Shattuck"
-            },
-            {
-                "label": "State",
-                "group": "Location",
-                "type": "text",
-                "value": "Oklahoma"
-            },
-            {
-                "label": "Birth Year",
-                "group": "Physical",
-                "type": "text",
-                "value": "1984"
-            },
-            {
                 "label": "Gender",
                 "group": "Physical",
                 "type": "text",
                 "value": "Male"
-            },
-            {
-                "label": "Height",
-                "group": "Physical",
-                "type": "text",
-                "value": "6ft 5in"
             }
         ],
-        "updated_at": "2025-03-25 14:21:27",
+        "updated_at": "2025-03-27 11:03:36",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
     {
-        "projectid": "pro-301518",
-        "attributes": [],
-        "id": "ent-6a43bb",
-        "created_at": "2025-03-25 19:31:31",
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Tracie",
+        "type": "Person",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
+            }
+        ],
+        "id": "ent-4d28f2",
+        "created_at": "2025-03-26 10:31:43",
         "created_by": "SYSTEM",
-        "deleted_at": "2025-03-25 19:33:14"
+        "updated_at": "2025-03-27 11:12:11",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Summary",
+        "type": "Person",
+        "description": "",
+        "attributes": [],
+        "id": "ent-931a65",
+        "created_at": "2025-03-26 10:36:32",
+        "created_by": "SYSTEM"
     }
 ]

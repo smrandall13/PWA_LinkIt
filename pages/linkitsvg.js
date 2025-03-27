@@ -1,5 +1,5 @@
 const LINKITSVG = {
-	svgid: 'linkit-visual-2d',
+	svgid: 'linkit-visual-graph',
 	simulation: null,
 	nodes: null,
 	svg: null,

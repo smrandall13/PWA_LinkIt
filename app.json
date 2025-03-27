@@ -1,6 +1,6 @@
 {
 	"name": "Link It",
-	"icon": "assets/images/app-icon.png",
+	"icon": "assets/images/favicon.png",
 	"version": "1.0.0",
 	"defaultPage": "linkit",
 	"defaultTheme": "Dark",

@@ -1,30 +1,30 @@
 {
-	"name": "Link It",
-	"icon": "assets/images/favicon.png",
-	"version": "1.0.0",
-	"defaultPage": "linkit",
-	"defaultTheme": "Dark",
-	"defaultFont": "Nunito",
-	"themeColor": "#121c2d",
+     "name": "Link It",
+     "icon": "assets/images/favicon.png",
+     "version": "1.0.0",
+     "defaultPage": "linkit",
+     "defaultTheme": "Dark",
+     "defaultFont": "Nunito",
+     "themeColor": "#121c2d",
 
-	"copyright": "&copy; 2025 Shaun Randall",
+     "copyright": "&copy; 2025 Shaun Randall",
 
-	"displayMenu": false,
-	"displayHome": false,
-	"displaySettings": false,
+     "displayMenu": false,
+     "displayHome": false,
+     "displaySettings": false,
 
-	"allowInstall": false,
-	"allowNotifications": false,
+     "allowInstall": false,
+     "allowNotifications": false,
 
-	"trackLocation": "",
+     "trackLocation": "",
 
-	"pages": [
-		{
-			"id": "linkit",
-			"name": "Link It",
-			"html": "pages/linkit.html",
-			"style": "pages/linkit.css,pages/linkitsvg.css",
-			"script": "pages/linkit.js,pages/linkitsvg.js,pages/linkitd3.js"
-		}
-	]
+     "pages": [
+          {
+               "id": "linkit",
+               "name": "Link It",
+               "html": "pages/linkit.html",
+               "style": "pages/linkit.css,pages/linkitvisuals.css",
+               "script": "pages/linkit.js,pages/linkitvisuals.js,pages/linkitd3.js"
+          }
+     ]
 }

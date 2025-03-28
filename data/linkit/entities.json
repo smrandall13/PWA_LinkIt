@@ -1,6 +1,6 @@
 [
     {
-        "name": "Randall's Home",
+        "name": "Home",
         "description": "Randall Family Home",
         "type": "Place",
         "projectid": "pro-301517",
@@ -38,12 +38,12 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-26 10:32:37",
+        "updated_at": "2025-03-28 10:45:13",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
     {
-        "name": "Shaun Randall",
+        "name": "Shaun",
         "type": "Person",
         "description": "Man of the house",
         "projectid": "pro-301517",
@@ -87,7 +87,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-24 11:33:33",
+        "updated_at": "2025-03-28 09:21:26",
         "deleted_at": null,
         "updated_by": "SYSTEM",
         "group": "",
@@ -102,26 +102,34 @@
         "id": "ent-cc6f02",
         "attributes": [
             {
-                "label": "Role",
-                "value": "Mother, Wife",
-                "group": "Roles"
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
             },
             {
                 "label": "Height",
-                "value": "5' 3\"",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "5"
             },
             {
                 "label": "Weight",
-                "value": "120 lbs",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "120 lbs"
             },
             {
-                "label": "Gender",
-                "value": "Female",
-                "group": "Physical"
+                "label": "Role",
+                "group": "Roles",
+                "type": "text",
+                "value": "Mother, Wife"
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-27 11:48:18",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "Levi",
@@ -160,30 +168,38 @@
         "id": "ent-cc6f04",
         "attributes": [
             {
-                "label": "Role",
-                "value": "Daughter",
-                "group": "Roles"
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
             },
             {
                 "label": "Height",
-                "value": "4' 1\"",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "4"
             },
             {
                 "label": "Weight",
-                "value": "62 lbs",
-                "group": "Physical"
+                "group": "Physical",
+                "type": "text",
+                "value": "62 lbs"
             },
             {
-                "label": "Gender",
-                "value": "Female",
-                "group": "Physical"
+                "label": "Role",
+                "group": "Roles",
+                "type": "text",
+                "value": "Daughter"
             }
-        ]
+        ],
+        "table": "entities",
+        "updated_at": "2025-03-27 17:47:59",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     },
     {
         "name": "Ruby",
-        "type": "Pet",
+        "type": "Animal",
         "description": "White Labrador",
         "projectid": "pro-301517",
         "id": "ent-cc6f05",
@@ -208,7 +224,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-21 11:23:44",
+        "updated_at": "2025-03-28 09:21:45",
         "deleted_at": null,
         "updated_by": "SYSTEM",
         "000011": "ent-3f82fe",
@@ -219,12 +235,18 @@
         "target": ""
     },
     {
-        "name": "Ricky Randall",
+        "name": "Ricky",
         "type": "Person",
         "description": "Shaun's Brother",
         "projectid": "pro-301517",
         "id": "ent-cc6f06",
         "attributes": [
+            {
+                "label": "Birth",
+                "group": "Date",
+                "type": "text",
+                "value": "1981"
+            },
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -242,21 +264,15 @@
                 "group": "Physical",
                 "type": "text",
                 "value": "220 lbs"
-            },
-            {
-                "label": "Birth",
-                "group": "Date",
-                "type": "text",
-                "value": "1981"
             }
         ],
-        "updated_at": "2025-03-27 09:32:44",
+        "updated_at": "2025-03-28 09:21:23",
         "deleted_at": null,
         "updated_by": "SYSTEM",
         "table": "entities"
     },
     {
-        "name": "Christy Randall",
+        "name": "Christy",
         "type": "Person",
         "description": "Ricky's Wife",
         "projectid": "pro-301517",
@@ -288,7 +304,7 @@
             }
         ],
         "table": "entities",
-        "updated_at": "2025-03-24 14:58:52",
+        "updated_at": "2025-03-28 09:21:17",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
@@ -733,7 +749,7 @@
         "projectid": "pro-301517",
         "table": "entities",
         "name": "Cash",
-        "type": "Pet",
+        "type": "Animal",
         "description": "Playful, Needy, Friendly",
         "attributes": [
             {
@@ -782,7 +798,7 @@
         "id": "ent-d71386",
         "created_at": "2025-03-18 10:14:33",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-24 14:55:46",
+        "updated_at": "2025-03-28 09:21:40",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
@@ -825,7 +841,7 @@
     {
         "projectid": "pro-301517",
         "table": "entities",
-        "name": "Chris Randall",
+        "name": "Chris",
         "type": "Person",
         "description": "",
         "id": "ent-cb3bfe",
@@ -837,9 +853,15 @@
                 "group": "Physical",
                 "type": "text",
                 "value": "Male"
+            },
+            {
+                "label": "Height",
+                "group": "Physical",
+                "type": "text",
+                "value": "6ft 5in"
             }
         ],
-        "updated_at": "2025-03-27 11:03:36",
+        "updated_at": "2025-03-28 09:21:13",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
@@ -860,19 +882,150 @@
         "id": "ent-4d28f2",
         "created_at": "2025-03-26 10:31:43",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-27 11:12:11",
+        "updated_at": "2025-03-28 09:13:09",
         "deleted_at": null,
         "updated_by": "SYSTEM"
     },
     {
         "projectid": "pro-301517",
         "table": "entities",
-        "name": "Summary",
+        "name": "Jamie",
         "type": "Person",
         "description": "",
         "attributes": [],
-        "id": "ent-931a65",
-        "created_at": "2025-03-26 10:36:32",
+        "id": "ent-6e388a",
+        "created_at": "2025-03-28 08:50:08",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 09:21:09",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Melody",
+        "type": "Person",
+        "description": "",
+        "attributes": [],
+        "id": "ent-04ac2b",
+        "created_at": "2025-03-28 08:50:53",
         "created_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Rico",
+        "type": "Animal",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Breed",
+                "group": "Physical",
+                "type": "text",
+                "value": "Chihuahua"
+            },
+            {
+                "label": "Height",
+                "group": "Physical",
+                "type": "text",
+                "value": "5in"
+            }
+        ],
+        "id": "ent-42f90e",
+        "created_at": "2025-03-28 08:51:36",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 08:52:31",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Roxie",
+        "type": "Animal",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Breed",
+                "group": "Physical",
+                "type": "text",
+                "value": "Chihuahua"
+            }
+        ],
+        "id": "ent-c9dafb",
+        "created_at": "2025-03-28 08:53:19",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 09:03:07",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Summer",
+        "type": "Person",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
+            }
+        ],
+        "id": "ent-68ad15",
+        "created_at": "2025-03-28 09:13:39",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 09:13:50",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Karalee",
+        "type": "Person",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Female"
+            }
+        ],
+        "id": "ent-69b10b",
+        "created_at": "2025-03-28 09:14:44",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 09:14:53",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
+    },
+    {
+        "projectid": "pro-301517",
+        "table": "entities",
+        "name": "Eugene",
+        "type": "Person",
+        "description": "",
+        "attributes": [
+            {
+                "label": "Gender",
+                "group": "Physical",
+                "type": "text",
+                "value": "Male"
+            },
+            {
+                "label": "Height",
+                "group": "Physical",
+                "type": "text",
+                "value": "6ft"
+            }
+        ],
+        "id": "ent-aa6f67",
+        "created_at": "2025-03-28 09:22:19",
+        "created_by": "SYSTEM",
+        "updated_at": "2025-03-28 09:22:41",
+        "deleted_at": null,
+        "updated_by": "SYSTEM"
     }
 ]

@@ -58,45 +58,76 @@
 
 			// Create / Update
 			}else if ($REQUEST === "set") {
-				$RETURN_STATUS = DATA::set($database, $table, $fields, $condition);
-				if ($RETURN_STATUS === 'success') {
 
-					$key = "entityid";
-					if ($table === "projects") $key = "projectid";
-					if ($table === "relationships") $key = "relationshipid";
+                    // Check if record already exists
+                    $continue = true;
+                    if (isset($fields['id'])){ // Check for update
+                         $continue = false;
+                         $condition = [["field"=>"id","operator"=>"=","value"=>$fields['id']]];
+                         $result = DATA::get($database, $table, ['id'], $condition);
+                         if (!empty($result)) $continue = true;
+                    }
 
-					// Get Entry
-					$recCondition = null;
+                    // Relationship Check
+                    if ($table == 'relationships'){
+                         $condition = [
+                              ["field"=>"source","operator"=>"=","value"=>$fields['source']],
+                              ["field"=>"target","operator"=>"=","value"=>$fields['target']]
+                         ];
+                         $result = DATA::get($database, $table, ['id'], $condition);
+                         if (!empty($result) && isset($result['id'])) $fields['id'] = $result['id'];
+                    }
 
-					// ID Sent in
-					if (isset($fields['id']) && !empty($fields['id'])) $recCondition = [["field"=>"id","operator"=>"=","value"=>$fields['id']]];
+				if ($continue){
+                         $RETURN_STATUS = DATA::set($database, $table, $fields, $condition);
+                         if ($RETURN_STATUS === 'success') {
 
-					// Get Record
-					if (empty($recCondition)) {
-						if ($table == "projects"){
-							$recCondition = [["field"=>"name","operator"=>"=","value"=>$fields['name']]];
-						}else{
-							if (isset($fields['name'])){
-								$recCondition = [["field"=>"projectid","operator"=>"=","value"=>$fields['projectid']],["field"=>"name","operator"=>"=","value"=>$fields['name']]];
-							}else if (isset($fields['source']) && isset($fields['target'])) {
-								$recCondition = [["field"=>"projectid","operator"=>"=","value"=>$fields['projectid']],["field"=>"source","operator"=>"=","value"=>$fields['source']],["field"=>"target","operator"=>"=","value"=>$fields['target']]];
-							}
-						}
-					}
-					$result = DATA::get($database, $table, ['id','projectid'],$recCondition);
-					if (!empty($result)){
-						$RETURN_DATA["data"][$key] = !empty($result) ? $result[0]['id'] : '';
+                              $key = "entityid";
+                              if ($table === "projects") $key = "projectid";
+                              if ($table === "relationships") $key = "relationshipid";
 
-						$getCondition = null;
-						if (isset($result[0]['projectid'])) $getCondition = [["field"=>"projectid","operator"=>"=","value"=>$result[0]['projectid']]];
+                              // Get 
+                              $recCondition = null;
 
-						// Get Table (Project) Records
-						$RETURN_DATA["data"][$table] = DATA::get($database, $table,"",$getCondition);
-					}else{
-						$RETURN_STATUS = 'failure';
-					}
+                              // ID Sent in
+                              if (isset($fields['id']) && !empty($fields['id'])) $recCondition = [["field"=>"id","operator"=>"=","value"=>$fields['id']]];
 
-				}
+                              // Get Record
+                              if (empty($recCondition)) {
+                                   if ($table == "projects"){
+                                        $recCondition = [["field"=>"name","operator"=>"=","value"=>$fields['name']]];
+                                   }else{
+                                        if (isset($fields['name'])){
+                                             $recCondition = [
+                                                  ["field"=>"projectid","operator"=>"=","value"=>$fields['projectid']],
+                                                  ["field"=>"name","operator"=>"=","value"=>$fields['name']]
+                                             ];
+                                        }else if (isset($fields['source']) && isset($fields['target'])) {
+                                             $recCondition = [
+                                                  ["field"=>"projectid","operator"=>"=","value"=>$fields['projectid']],
+                                                  ["field"=>"source","operator"=>"=","value"=>$fields['source']],
+                                                  ["field"=>"target","operator"=>"=","value"=>$fields['target']]
+                                             ];
+                                        }
+                                   }
+                              }
+
+                              // Get Entry
+                              $result = DATA::get($database, $table, ['id','projectid'],$recCondition);
+                              if (!empty($result)){
+                                   $RETURN_DATA["data"][$key] = !empty($result) ? $result[0]['id'] : '';
+
+                                   $getCondition = null;
+                                   if (isset($result[0]['projectid'])) $getCondition = [["field"=>"projectid","operator"=>"=","value"=>$result[0]['projectid']]];
+
+                                   // Get Table (Project) Records
+                                   $RETURN_DATA["data"][$table] = DATA::get($database, $table,"",$getCondition);
+                              }else{
+                                   $RETURN_STATUS = 'failure';
+                              }
+
+                         }
+                    }
 
 			// Delete
 			}else if ($REQUEST === "delete") {

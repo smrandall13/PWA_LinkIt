@@ -170,12 +170,29 @@ body.theme-light select option textarea {
 	text-shadow: var(--text-shadow);
 	width: fit-content;
 	flex: 0 0 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .app-button-full {
 	justify-content:space-between;
+	padding:0;
 }
 .app-button-icon {
 	background-size:80%;
+	flex:0 0 auto;
+	display:inline-flex;
+	flex-direction:row;
+	justify-content:center;align-items:center;
+}
+.app-button-text {
+	flex:1;
+	display:inline-flex;
+	flex-direction:row;
+	justify-content:center;align-items:center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .app-button-rounded {
 	border-radius: 50%;

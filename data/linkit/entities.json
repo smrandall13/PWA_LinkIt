@@ -5,7 +5,7 @@
         "type": "Place",
         "projectid": "pro-301517",
         "id": "ent-3f82fe",
-        "attributes": [
+        "properties": [
             {
                 "label": "City",
                 "group": "Address",
@@ -48,7 +48,7 @@
         "description": "Man of the house",
         "projectid": "pro-301517",
         "id": "ent-cc6f01",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -100,7 +100,7 @@
         "description": "First lady",
         "projectid": "pro-301517",
         "id": "ent-cc6f02",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -137,7 +137,7 @@
         "description": "First Born",
         "projectid": "pro-301517",
         "id": "ent-cc6f03",
-        "attributes": [
+        "properties": [
             {
                 "label": "Role",
                 "value": "Son",
@@ -166,7 +166,7 @@
         "description": "Second Born",
         "projectid": "pro-301517",
         "id": "ent-cc6f04",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -203,7 +203,7 @@
         "description": "White Labrador",
         "projectid": "pro-301517",
         "id": "ent-cc6f05",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -240,7 +240,7 @@
         "description": "Shaun's Brother",
         "projectid": "pro-301517",
         "id": "ent-cc6f06",
-        "attributes": [
+        "properties": [
             {
                 "label": "Birth",
                 "group": "Date",
@@ -277,7 +277,7 @@
         "description": "Ricky's Wife",
         "projectid": "pro-301517",
         "id": "ent-cc6f07",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -314,7 +314,7 @@
         "description": "",
         "projectid": "pro-301517",
         "id": "ent-cc6f08",
-        "attributes": [
+        "properties": [
             {
                 "label": "Position",
                 "value": "Daughter",
@@ -343,7 +343,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd001",
-        "attributes": [
+        "properties": [
             {
                 "label": "Primary Key",
                 "value": "id"
@@ -364,7 +364,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd002",
-        "attributes": [
+        "properties": [
             {
                 "label": "Primary Key",
                 "value": "id"
@@ -385,7 +385,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd201",
-        "attributes": [
+        "properties": [
             {
                 "label": "type",
                 "type": "text",
@@ -423,7 +423,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd202",
-        "attributes": [
+        "properties": [
             {
                 "label": "foreight key",
                 "type": "text",
@@ -441,7 +441,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd003",
-        "attributes": [
+        "properties": [
             {
                 "label": "Primary Key",
                 "value": "id"
@@ -458,7 +458,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd101",
-        "attributes": [
+        "properties": [
             {
                 "label": "type",
                 "value": "text"
@@ -491,7 +491,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd102",
-        "attributes": [
+        "properties": [
             {
                 "label": "type",
                 "value": "string"
@@ -508,7 +508,7 @@
         "description": "",
         "projectid": "pro-301518",
         "id": "ent-erd103",
-        "attributes": [
+        "properties": [
             {
                 "label": "type",
                 "value": "string"
@@ -720,7 +720,7 @@
         "updated_at": "2025-03-17 17:39:35",
         "deleted_at": "2025-03-18 10:13:17",
         "updated_by": "SYSTEM",
-        "attributes": [
+        "properties": [
             {
                 "label": "Age",
                 "type": "text",
@@ -751,7 +751,7 @@
         "name": "Cash",
         "type": "Animal",
         "description": "Playful, Needy, Friendly",
-        "attributes": [
+        "properties": [
             {
                 "label": "Birth Year",
                 "group": "Physical",
@@ -808,7 +808,7 @@
         "name": "Chris Randall",
         "type": "Person",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -847,7 +847,7 @@
         "id": "ent-cb3bfe",
         "created_at": "2025-03-24 11:59:18",
         "created_by": "SYSTEM",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -871,20 +871,27 @@
         "name": "Tracie",
         "type": "Person",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
                 "type": "text",
                 "value": "Female"
+            },
+            {
+                "label": "Height",
+                "group": "Physical",
+                "type": "text",
+                "value": "5ft 10in"
             }
         ],
         "id": "ent-4d28f2",
         "created_at": "2025-03-26 10:31:43",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-28 09:13:09",
+        "updated_at": "2025-03-28 15:20:05",
         "deleted_at": null,
-        "updated_by": "SYSTEM"
+        "updated_by": "SYSTEM",
+        "color": "#bde0fe"
     },
     {
         "projectid": "pro-301517",
@@ -892,7 +899,7 @@
         "name": "Jamie",
         "type": "Person",
         "description": "",
-        "attributes": [],
+        "properties": [],
         "id": "ent-6e388a",
         "created_at": "2025-03-28 08:50:08",
         "created_by": "SYSTEM",
@@ -906,7 +913,7 @@
         "name": "Melody",
         "type": "Person",
         "description": "",
-        "attributes": [],
+        "properties": [],
         "id": "ent-04ac2b",
         "created_at": "2025-03-28 08:50:53",
         "created_by": "SYSTEM"
@@ -917,7 +924,7 @@
         "name": "Rico",
         "type": "Animal",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Breed",
                 "group": "Physical",
@@ -944,7 +951,7 @@
         "name": "Roxie",
         "type": "Animal",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Breed",
                 "group": "Physical",
@@ -965,7 +972,7 @@
         "name": "Summer",
         "type": "Person",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -976,9 +983,10 @@
         "id": "ent-68ad15",
         "created_at": "2025-03-28 09:13:39",
         "created_by": "SYSTEM",
-        "updated_at": "2025-03-28 09:13:50",
+        "updated_at": "2025-03-28 15:18:52",
         "deleted_at": null,
-        "updated_by": "SYSTEM"
+        "updated_by": "SYSTEM",
+        "color": "#f8961e"
     },
     {
         "projectid": "pro-301517",
@@ -986,7 +994,7 @@
         "name": "Karalee",
         "type": "Person",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",
@@ -1007,7 +1015,7 @@
         "name": "Eugene",
         "type": "Person",
         "description": "",
-        "attributes": [
+        "properties": [
             {
                 "label": "Gender",
                 "group": "Physical",

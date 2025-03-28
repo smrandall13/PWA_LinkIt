@@ -10,11 +10,12 @@ const LINKIT = {
           projects: [],
           entities: [],
           relationships: [],
-          attributes: [],
+          properties: [],
           projectLimit: 3,
           entityLimit: 100,
           timeouts: [],
           edited: false,
+          colorDefault: "#00a878",
           siteupgrade: "https://shaunrandall.com"
      },
      form: {
@@ -81,36 +82,36 @@ const LINKIT = {
                     entity.parentNode.classList.remove("app-group-closed");
                }
 
-               // Gather All Attributes
-               let allAttributes = [];
-               if (LINKIT.settings.attributes && LINKIT.settings.attributes.length > 0) {
-                    // Gather Core Attributes
-                    LINKIT.settings.attributes.forEach((attribute) => {
-                         if (attribute.list && attribute.list.length > 0) {
-                              allAttributes = [...allAttributes, ...attribute.list];
+               // Gather All Properties
+               let allProperties = [];
+               if (LINKIT.settings.properties && LINKIT.settings.properties.length > 0) {
+                    // Gather Core Properties
+                    LINKIT.settings.properties.forEach((property) => {
+                         if (property.list && property.list.length > 0) {
+                              allProperties = [...allProperties, ...property.list];
                          }
                     });
                }
                if (LINKIT.settings.entities && LINKIT.settings.entities.length > 0) {
-                    // Gather Entity Attributes
+                    // Gather Entity Properties
                     LINKIT.settings.entities.forEach((entity) => {
-                         if (entity.attributes && entity.attributes.length > 0) {
-                              allAttributes = [...allAttributes, ...entity.attributes];
+                         if (entity.properties && entity.properties.length > 0) {
+                              allProperties = [...allProperties, ...entity.properties];
                          }
                     });
                }
 
                // Attribute Options
-               let attributeLabels = "";
-               let attributeGroups = "";
-               if (allAttributes && allAttributes.length > 0) {
+               let propertyLabels = "";
+               let propertyGroups = "";
+               if (allProperties && allProperties.length > 0) {
                     // Attribute Labels
-                    let uniqueAttributeLabels = uniqueKey(allAttributes, "label");
-                    if (uniqueAttributeLabels && uniqueAttributeLabels.length > 0) uniqueAttributeLabels.forEach((label) => (attributeLabels += `<option value='${label}'>${label}</option>`));
+                    let uniqueAttributeLabels = uniqueKey(allProperties, "label");
+                    if (uniqueAttributeLabels && uniqueAttributeLabels.length > 0) uniqueAttributeLabels.forEach((label) => (propertyLabels += `<option value='${label}'>${label}</option>`));
 
                     // Attribute Groups
-                    let uniqueAttributeGroups = uniqueKey(allAttributes, "group");
-                    if (uniqueAttributeGroups && uniqueAttributeGroups.length > 0) uniqueAttributeGroups.forEach((group) => (attributeGroups += `<option value='${group}'>${group}</option>`));
+                    let uniqueAttributeGroups = uniqueKey(allProperties, "group");
+                    if (uniqueAttributeGroups && uniqueAttributeGroups.length > 0) uniqueAttributeGroups.forEach((group) => (propertyGroups += `<option value='${group}'>${group}</option>`));
                }
 
                // Relationship Options
@@ -142,14 +143,12 @@ const LINKIT = {
                     return value;
                };
 
-               // Attributes
-               let attributes = [];
-               let controls = BUTTON("linkit-control-create", "", "Create", {
-                    class: "app-button-small linkit-button flex-1"
-               });
+               // Properties
+               let properties = [];
+               let controls = BUTTON("linkit-control-create", "", "Create", { class: "app-button-small linkit-button flex-1" });
                if (!isEmpty(itemid)) {
                     if (item && item.id === LINKIT.settings[itemKey]) {
-                         if (tableName == "entities") attributes = item.attributes;
+                         if (tableName == "entities") properties = item.properties;
                          label = item.name; //item.type + ': ' + item.name;
                          controls = BUTTON("linkit-control-update", "edit", "Update", {
                               class: "app-button-small linkit-button flex-1"
@@ -160,10 +159,10 @@ const LINKIT = {
                     }
                }
                if (newItem === 1) {
-                    const typeAttributes = LINKIT.attribute.type("Core");
-                    if (typeAttributes && typeAttributes.length && typeAttributes.length > 0) attributes = typeAttributes;
+                    const typeProperties = LINKIT.property.type("Core");
+                    if (typeProperties && typeProperties.length && typeProperties.length > 0) properties = typeProperties;
                }
-               if (!isArray(attributes)) attributes = [];
+               if (!isArray(properties)) properties = [];
 
                // Relationships
                let relationships = [];
@@ -176,64 +175,68 @@ const LINKIT = {
                const activeTab = LINKIT.settings.activetab;
 
                // Tab Content
-               let attributeContent = ``;
+               let entityFields = ``;
+               let propertyContent = ``;
                let relationshipContent = "";
-               if (tableName == "entities" && !isEmpty(itemid)) {
-                    let attrButton = BUTTON("linkit-attributes-button-delete", "delete", "Delete All", {
-                         class: "app-button-small linkit-button linkit-button-caution flex-1"
-                    });
-                    if (attributes.length == 0) attrButton = "";
+               if (tableName == "entities") {
+                    let entityColor = getKeyValue("color") || LINKIT.settings.colorDefault || "#00a878";
 
-                    // Attribute Content
-                    attributeContent = `
-                              <div id='linkit-tab-container-attributes' class='app-box-partial linkit-tab-container linkit-position-fixed ${activeTab == "attributes" ? "" : "app-hidden"}'>
-                                   <div class='linkit-tab-title'>Properties</div>
-                                   <div class='linkit-box-body' style='padding-top:0;'>
-                                        <div id='linkit-attributes-list' class='app-box-grid'>${LINKIT.attribute.list(attributes)}</div>
-                                        <datalist id='linkit-attributegroups'>${attributeGroups}</datalist>
-                                        <datalist id='linkit-attributelabels'>${attributeLabels}</datalist>
-                                   </div>
-     
-                                   <div class='linkit-box-controls'>
-                                        ${BUTTON("linkit-attribute-info", "info", "", {
-                                             class: "app-button-small linkit-icon",
-                                             tooltip: "Property Info"
-                                        })}
-                                        ${BUTTON("linkit-attributes-button-new", "add", "Property", {
-                                             class: "app-button-small linkit-button flex-1"
-                                        })}
-                                        ${attrButton}
-                                   </div>
-                              </div>`;
+                    entityFields = `
+                         <div class='app-box-label'>Color</div>
+                         <div class='app-box-value'>
+                              <input type="color" id="linkit-form-color" class='app-hidden' value="${entityColor}" />
+                              <div id='linkit-form-color-picker' class='app-color-picker' style='background-color:${entityColor};' onclick="COLOR.open('linkit-form-color')"></div>
+                         </div>
+                    `;
 
-                    // Relationship Content
-                    let relateButton = BUTTON("linkit-relationships-button-delete", "delete", "Delete All", {
-                         class: "app-button-small linkit-button linkit-button-caution flex-1"
-                    });
-                    if (relationships.length == 0) relateButton = "";
+                    if (!isEmpty(itemid)) {
+                         let propDelete = BUTTON("linkit-properties-button-delete", "delete", "Delete All", { class: "app-button-small linkit-button linkit-button-caution flex-1" });
+                         if (properties.length == 0) propDelete = "";
 
-                    relationshipContent = `
-                              <div id='linkit-tab-container-relationships' class='app-box-partial linkit-tab-container linkit-position-fixed ${activeTab == "relationships" ? "" : "app-hidden"}'>
-                                   <div class='linkit-tab-title'>Relationships</div>
-                                   <div class='linkit-box-body' style='padding-top:0;'>
-                                        <div id='linkit-relationships-list' class=' linkit-list' style='display:flex;flex-direction:column;gap:4px;'>${LINKIT.relationship.list(relationships)}</div>
-                                        <datalist id='linkit-relationshiptypes'>${relationshipTypeOptions}</datalist>
-                                   </div>
-                                   <div class='linkit-box-controls'>					
+                         // Attribute Content
+                         propertyContent = `<div id='linkit-tab-container-properties' class='app-box-partial linkit-tab-container linkit-position-fixed ${activeTab == "properties" ? "" : "app-hidden"}'>
+                              <div class='linkit-tab-title'>Properties</div>
+                              <div class='linkit-box-body' style='padding-top:0;'>
+                                   <div id='linkit-properties-list' class='app-box-grid'>${LINKIT.property.list(properties)}</div>
+                                   <datalist id='linkit-propertygroups'>${propertyGroups}</datalist>
+                                   <datalist id='linkit-propertylabels'>${propertyLabels}</datalist>
+                              </div>
 
-                                        ${BUTTON("linkit-relationship-info", "info", "", {
-                                             class: "app-button-small linkit-icon",
-                                             tooltip: "Relationship Info"
-                                        })}	
+                              <div class='linkit-box-controls'>
+                                   ${BUTTON("linkit-property-info", "info", "", { class: "app-button-small linkit-icon", tooltip: "Property Info" })}
+                                   ${BUTTON("linkit-properties-button-new", "add", "Property", { class: "app-button-small linkit-button flex-1" })}
+                                   ${propDelete}
+                              </div>
+                         </div>`;
 
-                                        ${BUTTON("linkit-relationship-button-new", "add", "Relationship", {
-                                             class: "app-button-small linkit-button flex-1"
-                                        })}		
+                         // Relationship Content
+                         let relateButton = BUTTON("linkit-relationships-button-delete", "delete", "Delete All", {
+                              class: "app-button-small linkit-button linkit-button-caution flex-1"
+                         });
+                         if (relationships.length == 0) relateButton = "";
 
-                                        ${relateButton}
+                         relationshipContent = `<div id='linkit-tab-container-relationships' class='app-box-partial linkit-tab-container linkit-position-fixed ${activeTab == "relationships" ? "" : "app-hidden"}'>
+                              <div class='linkit-tab-title'>Relationships</div>
+                              <div class='linkit-box-body' style='padding-top:0;'>
+                                   <div id='linkit-relationships-list' class=' linkit-list' style='display:flex;flex-direction:column;gap:4px;'>${LINKIT.relationship.list(relationships)}</div>
+                                   <datalist id='linkit-relationshiptypes'>${relationshipTypeOptions}</datalist>
+                              </div>
+                              <div class='linkit-box-controls'>					
 
-                                   </div>
-                              </div>`;
+                                   ${BUTTON("linkit-relationship-info", "info", "", {
+                                        class: "app-button-small linkit-icon",
+                                        tooltip: "Relationship Info"
+                                   })}	
+
+                                   ${BUTTON("linkit-relationship-button-new", "add", "Relationship", {
+                                        class: "app-button-small linkit-button flex-1"
+                                   })}		
+
+                                   ${relateButton}
+
+                              </div>
+                         </div>`;
+                    }
                }
 
                // File Content
@@ -255,7 +258,7 @@ const LINKIT = {
 
                let tabs = `<div class='linkit-tabs'>
                          <div id='linkit-tab-details' class='linkit-tab ${activeTab == "details" ? "linkit-tab-selected" : ""}' onclick="LINKIT.tabs.select('details')">${tabTitle}</div>`;
-               if (!isEmpty(attributeContent)) tabs += `<div id='linkit-tab-attributes' class='linkit-tab ${activeTab == "attributes" ? "linkit-tab-selected" : ""}' onclick="LINKIT.tabs.select('attributes')">Properties</div>`;
+               if (!isEmpty(propertyContent)) tabs += `<div id='linkit-tab-properties' class='linkit-tab ${activeTab == "properties" ? "linkit-tab-selected" : ""}' onclick="LINKIT.tabs.select('properties')">Properties</div>`;
                if (!isEmpty(relationshipContent)) tabs += `<div id='linkit-tab-relationships' class='linkit-tab ${activeTab == "relationships" ? "linkit-tab-selected" : ""}' onclick="LINKIT.tabs.select('relationships')">Relationships</div>`;
                if (!isEmpty(itemid)) {
                     tabs += `<div id='linkit-tab-files' class='linkit-tab ${activeTab == "files" ? "linkit-tab-selected" : ""}' onclick="LINKIT.tabs.select('files')">Files</div>`;
@@ -280,19 +283,29 @@ const LINKIT = {
                                         <div class='linkit-tab-title'>${itemTitle}</div>
                                         <div class='linkit-box-body'>
                                              <input type="hidden" id="linkit-form-table" value='${tableName}' />
+                                             
                                              <div class='app-box-label space-between'>Name</div>
-                                             <div class='app-box-value'><input type="text" id="linkit-form-name" placeholder="Name" value="${getKeyValue("name", 1)}" class='linkit-input' /></div>
+                                             <div class='app-box-value'>
+                                                  <input type="text" id="linkit-form-name" placeholder="Name" value="${getKeyValue("name", 1)}" class='linkit-input' />
+                                             </div>
+                                             
                                              <div class='app-box-label'>Type</div><div class='app-box-value'>
                                                   <input type="text" id="linkit-form-type" placeholder="Type" list="linkit-types" value="${getKeyValue("type", 1)}" class='linkit-input' ${typeChange}/>
                                                   <datalist id='linkit-types'>${typeOptions}</datalist>
                                              </div>
-                                             <div class='app-box-label'>Description</div><div class='app-box-value'><textarea id="linkit-form-description" style='min-height:100px;' class='linkit-input'>${getKeyValue("description", 1)}</textarea></div>
+
+                                             ${entityFields}
+                                             
+                                             <div class='app-box-label'>Description</div>
+                                             <div class='app-box-value'>
+                                                  <textarea id="linkit-form-description" style='min-height:100px;' class='linkit-input'>${getKeyValue("description", 1)}</textarea>
+                                             </div>
                                         </div>
 
                                         <div class='linkit-box-controls app-box-controls'>${controls}</div>
                                    </div>
 
-                                   ${attributeContent}
+                                   ${propertyContent}
                                    ${relationshipContent}
                                    ${fileContent}	
 
@@ -331,18 +344,18 @@ const LINKIT = {
                          );
                     });
 
-                    addEvent("linkit-attributes-button-new", () => {
-                         LINKIT.attribute.edit(0);
+                    addEvent("linkit-properties-button-new", () => {
+                         LINKIT.property.edit(0);
                     });
-                    addEvent("linkit-attribute-info", () => {
+                    addEvent("linkit-property-info", () => {
                          MESSAGE.info(
                               `Property Info`,
                               `Properties consist of a Group, Label, and Value.<br>Groups are used to group related properties together, Labels are used to identify the property, and Values are used to store the actual data.<br><br>To Edit or Remove a property, click the Edit button [<div class='app-icon-inline app-icon-edit'></div>] on the row of the property.<br><br>To add a new property use the + Property button and fill out the New Property form.`
                          );
                     });
 
-                    addEvent("linkit-attributes-button-delete", () => {
-                         LINKIT.attribute.deleteAll();
+                    addEvent("linkit-properties-button-delete", () => {
+                         LINKIT.property.deleteAll();
                     });
                     addEvent("linkit-relationships-button-delete", () => {
                          LINKIT.relationship.deleteAll();
@@ -394,7 +407,7 @@ const LINKIT = {
                LINKIT2D.select();
           },
           init: function () {
-               LINKIT.attribute.close();
+               LINKIT.property.close();
                LINKIT.relationship.close();
                LINKIT.file.close();
           }
@@ -458,24 +471,24 @@ const LINKIT = {
                     postData.fields[key] = sanitizeString(input.value);
                });
 
-               // Attributes
-               const attributesTab = getElement("linkit-tab-container-attributes");
-               const attributes = [];
-               if (attributesTab) {
-                    const attributesInputs = attributesTab.querySelectorAll("input, select, textarea");
-                    attributesInputs.forEach((input) => {
-                         if (input.id.includes("attr_key_")) {
+               // Properties
+               const propertiesTab = getElement("linkit-tab-container-properties");
+               const properties = [];
+               if (propertiesTab) {
+                    const propertiesInputs = propertiesTab.querySelectorAll("input, select, textarea");
+                    propertiesInputs.forEach((input) => {
+                         if (input.id.includes("prop_label_")) {
                               let number = input.id.split("_")[2];
                               if (isEmpty(number)) number = 0;
 
-                              let label = sanitizeString(getValue(`linkit-form-attr_key_${number}`));
-                              let group = sanitizeString(getValue(`linkit-form-attr_group_${number}`));
-                              let type = sanitizeString(getValue(`linkit-form-attr_type_${number}`));
-                              let value = sanitizeString(getValue(`linkit-form-attr_value_${number}`));
+                              let label = sanitizeString(getValue(`linkit-form-prop_label_${number}`));
+                              let group = sanitizeString(getValue(`linkit-form-prop_group_${number}`));
+                              let type = sanitizeString(getValue(`linkit-form-prop_type_${number}`));
+                              let value = sanitizeString(getValue(`linkit-form-prop_value_${number}`));
 
                               if (!isEmpty(label) && !isEmpty(value) && number > 0) {
                                    if (isEmpty(type)) type = "text";
-                                   attributes.push({
+                                   properties.push({
                                         label: label,
                                         group: group,
                                         type: type,
@@ -485,7 +498,7 @@ const LINKIT = {
                          }
                     });
                }
-               postData.fields.attributes = attributes;
+               postData.fields.properties = properties;
 
                // Update Data
                LINKIT.settings.edited = false;
@@ -639,26 +652,26 @@ const LINKIT = {
                     list.push(`</div>`); // Close Group
                }
                LINKIT.relationship.get();
-               LINKIT.attribute.get();
+               LINKIT.property.get();
           },
           type: function (type = "Core") {
                if (!isEmpty(type)) {
-                    let attributes = LINKIT.attribute.type(type);
-                    if (!attributes || attributes.length == 0) {
-                         // Get All Attributes for the last entity created with matching type
+                    let properties = LINKIT.property.type(type);
+                    if (!properties || properties.length == 0) {
+                         // Get All Properties for the last entity created with matching type
                          const entity = LINKIT.settings.entities.find((entity) => entity.type === type);
                          if (entity) {
-                              attributes = [...entity.attributes];
-                              attributes.forEach((attribute) => {
-                                   attribute.value = "";
+                              properties = [...entity.properties];
+                              properties.forEach((property) => {
+                                   property.value = "";
                               });
                          }
                     }
-                    if (attributes) {
-                         const attributeElement = document.getElementById("linkit-attributes-list");
-                         if (attributeElement) {
-                              let attributeList = LINKIT.attribute.list(attributes);
-                              attributeElement.innerHTML = attributeList;
+                    if (properties) {
+                         const propertyElement = document.getElementById("linkit-properties-list");
+                         if (propertyElement) {
+                              let propertyList = LINKIT.property.list(properties);
+                              propertyElement.innerHTML = propertyList;
                          }
                     }
                }
@@ -974,77 +987,77 @@ const LINKIT = {
                });
           }
      },
-     attribute: {
+     property: {
           get: function () {
                // Get Attribute Types
-               DATA.submit("attributes").then((result) => {
-                    if (result && result.data && result.data.attributes && isArray(result.data.attributes)) {
-                         LINKIT.settings.attributes = result.data.attributes;
+               DATA.submit("properties").then((result) => {
+                    if (result && result.data && result.data.properties && isArray(result.data.properties)) {
+                         LINKIT.settings.properties = result.data.properties;
                     }
                });
           },
           line: function (num, group, label, value) {
                return `<div class='app-box-value'>
-                         <input type='text' id='linkit-form-attr_key_${num}' value='${label}' placeholder='Label' disabled style='max-width:100px;' list='linkit-attributelabels' />
-                         <input type='hidden' id='linkit-form-attr_group_${num}' value='${group}' disabled list='linkit-attributegroups' />
+                         <input type='text' id='linkit-form-prop_label_${num}' value='${label}' placeholder='Label' disabled style='max-width:100px;' list='linkit-propertylabels' />
+                         <input type='hidden' id='linkit-form-prop_group_${num}' value='${group}' disabled list='linkit-propertygroups' />
                     </div>
                     <div class='app-box-value'>
                          ${value}
-                         <div class='app-icon app-icon-small app-icon-edit linkit-icon' onclick='LINKIT.attribute.edit(${num})'></div>
+                         <div class='app-icon app-icon-small app-icon-edit linkit-icon' onclick='LINKIT.property.edit(${num})'></div>
                     </div>`;
           },
-          list: function (attributes = []) {
-               // Attributes
-               const createAttributeValue = function (a, attribute) {
-                    let value = attribute.value;
-                    let defaultValue = attribute.default;
+          list: function (properties = []) {
+               // Properties
+               const getPropertyValue = function (a, property) {
+                    let value = property.value;
+                    let defaultValue = property.default;
                     if (isEmpty(value)) value = defaultValue;
                     if (isEmpty(defaultValue)) defaultValue = "";
                     if (isEmpty(value)) value = "";
-                    let type = attribute.type || "text";
+                    let type = property.type || "text";
                     type = "text";
 
                     if (type == "integer" || type == "number" || type == "range" || type == "boolean") value = parseInt(value);
                     if (type == "float" || type == "decimal") value = parseFloat(value);
                     // if (type == 'date' || type == 'datetime') value = new Date(value);
 
-                    let attributeValue = "";
-                    let attrID = `linkit-form-attr_value_${a}`;
+                    let propertyValue = "";
+                    let propID = `linkit-form-prop_value_${a}`;
                     if (type == "select") {
                          let options = ``;
-                         if (attribute.list && attribute.list.length > 0) {
-                              attribute.list.forEach((option) => (options += `<option value='${option}'>${option}</option>`));
+                         if (property.list && property.list.length > 0) {
+                              property.list.forEach((option) => (options += `<option value='${option}'>${option}</option>`));
                          }
-                         attributeValue = `<select id='${attrID}' value='${value}'>${options}</select>`;
+                         propertyValue = `<select id='${propID}' value='${value}'>${options}</select>`;
                     } else if (type == "color") {
-                         attributeValue = `<input type='color' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='color' id='${propID}' value='${value}' />`;
                     } else if (type == "url" || type == "link" || type == "web") {
-                         attributeValue = `<input type='url' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='url' id='${propID}' value='${value}' />`;
                     } else if (type == "date") {
-                         attributeValue = `<input type='date' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='date' id='${propID}' value='${value}' />`;
                     } else if (type == "email") {
-                         attributeValue = `<input type='email' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='email' id='${propID}' value='${value}' />`;
                     } else if (type == "phone" || type == "tel") {
-                         attributeValue = `<input type='tel' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='tel' id='${propID}' value='${value}' />`;
                     } else if (type == "integer" || type == "number") {
-                         attributeValue = `<input type='number' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='number' id='${propID}' value='${value}' />`;
                     } else if (type == "range") {
-                         attributeValue = `<input type='range' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='range' id='${propID}' value='${value}' />`;
                     } else if (type == "datetime") {
-                         attributeValue = `<input type='datetime' id='${attrID}' value='${value}' />`;
+                         propertyValue = `<input type='datetime' id='${propID}' value='${value}' />`;
                     } else if (type == "checkbox" || type == "boolean") {
-                         attributeValue = `<div class='app-toggle-wrapper'><label class='app-toggle-switch'><input type='checkbox' id='${attrID}' ${value ? "checked" : ""} /><span class='app-toggle-slider'></span></label></div>`;
+                         propertyValue = `<div class='app-toggle-wrapper'><label class='app-toggle-switch'><input type='checkbox' id='${propID}' ${value ? "checked" : ""} /><span class='app-toggle-slider'></span></label></div>`;
                     } else if (type == "text" || type == "varchar") {
-                         attributeValue = `<input type='text' id='linkit-form-attr_value_${a}' placeholder="${defaultValue}" value='${value}' disabled />`;
+                         propertyValue = `<input type='text' id='linkit-form-prop_value_${a}' placeholder="${defaultValue}" value='${value}' disabled />`;
                     }
-                    return attributeValue;
+                    return propertyValue;
                };
 
-               let attributeList = `<div class="linkit-list-box align-center">No Properties</div>`;
+               let propertyList = `<div class="linkit-list-box align-center">No Properties</div>`;
 
                let a = 1;
-               if (attributes && attributes.length > 0) {
-                    attributes.sort((a, b) => {
+               if (properties && properties.length > 0) {
+                    properties.sort((a, b) => {
                          if (a.group && b.group) {
                               const group = a.group.localeCompare(b.group);
                               if (group !== 0) return group; // Sort By Group
@@ -1065,46 +1078,46 @@ const LINKIT = {
                     let lastGroup = "";
                     let titleLabels = `<div class='font-size-xsm app-box-value align-center'>Label</div><div class='font-size-xsm app-box-value align-center'>Value</div>`;
 
-                    attributeList = `<div class='linkit-list-box app-box-grid marb-4'>`;
+                    propertyList = `<div class='linkit-list-box app-box-grid marb-4'>`;
                     let boxOpen = false;
-                    attributes.forEach((attribute) => {
-                         if (lastGroup !== attribute.group) {
-                              lastGroup = attribute.group;
-                              if (boxOpen) attributeList += `</div><div class='linkit-list-box app-box-grid marb-4'>`;
+                    properties.forEach((property) => {
+                         if (lastGroup !== property.group) {
+                              lastGroup = property.group;
+                              if (boxOpen) propertyList += `</div><div class='linkit-list-box app-box-grid marb-4'>`;
                               boxOpen = true;
-                              if (!isEmpty(attribute.group)) {
-                                   attributeList += `<div class='app-box-subtitle app-box-span flex-row justify-center marb-4'>${attribute.group}</div>`;
+                              if (!isEmpty(property.group)) {
+                                   propertyList += `<div class='app-box-subtitle app-box-span flex-row justify-center marb-4'>${property.group}</div>`;
                               }
-                              attributeList += titleLabels;
+                              propertyList += titleLabels;
                          }
                          let editButton = ``;
-                         attributeList += LINKIT.attribute.line(a, attribute.group, attribute.label, createAttributeValue(a, attribute) + editButton);
+                         propertyList += LINKIT.property.line(a, property.group, property.label, getPropertyValue(a, property) + editButton);
                          a++;
                     });
-                    attributeList += "</div>";
+                    propertyList += "</div>";
                }
-               return attributeList;
+               return propertyList;
           },
           edit: function (a = 0) {
                let group = "";
                let label = "";
                let value = "";
-               let buttonUpdate = BUTTON("linkit-attribute-add", "", "Add Property", {
+               let buttonUpdate = BUTTON("linkit-property-add", "", "Add Property", {
                     class: "app-button-small linkit-button flex-1"
                });
                let titleLabel = "New Property";
                let buttonDelete = ``;
 
                if (a !== 0) {
-                    label = getValue("linkit-form-attr_key_" + a);
+                    label = getValue("linkit-form-prop_label_" + a);
                     if (!isEmpty(label)) {
-                         group = getValue("linkit-form-attr_group_" + a);
-                         value = getValue("linkit-form-attr_value_" + a);
+                         group = getValue("linkit-form-prop_group_" + a);
+                         value = getValue("linkit-form-prop_value_" + a);
                          titleLabel = "Edit Property";
-                         buttonUpdate = BUTTON("linkit-attribute-add", "edit", "Update", {
+                         buttonUpdate = BUTTON("linkit-property-add", "edit", "Update", {
                               class: "app-button-small linkit-button flex-1"
                          });
-                         buttonDelete = BUTTON("linkit-attribute-delete", "delete", "Delete", {
+                         buttonDelete = BUTTON("linkit-property-delete", "delete", "Delete", {
                               class: "app-button-small linkit-button linkit-button-caution flex-1"
                          });
                     }
@@ -1114,42 +1127,56 @@ const LINKIT = {
                keyEscape = `app-action-escape="setValue" `;
                keyEnter = ``; //app-action-enter="inputNext"`;
 
-               let editContent = `<div id='linkit-attribute-new' class='app-box-cover'>
-                         <div class='linkit-tab-title space-between'>${titleLabel} <div class='app-icon-close app-icon app-icon-small pointer app-icon-hover ' onclick="LINKIT.attribute.close()"></div></div>
-                         <div class='linkit-box-body'>
-                              <input type="hidden" id="linkit-attr-number" value='${a}'/>
-                              <div class='app-box-label'>Group</div><div class='app-box-value'><input type="text" id="linkit-attr-group" placeholder="Group" class='linkit-input' ${keyEscape} ${keyEnter} list='linkit-attributegroups' value='${group}'/></div>
-                              <div class='app-box-label'>Label</div><div class='app-box-value'><input type="text" id="linkit-attr-label" placeholder="Label" class='linkit-input' ${keyEscape} ${keyEnter} list='linkit-attributelabels' value='${label}'/></div>
-                              <div class='app-box-label'>Value</div><div class='app-box-value'><input type="text" id="linkit-attr-value" placeholder="Value" class='linkit-input'${keyEscape} app-action-enter="LINKIT.attribute.update()"  value='${value}' /></div>
-                         </div>
-                         <div class='linkit-box-controls'>
-                              ${buttonUpdate}
-                              ${buttonDelete}
-                         </div>
-                    </div>`;
+               let editContent = `<div id='linkit-property-new' class='app-box-cover'>
+                    <div class='linkit-tab-title space-between'>${titleLabel} <div class='app-icon-close app-icon app-icon-small pointer app-icon-hover ' onclick="LINKIT.property.close()"></div></div>
+                    <div class='linkit-box-body'>
 
-               const parent = document.getElementById("linkit-tab-container-attributes");
+                         <input type="hidden" id="linkit-prop-number" value='${a}'/>
+
+                         <div class='app-box-label'>Group</div>
+                         <div class='app-box-value'>
+                              <input type="text" id="linkit-prop-group" placeholder="Group" class='linkit-input' ${keyEscape} ${keyEnter} list='linkit-propertygroups' value='${group}'/>
+                         </div>
+                         
+                         <div class='app-box-label'>Label</div>
+                         <div class='app-box-value'>
+                              <input type="text" id="linkit-prop-label" placeholder="Label" class='linkit-input' ${keyEscape} ${keyEnter} list='linkit-propertylabels' value='${label}'/>
+                         </div>
+                         
+                         <div class='app-box-label'>Value</div>
+                         <div class='app-box-value'>
+                              <input type="text" id="linkit-prop-value" placeholder="Value" class='linkit-input'${keyEscape} app-action-enter="LINKIT.property.update()"  value='${value}' />
+                         </div>
+                         
+                    </div>
+                    <div class='linkit-box-controls'>
+                         ${buttonUpdate}
+                         ${buttonDelete}
+                    </div>
+               </div>`;
+
+               const parent = document.getElementById("linkit-tab-container-properties");
                if (parent) {
                     parent.insertAdjacentHTML("beforeend", editContent);
 
-                    inputFocus("linkit-attr-group");
+                    inputFocus("linkit-prop-group");
 
-                    const updateButton = document.getElementById("linkit-attribute-add");
-                    if (updateButton) addEvent(updateButton, () => LINKIT.attribute.update());
+                    const updateButton = document.getElementById("linkit-property-add");
+                    if (updateButton) addEvent(updateButton, () => LINKIT.property.update());
 
-                    const deleteButton = document.getElementById("linkit-attribute-delete");
-                    if (deleteButton) addEvent(deleteButton, () => LINKIT.attribute.delete());
+                    const deleteButton = document.getElementById("linkit-property-delete");
+                    if (deleteButton) addEvent(deleteButton, () => LINKIT.property.delete());
                }
           },
           close: function () {
-               removeElement("linkit-attribute-new");
+               removeElement("linkit-property-new");
           },
           update: function () {
-               const number = parseInt(getValue("linkit-attr-number"));
-               const group = getValue("linkit-attr-group");
-               const label = getValue("linkit-attr-label");
-               const value = getValue("linkit-attr-value");
-               let type = getValue("linkit-attr-type");
+               const number = parseInt(getValue("linkit-prop-number"));
+               const group = getValue("linkit-prop-group");
+               const label = getValue("linkit-prop-label");
+               const value = getValue("linkit-prop-value");
+               let type = getValue("linkit-prop-type");
                if (isEmpty(type)) type = "text";
 
                if (isEmpty(label) || isEmpty(value)) {
@@ -1159,17 +1186,17 @@ const LINKIT = {
 
                // Existing Attribute
                if (number > 0) {
-                    setValue("linkit-form-attr_group_" + number, group);
-                    setValue("linkit-form-attr_key_" + number, label);
-                    setValue("linkit-form-attr_value_" + number, value);
+                    setValue("linkit-form-prop_group_" + number, group);
+                    setValue("linkit-form-prop_label_" + number, label);
+                    setValue("linkit-form-prop_value_" + number, value);
                } else if (number == 0) {
                     // New Attribute
-                    const list = document.getElementById("linkit-attributes-list");
-                    const inputs = list.querySelectorAll('input[id^="linkit-form-attr_key_"]');
-                    // Get the number of attributes
+                    const list = document.getElementById("linkit-properties-list");
+                    const inputs = list.querySelectorAll('input[id^="linkit-form-prop_label_"]');
+                    // Get the number of properties
                     let num = inputs.length + 1;
 
-                    const line = LINKIT.attribute.line(num, group, label, `<input type='text' id='linkit-form-attr_value_${num}' value='${value}' />`);
+                    const line = LINKIT.property.line(num, group, label, `<input type='text' id='linkit-form-prop_value_${num}' value='${value}' />`);
                     let html = list.innerHTML + line;
                     list.innerHTML = html;
                }
@@ -1179,41 +1206,41 @@ const LINKIT = {
                }, 200); // Update Entity
           },
           delete: function (confirm = 0) {
-               const number = parseInt(getValue("linkit-attr-number"));
+               const number = parseInt(getValue("linkit-prop-number"));
                if (number > 0) {
                     if (confirm == 0) {
-                         const group = getValue("linkit-form-attr_group_" + number, "");
-                         const label = getValue("linkit-form-attr_key_" + number, "");
+                         const group = getValue("linkit-form-prop_group_" + number, "");
+                         const label = getValue("linkit-form-prop_label_" + number, "");
                          let name = label;
                          if (!isEmpty(group)) {
                               name = group + ": " + label;
                          }
 
-                         MESSAGE.confirm(`Delete Property`, `Are you sure you want to delete this ${name}?`, () => LINKIT.attribute.delete(1));
+                         MESSAGE.confirm(`Delete Property`, `Are you sure you want to delete this ${name}?`, () => LINKIT.property.delete(1));
                          return;
                     }
-                    setValue("linkit-form-attr_group_" + number, "");
-                    setValue("linkit-form-attr_key_" + number, "");
-                    setValue("linkit-form-attr_value_" + number, "");
+                    setValue("linkit-form-prop_group_" + number, "");
+                    setValue("linkit-form-prop_label_" + number, "");
+                    setValue("linkit-form-prop_value_" + number, "");
                     LINKIT.update(0, 1, 0);
                }
           },
           deleteAll: function (confirm = 0) {
                if (confirm == 0) {
-                    MESSAGE.confirm(`Delete All Properties`, `Are you sure you want to delete all properties?`, () => LINKIT.attribute.deleteAll(1));
+                    MESSAGE.confirm(`Delete All Properties`, `Are you sure you want to delete all properties?`, () => LINKIT.property.deleteAll(1));
                     return;
                }
-               const list = document.getElementById("linkit-attributes-list");
+               const list = document.getElementById("linkit-properties-list");
                list.innerHTML = "";
                LINKIT.update(0, 1, 0);
           },
           type: function (type = "") {
-               let attributes = "";
+               let properties = "";
                if (!isEmpty(type)) {
-                    const coreAttributes = LINKIT.settings.attributes.find((attribute) => attribute.label === type);
-                    if (coreAttributes && coreAttributes.list) attributes = coreAttributes.list;
+                    const coreProperties = LINKIT.settings.properties.find((property) => property.label === type);
+                    if (coreProperties && coreProperties.list) properties = coreProperties.list;
                }
-               return attributes;
+               return properties;
           }
      },
      file: {

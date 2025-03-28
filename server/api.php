@@ -28,7 +28,11 @@
 		$fields = get('fields', 'array');
 		if (empty($fields) && isset($data['fields'])) $fields = $data['fields'];
 
-		// Attributes
+		// Properties
+		$properties = get('properties', 'array');
+		if (empty($properties) && isset($data['properties'])) $properties = $data['properties'];
+		
+          // Attributes
 		$attributes = get('attributes', 'array');
 		if (empty($attributes) && isset($data['attributes'])) $attributes = $data['attributes'];
 

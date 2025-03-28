@@ -22,26 +22,38 @@
      stroke-width: 1px;
 }
 .linkit-svg-node rect {
-     fill: var(--color-back);
+     /* fill: var(--color-back); */
      /* fill: transparent; */
      stroke: var(--color-accent);
      /* stroke: var(--color-border); */
      stroke-width: 1px;
 }
 .linkit-svg-node:hover rect {
-     fill: var(--color-hover);
+     /* fill: var(--color-hover); */
      stroke: var(--color-accent);
+     height: 30px;
+     padding: 0;
 }
 .linkit-svg-node text {
      font-size: var(--font-size-sm);
      pointer-events: none;
-     color: var(--color-text);
-     fill: var(--color-text);
+     /* color: var(--color-text);
+     fill: var(--color-text); */
+}
+.linkit-svg-hover,
+.linkit-svg-selected {
+     z-index: 2;
 }
 .linkit-svg-node.linkit-svg-selected rect {
      fill: var(--color-accent);
+     color: var(--color-text);
      stroke: var(--color-accent);
      stroke-width: 2px;
+     padding: 100px;
+}
+.linkit-svg-node.linkit-svg-selected text {
+     color: var(--color-text);
+     fill: var(--color-text);
 }
 .linkit-svg-hover {
      z-index: 1;
@@ -49,32 +61,39 @@
 .linkit-svg-node.linkit-svg-hover circle {
      stroke: var(--color-accent);
 }
-.linkit-svg-node.linkit-svg-hover text {
-     /* font-size: var(--font-size); */
-}
+/* .linkit-svg-node.linkit-svg-hover text {
+     font-size: var(--font-size); 
+} */
 .linkit-svg-link {
      stroke: var(--color-border);
      stroke-opacity: 1;
      stroke-width: 2px;
      z-index: 0;
 }
-.linkit-svg-link.linkit-svg-hover {
+.linkit-svg-link.linkit-svg-hover,
+.linkit-svg-link.linkit-svg-selected {
      stroke: var(--color-accent);
      stroke-opacity: 1;
      z-index: 1;
 }
-.linkit-svg-link-type {
+.linkit-svg-link.linkit-svg-selected {
+     stroke-width: 3px;
+}
+.linkit-svg-link-label {
      font-size: var(--font-size-xsm);
      pointer-events: none;
      color: var(--color-text);
      fill: var(--color-text);
      opacity: 0;
 }
-.linkit-svg-link-type.linkit-svg-hover {
+.linkit-svg-link-label.linkit-svg-hover {
+     color: var(--color-accent);
+     opacity: 0.75;
+     z-index: 1;
+}
+.linkit-svg-link-label.linkit-svg-selected {
      color: var(--color-accent);
      opacity: 1;
      z-index: 1;
-}
-.linkit-svg-link-label.linkit-svg-hover {
-     opacity: 0.75;
+     font-size: var(--font-size-sm);
 }

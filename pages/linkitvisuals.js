@@ -57,10 +57,18 @@ const LINKIT2D = {
                // Calculate new translation to center the node
                newX = LINKIT2D.width / 2 - nodeData.x * transform.k;
                newY = LINKIT2D.height / 2 - nodeData.y * transform.k;
-
-               // Smoothly transition to the new position
-               LINKIT2D.svg.transition().duration(750).call(LINKIT2D.zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(transform.k));
+          } else {
+               // Calculate center of all nodes
+               const nodes = LINKIT2D.nodes.data();
+               if (nodes.length > 0) {
+                    const avgX = d3.mean(nodes, (d) => d.x);
+                    const avgY = d3.mean(nodes, (d) => d.y);
+                    newX = LINKIT2D.width / 2 - avgX * transform.k;
+                    newY = LINKIT2D.height / 2 - avgY * transform.k;
+               }
           }
+          // Smoothly transition to the new position
+          LINKIT2D.svg.transition().duration(750).call(LINKIT2D.zoom.transform, d3.zoomIdentity.translate(newX, newY).scale(transform.k));
      },
      isLinked: function (node1, node2) {
           return LINKIT2D.data.links.some((link) => (link.source.id === node1.id && link.target.id === node2.id) || (link.source.id === node2.id && link.target.id === node1.id));
@@ -162,16 +170,27 @@ const LINKIT2D = {
      },
      select: function (entityID = "") {
           // Clear Selection
-          const nodes = document.getElementsByClassName("linkit-svg-node");
-          if (nodes && nodes.length > 0) {
-               for (let i = 0; i < nodes.length; i++) {
-                    nodes[i].classList.remove("linkit-svg-selected");
-               }
-          }
+          const selected = document.querySelectorAll(".linkit-svg-selected");
+          if (selected) selected.forEach((el) => el.classList.remove("linkit-svg-selected"));
+
+          // Select Node
           if (!isEmpty(entityID)) {
                const node = document.getElementById(`node-${entityID}`);
-               if (node) node.classList.add("linkit-svg-selected");
+               if (node) {
+                    const nodeId = node.getAttribute("id").replace("node-", "");
+                    node.classList.add("linkit-svg-selected");
+
+                    // Select and mark connected lines
+                    const connectedLines = document.querySelectorAll(`.linkit-svg-link[data-source='${nodeId}'], .linkit-svg-link[data-target='${nodeId}']`);
+                    connectedLines.forEach((line) => line.classList.add("linkit-svg-selected"));
+
+                    // Select and mark labels on those lines
+                    const lineLabels = document.querySelectorAll(`.linkit-svg-link-label[data-source='${nodeId}'], .linkit-svg-link-label[data-target='${nodeId}']`);
+                    lineLabels.forEach((label) => label.classList.add("linkit-svg-selected"));
+               }
           }
+
+          // Center on Selection
           LINKIT2D.center(entityID);
      },
      reset: function () {
@@ -238,24 +257,27 @@ const LINKIT2D = {
           const group = svg.append("g").attr("class", "graph-group"); // Parent Group
 
           // Links between nodes
-          const link = group.selectAll(".linkit-svg-link").data(data.links).enter().append("line").attr("class", "linkit-svg-link");
+          const link = group
+               .selectAll(".linkit-svg-link")
+               .data(data.links)
+               .enter()
+               .append("line")
+               .attr("class", "linkit-svg-link")
+               .attr("data-source", (d) => d.source)
+               .attr("data-target", (d) => d.target);
 
           // Labels of each Link
-          const linkTypes = group
-               .selectAll(".linkit-svg-link-type")
+          const linkLabels = group
+               .selectAll(".linkit-svg-link-label")
                .data(data.links)
                .enter()
                .append("text")
-               .attr("class", "linkit-svg-link-type")
+               .attr("class", "linkit-svg-link-label")
+               .attr("data-source", (d) => d.source)
+               .attr("data-target", (d) => d.target)
                .attr("text-anchor", "middle")
                .text((d) => {
-                    let type = "";
-                    if (d.sourcetype === d.targettype || isEmpty(d.targettype)) {
-                         type = `${d.sourcetype}`;
-                    } else {
-                         type = `${d.sourcetype} - ${d.targettype}`;
-                    }
-                    return type;
+                    return d.sourcetype === d.targettype || isEmpty(d.targettype) ? (type = `${d.sourcetype}`) : (type = `${d.sourcetype} - ${d.targettype}`);
                });
 
           // Node Attributes
@@ -280,11 +302,11 @@ const LINKIT2D = {
           node.on("mouseover", function (event, d) {
                d3.select(this).classed("linkit-svg-hover", true);
                link.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", true); // Select connected links
-               linkTypes.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", true); // Select connected links
+               linkLabels.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", true); // Select connected links text
           }).on("mouseout", function (event, d) {
                d3.select(this).classed("linkit-svg-hover", false); // Reset border
                link.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", false);
-               linkTypes.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", false); // Select connected links
+               linkLabels.filter((l) => l.source === d || l.target === d).classed("linkit-svg-hover", false); // Select connected links
           });
 
           // Node Elements - Rounded Rectangle - Append text inside the rectangle
@@ -297,13 +319,14 @@ const LINKIT2D = {
                .attr("rx", borderRadius) // Rounded corners
                .attr("ry", borderRadius)
                .attr("x", -rectWidth / 2) // Centering rectangle
-               .attr("y", -rectHeight / 2);
+               .attr("y", -rectHeight / 2)
+               .attr("fill", (d) => (d.color ? d.color : "#121c2d"));
 
           const textElements = node
                .append("text")
                .attr("text-anchor", "middle")
                .attr("dy", 5) // Center text within the rectangle
-               .attr("fill", "white")
+               .attr("fill", (d) => (d.color ? colorText(d.color) : colorText("#121c2d")))
                .text((d) => d.name);
 
           // Zoom
@@ -373,7 +396,7 @@ const LINKIT2D = {
                     .attr("x2", (d) => d.target.x)
                     .attr("y2", (d) => d.target.y);
 
-               linkTypes.attr("x", (d) => (d.source.x + d.target.x) / 2).attr("y", (d) => (d.source.y + d.target.y) / 2);
+               linkLabels.attr("x", (d) => (d.source.x + d.target.x) / 2).attr("y", (d) => (d.source.y + d.target.y) / 2);
 
                node.attr("transform", (d) => `translate(${d.x},${d.y})`); // Keep nodes centered
           });

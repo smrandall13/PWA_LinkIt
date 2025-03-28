@@ -297,6 +297,46 @@ const DATA = {
      }
 };
 
+const COLOR = {
+     colorDefault: "#00a878",
+     colors: ["#FFB703", "#219EBC", "#FB8500", "#C1121F", "#BDE0FE", "#FFAFCC", "#FF006E", "#03045E", "#0F4C5C", "#90BE6D", "#0E6BA8", "#161A1D", "#EDF6F9", "#83C5BE", "#06E6A0", "#F8961E", "#2F6690", "#80ED99", "F7C59F", "#8AC926"],
+     colorInput: null,
+     select: function (color = "") {
+          if (isEmpty(color)) return;
+          const input = getElement(this.colorInput);
+          const picker = getElement(this.colorInput + "-picker");
+          if (!input) return;
+          input.value = color;
+          if (picker) picker.style.backgroundColor = color;
+          POPUP.close();
+     },
+     open: function (inputid = "") {
+          const input = getElement(inputid);
+          if (!input) return;
+
+          COLOR.colorInput = inputid; // Set Input
+
+          let selectedColor = input.value;
+          if (isEmpty(selectedColor)) selectedColor = this.colorDefault;
+          const colorList = colorSort(this.colors);
+          const colorOptions = colorList.map((color) => {
+               return `<div class='app-color-option ${color == selectedColor ? "app-color-selected" : ""}' style='background-color:${color}' onclick="COLOR.select('${color}')"></div>`;
+          });
+
+          let controls = `<div class='width-100 align-center flex-row'>${BUTTON("app-color-custom", "", "Custom", { class: "app-button-small" })}</div><div style='width:100%;opacity:0;height:1px;text-align:center;overflow:hidden;'><input id='app-color-input' type='color' onchange="COLOR.select(getValue('app-color-input'))"></div>`;
+          POPUP.open("Select Color", colorOptions.join("") + ``, controls, "app-color-selector", "", true, () => {
+               addEvent("app-color-custom", () => {
+                    // POPUP.close();
+                    getElement("app-color-input").click();
+               });
+          });
+     },
+     close: function () {
+          COLOR.colorInput = null;
+          POPUP.close();
+     }
+};
+
 const BUTTON = function (buttonid = "", icon = "", text = "", buttonAttr = {}, iconAttr = {}, textAttr = {}, click = null, returnType = "") {
      const button = document.createElement("button");
      if (!isEmpty(buttonid)) button.id = buttonid;
@@ -415,6 +455,11 @@ const isString = (variable) => typeof variable === "string";
 const isJSON = (variable) => typeof variable === "object" && variable !== null;
 const isArray = (variable) => Array.isArray(variable);
 const isObject = (variable) => typeof variable === "object" && variable !== null;
+const isHex = (variable) => {
+     if (isEmpty(variable)) return false;
+     const hexPattern = /^#([0-9A-F]{3}|[0-9A-F]{6})$/i;
+     return hexPattern.test(variable);
+};
 const is = {
      number: isNumber,
      string: isString,
@@ -581,7 +626,6 @@ const formatDateTime = (variable = "", dateFormat = "", timeFormat = "") => {
      const timeString = formatTime(variable, timeFormat);
      return `${dateString} ${timeString}`;
 };
-
 const formatDate = (variable = "", format = "") => {
      if (isEmpty(variable)) return "";
 
@@ -601,7 +645,6 @@ const formatDate = (variable = "", format = "") => {
                .replace("DD", day);
      }
 };
-
 const formatTime = (variable = "", format = "") => {
      if (!variable) return ""; // Ensures variable is not empty or undefined
 
@@ -627,3 +670,62 @@ const formatTime = (variable = "", format = "") => {
                .replace("AMPM", ampm);
      }
 };
+
+function colorHexToRgb(hex) {
+     const bigint = parseInt(hex.slice(1), 16);
+     const r = (bigint >> 16) & 255;
+     const g = (bigint >> 8) & 255;
+     const b = bigint & 255;
+     return { r, g, b };
+}
+function colorGetLuminance(hex) {
+     const { r, g, b } = colorHexToRgb(hex);
+     // Formula for perceived luminance
+     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function colorSort(colorArray) {
+     return colorArray.slice().sort((a, b) => {
+          return colorGetLuminance(a) - colorGetLuminance(b);
+     });
+}
+function colorHexToRgba(hex, alpha = 1) {
+     hex = hex.replace(/^#/, "");
+
+     if (hex.length === 3)
+          hex = hex
+               .split("")
+               .map((h) => h + h)
+               .join("");
+
+     if (hex.length !== 6) throw new Error("Invalid HEX color.");
+
+     const r = parseInt(hex.slice(0, 2), 16);
+     const g = parseInt(hex.slice(2, 4), 16);
+     const b = parseInt(hex.slice(4, 6), 16);
+
+     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function colorText(hex) {
+     // Check if hex is valid
+     if (!isHex(hex)) return;
+     hex = hex.replace(/^#/, "");
+
+     if (hex.length === 3) {
+          hex = hex
+               .split("")
+               .map((h) => h + h)
+               .join("");
+     }
+
+     const r = parseInt(hex.substr(0, 2), 16);
+     const g = parseInt(hex.substr(2, 2), 16);
+     const b = parseInt(hex.substr(4, 2), 16);
+
+     // Calculate luminance (per WCAG guidelines)
+     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+     const color = luminance > 0.5 ? "black" : "white";
+     console.log("H", hex, color);
+
+     return color;
+}
